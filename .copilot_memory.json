@@ -1,45 +1,51 @@
-{
-  "metadata": {
-    "created_by": "GitHub Copilot assistant",
-    "created_at": "2025-11-24T00:00:00Z",
-    "workspace_path": "c:\\Users\\nirma\\Desktop\\New Website",
-    "os": "Windows",
-    "shell": "powershell.exe"
-  },
-  "memory_points": [
-    {
-      "id": 1,
-      "title": "Business-ready live hosted website",
-      "detail": "At the end of this project, deliver a business-ready, complete, live hosted website ready to use."
-    },
-    {
-      "id": 2,
-      "title": "Zero cost constraint",
-      "detail": "Strict zero-cost constraint except for two custom domain names and SMS sending charges."
-    },
-    {
-      "id": 3,
-      "title": "GitHub student developer pack",
-      "detail": "User has GitHub Student Developer Pack available."
-    },
-    {
-      "id": 4,
-      "title": "Best UI and performance",
-      "detail": "User wants the best possible website with respect to UI and performance within constraints."
-    },
-    {
-      "id": 5,
-      "title": "Expected users",
-      "detail": "Expected total users ~10000; expected active concurrent users ~15."
-    }
-  ],
-  "notes": {
-    "update_instructions": "Update this file as project context changes. To persist across machines/sessions, commit to a Git repo and push to a remote (GitHub).",
-    "persistence_options": [
-      "Commit & push to GitHub (recommended; use private repo if needed)",
-      "Use an encrypted file (git-crypt or GPG) for sensitive fields",
-      "Store in an external secrets manager (e.g., GitHub Secrets) for CI/CD uses"
-    ]
-  },
-  "last_updated": "2025-11-24T00:00:00Z"
+﻿{
+    "metadata":  {
+                     "created_by":  "GitHub Copilot assistant",
+                     "created_at":  "2025-11-24T00:00:00Z",
+                     "workspace_path":  "c:\\Users\\nirma\\Desktop\\New Website",
+                     "os":  "Windows",
+                     "shell":  "powershell.exe"
+                 },
+    "memory_points":  [
+                          {
+                              "id":  1,
+                              "title":  "Business-ready live hosted website",
+                              "detail":  "At the end of this project, deliver a business-ready, complete, live hosted website ready to use."
+                          },
+                          {
+                              "id":  2,
+                              "title":  "Zero cost constraint",
+                              "detail":  "Strict zero-cost constraint except for two custom domain names and SMS sending charges."
+                          },
+                          {
+                              "id":  3,
+                              "title":  "GitHub student developer pack",
+                              "detail":  "User has GitHub Student Developer Pack available."
+                          },
+                          {
+                              "id":  4,
+                              "title":  "Best UI and performance",
+                              "detail":  "User wants the best possible website with respect to UI and performance within constraints."
+                          },
+                          {
+                              "id":  5,
+                              "title":  "Expected users",
+                              "detail":  "Expected total users ~10000; expected active concurrent users ~15."
+                          },
+                          {
+                              "detail":  "rkspace \u0027COPILOT_MEMORY.md\u0027",
+                              "title":  "Note: rkspace \u0027COPILOT_MEMORY.md\u0027",
+                              "timestamp":  "2025-11-24T23:52:21.8756868+05:30",
+                              "id":  6
+                          }
+                      ],
+    "notes":  {
+                  "update_instructions":  "Update this file as project context changes. To persist across machines/sessions, commit to a Git repo and push to a remote (GitHub).",
+                  "persistence_options":  [
+                                              "Commit \u0026 push to GitHub (recommended; use private repo if needed)",
+                                              "Use an encrypted file (git-crypt or GPG) for sensitive fields",
+                                              "Store in an external secrets manager (e.g., GitHub Secrets) for CI/CD uses"
+                                          ]
+              },
+    "last_updated":  "2025-11-24T23:52:21.9378737+05:30"
 }
