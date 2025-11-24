@@ -33,28 +33,34 @@
                               "detail":  "Expected total users ~10000; expected active concurrent users ~15."
                           },
                           {
-                              "detail":  "rkspace \u0027COPILOT_MEMORY.md\u0027",
-                              "title":  "Note: rkspace \u0027COPILOT_MEMORY.md\u0027",
+                               "detail":  "rkspace 'COPILOT_MEMORY.md'",
+                              "title":  "Note: rkspace 'COPILOT_MEMORY.md'",
                               "timestamp":  "2025-11-24T23:52:21.8756868+05:30",
                               "id":  6
                           },
                           {
-                              "detail":  "rkspace \u0027COPILOT_MEMORY.md\u0027",
-                              "title":  "Note: rkspace \u0027COPILOT_MEMORY.md\u0027",
+                              "detail":  "rkspace 'COPILOT_MEMORY.md'",
+                              "title":  "Note: rkspace 'COPILOT_MEMORY.md'",
                               "timestamp":  "2025-11-24T23:52:23.4168669+05:30",
                               "id":  7
                           },
                           {
-                              "detail":  "rkspace \u0027COPILOT_MEMORY.md\u0027",
-                              "title":  "Note: rkspace \u0027COPILOT_MEMORY.md\u0027",
+                              "detail":  "rkspace 'COPILOT_MEMORY.md'",
+                              "title":  "Note: rkspace 'COPILOT_MEMORY.md'",
                               "timestamp":  "2025-11-24T23:52:24.5409336+05:30",
                               "id":  8
                           },
                           {
-                              "detail":  "rkspace \u0027COPILOT_MEMORY.md\u0027",
-                              "title":  "Note: rkspace \u0027COPILOT_MEMORY.md\u0027",
+                              "detail":  "rkspace 'COPILOT_MEMORY.md'",
+                              "title":  "Note: rkspace 'COPILOT_MEMORY.md'",
                               "timestamp":  "2025-11-24T23:52:29.0267649+05:30",
                               "id":  9
+                          },
+                          {
+                              "id":  10,
+                              "title":  "Push reminders",
+                              "detail":  "Assistant should prompt the user to commit and push workspace context at crucial development and deployment intervals. Preferred local command: cd 'C:\\Users\\nirma\\Desktop\\New Website' ; .\\update_memory.ps1 -Note \"<message>\" -Push",
+                              "timestamp":  "2025-11-25T00:00:00Z"
                           }
                       ],
     "notes":  {

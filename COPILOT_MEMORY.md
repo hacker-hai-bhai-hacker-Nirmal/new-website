@@ -13,6 +13,13 @@ Permanent memory points:
 4. Goal: best possible website for UI and performance within constraints.
 5. Expected users: ~10000 total, ~15 active concurrently.
 
+6. Remind to push context: Assistant should prompt the user at crucial development and deployment intervals to commit and push the workspace context. Preferred local command for recording/pushing context:
+
+```
+cd 'C:\Users\nirma\Desktop\New Website'
+.\update_memory.ps1 -Note "<your note here>" -Push
+```
+
 How to persist and keep this file updated:
 
 - Option A (recommended): Initialize a Git repo, commit these files, and push to GitHub. Use a private repo if you prefer privacy.
@@ -31,3 +38,5 @@ Reply with how you'd like me to proceed.
 - [2025-11-24T23:52:24] rkspace 'COPILOT_MEMORY.md'
 
 - [2025-11-24T23:52:29] rkspace 'COPILOT_MEMORY.md'
+ 
+- [2025-11-25T00:00:00] Added permanent push-reminder memory and preferred command
