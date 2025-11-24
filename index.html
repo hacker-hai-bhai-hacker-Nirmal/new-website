@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Fast, accessible website — business-ready scaffold." />
+  <title>New Website — Fast & Accessible</title>
+  <link rel="stylesheet" href="/styles.css">
+  <meta name="theme-color" content="#0b1221">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">New Website</a>
+      <nav class="nav">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a class="cta" href="#contact">Get Started</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Beautiful. Fast. Reliable.</h1>
+        <p class="lead">A business-ready website scaffold designed for maximum performance and great UX — zero infrastructure cost required.</p>
+        <p><a class="primary" href="#features">See features</a></p>
+      </div>
+    </section>
+
+    <section id="features" class="container features">
+      <h2>Features</h2>
+      <div class="grid">
+        <article>
+          <h3>Performance-first</h3>
+          <p>Minimal JS, responsive images, critical CSS inline — optimized for real users and Core Web Vitals.</p>
+        </article>
+        <article>
+          <h3>Accessible</h3>
+          <p>Semantic markup and keyboard-friendly navigation make the site usable by everyone.</p>
+        </article>
+        <article>
+          <h3>Zero-cost hosting</h3>
+          <p>Deploy to GitHub Pages, Cloudflare Pages, or Netlify free tiers with a custom domain.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="about" class="container about">
+      <h2>About this scaffold</h2>
+      <p>This is a minimal, production-ready static scaffold to help you iterate quickly. We'll add pages, components, and deployment automation next.</p>
+    </section>
+
+    <section id="contact" class="container contact">
+      <h2>Get started</h2>
+      <p>When you're ready we can wire a contact flow (email or SMS) and onboarding flow — note SMS incurs cost.</p>
+      <pre class="cmd">cd 'C:\Users\nirma\Desktop\New Website'
+.\update_memory.ps1 -Note "Started scaffolding the website (initial scaffold)" -Push</pre>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>&copy; <span id="year"></span> New Website — Built for speed.</small>
+    </div>
+  </footer>
+
+  <script>
+    // small script only to set year — keeps page interactive minimal
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
