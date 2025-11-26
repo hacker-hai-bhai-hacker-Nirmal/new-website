@@ -40,31 +40,56 @@ async function handleEvent(event, env, ctx) {
 
   // Serve static assets
   try {
-    // If it's a directory, serve index.html
+    // If it's a directory, serve index.html (no-cache for HTML)
     if (pathname.endsWith('/')) {
-      return await getAssetFromKV(event, {
+      return await serveAsset(event, {
         mapRequestToAsset: req => new Request(`${new URL(req.url).origin}index.html`, req),
+        cacheControl: { bypassCache: true },
       });
     }
 
     // Otherwise, try to serve the requested asset
-    return await getAssetFromKV(event, {
+    return await serveAsset(event, {
       mapRequestToAsset: req => {
         // First try to get the exact asset
         return mapRequestToAsset(req);
       },
+      cacheControl: { bypassCache: true },
     });
   } catch (e) {
-    // If asset not found, try to serve as SPA route
+    // If asset not found, try to serve as SPA route (no-cache)
     try {
-      return await getAssetFromKV(event, {
+      return await serveAsset(event, {
         mapRequestToAsset: req => new Request(`${new URL(req.url).origin}index.html`, req),
+        cacheControl: { bypassCache: true },
       });
     } catch (e) {
       // If still not found, return 404
       return new Response('Not Found', { status: 404 });
     }
   }
+}
+
+// Helper to add cache headers (no-store for HTML)
+async function serveAsset(event, options) {
+  const res = await getAssetFromKV(event, options);
+  const ct = res.headers.get('content-type') || '';
+  const headers = new Headers(res.headers);
+
+  if (ct.includes('text/html')) {
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    headers.set('Pragma', 'no-cache');
+    headers.set('Expires', '0');
+  } else {
+    // short cache for static assets to reflect changes quickly
+    headers.set('Cache-Control', 'public, max-age=300, immutable');
+  }
+
+  return new Response(res.body, {
+    status: res.status,
+    statusText: res.statusText,
+    headers,
+  });
 }
 
 /**

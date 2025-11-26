@@ -1,4 +1,5 @@
 import { Client, Account, Databases, ID, Query } from 'appwrite';
+import config from './appwriteConfig';
 
 // Get configuration from environment variables
 const getEnvVar = (key) => {
@@ -11,12 +12,66 @@ const getEnvVar = (key) => {
     }
 };
 
+// Initialize Appwrite client
 export const client = new Client()
-    .setEndpoint(getEnvVar('VITE_APPWRITE_ENDPOINT') || 'https://cloud.appwrite.io/v1')
-    .setProject(getEnvVar('VITE_APPWRITE_PROJECT_ID') || 'YOUR_PROJECT_ID');
+    .setEndpoint(getEnvVar('VITE_APPWRITE_ENDPOINT') || 'https://fra.cloud.appwrite.io/v1')
+    .setProject(getEnvVar('VITE_APPWRITE_PROJECT_ID') || '6900b1ed001604d8befb');
 
 export const account = new Account(client);
 export const databases = new Databases(client);
+
+// Helper function to get database ID
+const getDatabaseId = () => {
+    return config.databaseId;
+};
+
+// Helper function to get collection ID by name
+const getCollectionId = (name) => {
+    return config.collections[name]?.id || name;
+};
+
+// Initialize database and collections
+const initDatabase = async () => {
+    try {
+        // Check if database exists, create if not
+        try {
+            await databases.get(getDatabaseId());
+        } catch (error) {
+            if (error.code === 404) {
+                console.log('Database not found, creating...');
+                // Note: You'll need to create the database manually in Appwrite console
+                // as it requires project owner permissions
+                console.log('Please create the database in Appwrite console');
+            } else {
+                throw error;
+            }
+        }
+
+        // Create collections if they don't exist
+        for (const [key, collection] of Object.entries(config.collections)) {
+            try {
+                await databases.getCollection(getDatabaseId(), collection.id);
+                console.log(`Collection ${collection.name} already exists`);
+            } catch (error) {
+                if (error.code === 404) {
+                    console.log(`Creating collection: ${collection.name}`);
+                    // Note: You'll need to create collections manually in Appwrite console
+                    // as it requires project owner permissions
+                    console.log(`Please create collection '${collection.name}' in Appwrite console`);
+                } else {
+                    console.error(`Error checking collection ${collection.name}:`, error);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error initializing database:', error);
+    }
+};
+
+// Initialize database on module load
+if (typeof window !== 'undefined') {
+    initDatabase();
+}
 
 // Appwrite Configuration
 export const config = {
