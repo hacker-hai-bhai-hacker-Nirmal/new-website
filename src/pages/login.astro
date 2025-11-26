@@ -158,13 +158,16 @@ import { ID, Query } from 'appwrite'
 
   // Check if user is already logged in
   document.addEventListener('DOMContentLoaded', async () => {
+    // Test Appwrite connection
     try {
-      const session = await account.get();
-      if (session) {
+      const response = await account.get();
+      console.log('Appwrite connected successfully');
+      if (response) {
         // User is logged in, redirect to dashboard
         window.location.href = '/dashboard';
       }
     } catch (error) {
+      console.log('Appwrite connection test:', error.message);
       // User is not logged in, stay on login page
       console.log('User not logged in');
     }
