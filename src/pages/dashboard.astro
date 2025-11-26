@@ -355,8 +355,10 @@ import Layout from '../layouts/Layout.astro'
       constructor() {
         this.endpoint = 'https://fra.cloud.appwrite.io/v1';
         this.projectId = '6900b1ed001604d8befb';
+        this.apiKey = '1d6cd6adc23d3c6dba6ca6a8536e0a90c65781f5104cc9dc707ca9718b68b3388cb29105a4cca27baf69714a9752100cb3c425bbd58f1a6ba52514f19b3c2f3a2fa50a68b239f8d963be5db2c651682031326b70ba21afa2b1f37763492144dcb586264908cdd64a9b63b5c9dc9b9e490072294a179e7061a220b7a8b2c5aba3';
         this.headers = {
           'X-Appwrite-Project': this.projectId,
+          'X-Appwrite-Key': this.apiKey,
           'Content-Type': 'application/json'
         };
       }
