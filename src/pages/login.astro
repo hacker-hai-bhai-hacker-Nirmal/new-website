@@ -1,0 +1,771 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <!-- Launch Discount Banner -->
+  <div class="discount-banner">
+    <div class="sparkle-effect">✨</div>
+    <span>🎉 Launch Discount: Get Up to 60% Off! 🎉</span>
+    <div class="sparkle-effect">✨</div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">Litterateur</a>
+      <nav class="nav">
+        <a href="/menu">Menu</a>
+        <a href="/rewards">Rewards</a>
+        <a class="cta" href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="auth-section">
+      <div class="container">
+        <div class="auth-container">
+          <div class="auth-image">
+            <div class="image-placeholder">🍽️ Literary Dining Experience</div>
+          </div>
+          
+          <div class="auth-form-container">
+            <div class="auth-header">
+              <h1>Welcome to Litterateur</h1>
+              <p>Sign in to unlock exclusive rewards and personalized offers</p>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form" id="loginForm">
+              <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <div class="phone-input-group">
+                  <select id="countryCode" class="country-code">
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                  </select>
+                  <input type="tel" id="phone" name="phone" placeholder="98765 43210" required>
+                </div>
+                <span class="error-message" id="phoneError">Phone number is required</span>
+              </div>
+
+              <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="John Doe">
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email (Optional)</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com">
+              </div>
+
+              <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-input-group">
+                  <input type="password" id="password" name="password" placeholder="Enter your password">
+                  <button type="button" class="toggle-password" id="togglePassword">
+                    <span class="eye-icon">👁️</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="rememberMe" name="rememberMe">
+                  <span class="checkmark"></span>
+                  Remember Me
+                </label>
+              </div>
+
+              <button type="submit" class="auth-submit">Sign In</button>
+
+              <div class="auth-links">
+                <a href="#" class="forgot-password">Forgot Password?</a>
+                <span class="divider">|</span>
+                <a href="#" class="toggle-auth" id="toggleToSignup">New User? Sign Up</a>
+              </div>
+            </form>
+
+            <!-- Signup Form (Hidden by default) -->
+            <form class="auth-form" id="signupForm" style="display: none;">
+              <div class="form-group">
+                <label for="signupPhone">Phone Number *</label>
+                <div class="phone-input-group">
+                  <select id="signupCountryCode" class="country-code">
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                  </select>
+                  <input type="tel" id="signupPhone" name="signupPhone" placeholder="98765 43210" required>
+                </div>
+                <span class="error-message" id="signupPhoneError">Phone number is required</span>
+              </div>
+
+              <div class="form-group">
+                <label for="signupFullName">Full Name *</label>
+                <input type="text" id="signupFullName" name="signupFullName" placeholder="John Doe" required>
+              </div>
+
+              <div class="form-group">
+                <label for="signupEmail">Email (Optional)</label>
+                <input type="email" id="signupEmail" name="signupEmail" placeholder="john@example.com">
+              </div>
+
+              <div class="form-group">
+                <label for="signupPassword">Password *</label>
+                <div class="password-input-group">
+                  <input type="password" id="signupPassword" name="signupPassword" placeholder="Create a password" required>
+                  <button type="button" class="toggle-password" id="toggleSignupPassword">
+                    <span class="eye-icon">👁️</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword">Confirm Password *</label>
+                <div class="password-input-group">
+                  <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                  <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                    <span class="eye-icon">👁️</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                  <span class="checkmark"></span>
+                  I agree to the Terms & Conditions
+                </label>
+              </div>
+
+              <button type="submit" class="auth-submit">Sign Up</button>
+
+              <div class="auth-links">
+                <a href="#" class="toggle-auth" id="toggleToLogin">Already have an account? Sign In</a>
+              </div>
+            </form>
+
+            <!-- Social Login -->
+            <div class="social-login">
+              <div class="divider">
+                <span>Or continue with</span>
+              </div>
+              <div class="social-buttons">
+                <button class="social-btn google">
+                  <span class="social-icon">🇬</span>
+                  Google
+                </button>
+                <button class="social-btn facebook">
+                  <span class="social-icon">📘</span>
+                  Facebook
+                </button>
+                <button class="social-btn apple">
+                  <span class="social-icon">🍎</span>
+                  Apple
+                </button>
+              </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="trust-badges">
+              <div class="trust-badge">
+                <span class="trust-icon">🔒</span>
+                <span>Secure Login</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-icon">🛡️</span>
+                <span>Your data is safe with us</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Form switching
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const toggleToSignup = document.getElementById('toggleToSignup');
+    const toggleToLogin = document.getElementById('toggleToLogin');
+
+    toggleToSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      signupForm.style.display = 'block';
+    });
+
+    toggleToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      signupForm.style.display = 'none';
+      loginForm.style.display = 'block';
+    });
+
+    // Password visibility toggle
+    function setupPasswordToggle(toggleId, inputId) {
+      const toggle = document.getElementById(toggleId);
+      const input = document.getElementById(inputId);
+      
+      toggle.addEventListener('click', () => {
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        toggle.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+      });
+    }
+
+    setupPasswordToggle('togglePassword', 'password');
+    setupPasswordToggle('toggleSignupPassword', 'signupPassword');
+    setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
+
+    // Form validation
+    function validatePhone(phone) {
+      const phoneRegex = /^[6-9]\d{9}$/;
+      return phoneRegex.test(phone.replace(/\s/g, ''));
+    }
+
+    function showError(errorId) {
+      const errorElement = document.getElementById(errorId);
+      errorElement.style.display = 'block';
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+      }, 5000);
+    }
+
+    // Login form submission
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const phone = document.getElementById('phone').value;
+      const countryCode = document.getElementById('countryCode').value;
+      const fullPhone = countryCode + phone.replace(/\s/g, '');
+      
+      if (!validatePhone(phone)) {
+        showError('phoneError');
+        return;
+      }
+      
+      // Simulate login success
+      showToast('Login successful! Redirecting...');
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 2000);
+    });
+
+    // Signup form submission
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const phone = document.getElementById('signupPhone').value;
+      const fullName = document.getElementById('signupFullName').value;
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const agreeTerms = document.getElementById('agreeTerms').checked;
+      
+      if (!validatePhone(phone)) {
+        showError('signupPhoneError');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        showToast('Passwords do not match!');
+        return;
+      }
+      
+      if (!agreeTerms) {
+        showToast('Please agree to the Terms & Conditions');
+        return;
+      }
+      
+      // Simulate signup success
+      showToast('Account created successfully! Redirecting...');
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 2000);
+    });
+
+    // Social login handlers
+    document.querySelectorAll('.social-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const provider = btn.classList[1];
+        showToast(`Connecting to ${provider}...`);
+        // Simulate social login
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 2000);
+      });
+    });
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Phone number formatting
+    document.querySelectorAll('input[type="tel"]').forEach(input => {
+      input.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\s/g, '');
+        if (value.length > 5 && value.length <= 10) {
+          value = value.slice(0, 5) + ' ' + value.slice(5);
+        }
+        e.target.value = value;
+      });
+    });
+  </script>
+
+  <style>
+    :root {
+      --primary-green: #1B4332;
+      --cream-white: #F8F9FA;
+      --gold: #FFD700;
+      --text-dark: #2C3E50;
+      --text-light: #6C757D;
+      --border-light: #E9ECEF;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+      --error-red: #DC3545;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background: var(--cream-white);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Discount Banner */
+    .discount-banner {
+      background: linear-gradient(45deg, var(--gold), #FFA500);
+      color: var(--primary-green);
+      text-align: center;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sparkle-effect {
+      display: inline-block;
+      animation: sparkle 2s infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    /* Header */
+    .site-header {
+      background: white;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .site-header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--primary-green);
+      text-decoration: none;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav a {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav a:hover {
+      color: var(--primary-green);
+    }
+
+    .cta {
+      background: var(--primary-green);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .cta:hover {
+      background: #2A5F3E;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Auth Section */
+    .auth-section {
+      min-height: calc(100vh - 200px);
+      display: flex;
+      align-items: center;
+      padding: 40px 0;
+      background: linear-gradient(135deg, var(--cream-white) 0%, #E8F5E8 100%);
+    }
+
+    .auth-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .auth-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .image-placeholder {
+      width: 100%;
+      max-width: 500px;
+      height: 400px;
+      background: linear-gradient(45deg, #E8F5E8, #D4E9D4);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: var(--text-light);
+      box-shadow: var(--shadow);
+      text-align: center;
+      padding: 20px;
+    }
+
+    .auth-form-container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 500px;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .auth-header h1 {
+      color: var(--primary-green);
+      font-size: 32px;
+      margin-bottom: 10px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .auth-header p {
+      color: var(--text-light);
+      font-size: 16px;
+    }
+
+    /* Form Styles */
+    .auth-form {
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border-light);
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-green);
+    }
+
+    .phone-input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .country-code {
+      padding: 12px;
+      border: 2px solid var(--border-light);
+      border-radius: 8px;
+      background: white;
+      font-size: 16px;
+      min-width: 100px;
+    }
+
+    .phone-input-group input {
+      flex: 1;
+    }
+
+    .password-input-group {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text-light);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    .error-message {
+      color: var(--error-red);
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .auth-submit {
+      width: 100%;
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+    }
+
+    .auth-submit:hover {
+      background: #2A5F3E;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .auth-links {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-light);
+    }
+
+    .auth-links a {
+      color: var(--primary-green);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .auth-links a:hover {
+      color: var(--gold);
+    }
+
+    .divider {
+      margin: 0 10px;
+    }
+
+    /* Social Login */
+    .social-login {
+      margin-top: 30px;
+    }
+
+    .social-login .divider {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .social-login .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--border-light);
+      z-index: 1;
+    }
+
+    .social-login .divider span {
+      background: white;
+      padding: 0 15px;
+      position: relative;
+      z-index: 2;
+      color: var(--text-light);
+    }
+
+    .social-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border: 2px solid var(--border-light);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .social-btn:hover {
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+    }
+
+    .social-icon {
+      font-size: 16px;
+    }
+
+    /* Trust Badges */
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .trust-icon {
+      font-size: 16px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-green);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-hover);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .auth-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .auth-image {
+        order: 2;
+      }
+
+      .auth-form-container {
+        order: 1;
+        padding: 30px 20px;
+      }
+
+      .image-placeholder {
+        height: 300px;
+        font-size: 24px;
+      }
+
+      .social-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .trust-badges {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .nav {
+        display: none;
+      }
+    }
+  </style>
+</Layout>

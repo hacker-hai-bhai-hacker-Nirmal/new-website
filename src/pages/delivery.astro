@@ -1,0 +1,1318 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <header class="delivery-header">
+    <div class="header-content">
+      <div class="app-info">
+        <h1>🚚 Litterateur Delivery</h1>
+        <div class="partner-name">John Driver</div>
+      </div>
+      <div class="header-actions">
+        <button class="profile-btn">👤</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="delivery-main">
+    <!-- Availability Toggle -->
+    <section class="availability-section">
+      <div class="toggle-container">
+        <div class="toggle-info">
+          <h2>Delivery Status</h2>
+          <p class="status-text">Currently <span class="status online">Online</span></p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="availabilityToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="earnings-widget">
+        <div class="earnings-info">
+          <div class="earnings-amount">₹2,450</div>
+          <div class="earnings-label">Today's Earnings</div>
+        </div>
+        <div class="earnings-stats">
+          <div class="stat">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Deliveries</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">4.8</span>
+            <span class="stat-label">Rating</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="available">
+        <span class="tab-icon">📋</span>
+        <span>Available</span>
+        <span class="tab-count">3</span>
+      </button>
+      <button class="tab-btn" data-tab="active">
+        <span class="tab-icon">🚚</span>
+        <span>Active</span>
+        <span class="tab-count">1</span>
+      </button>
+      <button class="tab-btn" data-tab="completed">
+        <span class="tab-icon">✅</span>
+        <span>Completed</span>
+        <span class="tab-count">11</span>
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Available Deliveries -->
+      <div class="tab-pane active" id="available">
+        <div class="delivery-list">
+          <div class="delivery-card">
+            <div class="delivery-header">
+              <div class="delivery-info">
+                <div class="order-number">#ORD-2025-048</div>
+                <div class="delivery-time">12:45 PM</div>
+              </div>
+              <div class="delivery-amount">₹794</div>
+            </div>
+            
+            <div class="delivery-details">
+              <div class="pickup-info">
+                <div class="location-type">📍 Pickup</div>
+                <div class="location-name">Litterateur Cafe</div>
+                <div class="location-address">123 Literary Lane, Cafe District</div>
+                <div class="location-distance">0.5 km away</div>
+              </div>
+              
+              <div class="route-arrow">↓</div>
+              
+              <div class="dropoff-info">
+                <div class="location-type">🏠 Drop-off</div>
+                <div class="location-name">John Doe</div>
+                <div class="location-address">456 Book Street, Reading Quarter</div>
+                <div class="location-distance">2.3 km away</div>
+              </div>
+            </div>
+            
+            <div class="delivery-items">
+              <div class="items-preview">
+                <span class="item-emoji">🥐</span>
+                <span class="item-emoji">☕</span>
+                <span class="item-emoji">🥗</span>
+                <span class="item-count">+1 more</span>
+              </div>
+              <div class="delivery-time-estimate">~15 min delivery</div>
+            </div>
+            
+            <div class="delivery-actions">
+              <button class="action-btn accept">Accept Delivery</button>
+              <button class="action-btn decline">Decline</button>
+            </div>
+          </div>
+
+          <div class="delivery-card">
+            <div class="delivery-header">
+              <div class="delivery-info">
+                <div class="order-number">#ORD-2025-049</div>
+                <div class="delivery-time">12:48 PM</div>
+              </div>
+              <div class="delivery-amount">₹1,248</div>
+            </div>
+            
+            <div class="delivery-details">
+              <div class="pickup-info">
+                <div class="location-type">📍 Pickup</div>
+                <div class="location-name">Litterateur Cafe</div>
+                <div class="location-address">123 Literary Lane, Cafe District</div>
+                <div class="location-distance">0.5 km away</div>
+              </div>
+              
+              <div class="route-arrow">↓</div>
+              
+              <div class="dropoff-info">
+                <div class="location-type">🏠 Drop-off</div>
+                <div class="location-name">Jane Smith</div>
+                <div class="location-address">789 Novel Avenue, Story Town</div>
+                <div class="location-distance">3.1 km away</div>
+              </div>
+            </div>
+            
+            <div class="delivery-items">
+              <div class="items-preview">
+                <span class="item-emoji">🥩</span>
+                <span class="item-emoji">🍷</span>
+              </div>
+              <div class="delivery-time-estimate">~20 min delivery</div>
+            </div>
+            
+            <div class="delivery-actions">
+              <button class="action-btn accept">Accept Delivery</button>
+              <button class="action-btn decline">Decline</button>
+            </div>
+          </div>
+
+          <div class="delivery-card">
+            <div class="delivery-header">
+              <div class="delivery-info">
+                <div class="order-number">#ORD-2025-050</div>
+                <div class="delivery-time">12:50 PM</div>
+              </div>
+              <div class="delivery-amount">₹898</div>
+            </div>
+            
+            <div class="delivery-details">
+              <div class="pickup-info">
+                <div class="location-type">📍 Pickup</div>
+                <div class="location-name">Litterateur Cafe</div>
+                <div class="location-address">123 Literary Lane, Cafe District</div>
+                <div class="location-distance">0.5 km away</div>
+              </div>
+              
+              <div class="route-arrow">↓</div>
+              
+              <div class="dropoff-info">
+                <div class="location-type">🏠 Drop-off</div>
+                <div class="location-name">Bob Wilson</div>
+                <div class="location-address">321 Poetry Lane, Verse Village</div>
+                <div class="location-distance">1.8 km away</div>
+              </div>
+            </div>
+            
+            <div class="delivery-items">
+              <div class="items-preview">
+                <span class="item-emoji">🍝</span>
+                <span class="item-emoji">🍮</span>
+                <span class="item-count">+2 more</span>
+              </div>
+              <div class="delivery-time-estimate">~18 min delivery</div>
+            </div>
+            
+            <div class="delivery-actions">
+              <button class="action-btn accept">Accept Delivery</button>
+              <button class="action-btn decline">Decline</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Delivery -->
+      <div class="tab-pane" id="active">
+        <div class="active-delivery">
+          <div class="delivery-header">
+            <div class="delivery-info">
+              <div class="order-number">#ORD-2025-047</div>
+              <div class="delivery-status">In Progress</div>
+            </div>
+            <div class="delivery-amount">₹598</div>
+          </div>
+          
+          <div class="delivery-progress">
+            <div class="progress-step completed">
+              <div class="step-icon">📍</div>
+              <div class="step-label">Picked Up</div>
+              <div class="step-time">12:35 PM</div>
+            </div>
+            
+            <div class="progress-line"></div>
+            
+            <div class="progress-step active">
+              <div class="step-icon">🚚</div>
+              <div class="step-label">On the Way</div>
+              <div class="step-time">12:42 PM</div>
+            </div>
+            
+            <div class="progress-line"></div>
+            
+            <div class="progress-step">
+              <div class="step-icon">✅</div>
+              <div class="step-label">Delivered</div>
+              <div class="step-time">--:--</div>
+            </div>
+          </div>
+          
+          <div class="delivery-map">
+            <div class="map-placeholder">
+              <div class="map-icon">🗺️</div>
+              <p>Live navigation map</p>
+              <div class="eta-info">
+                <div class="eta-time">5 min</div>
+                <div class="eta-distance">1.2 km remaining</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="customer-info">
+            <h3>Customer Details</h3>
+            <div class="customer-contact">
+              <div class="customer-name">Alice Johnson</div>
+              <div class="customer-phone">📞 +91 98765 43210</div>
+            </div>
+            <div class="customer-address">
+              📍 456 Book Street, Reading Quarter
+            </div>
+            <div class="customer-notes">
+              <strong>Delivery Notes:</strong> Please call upon arrival
+            </div>
+          </div>
+          
+          <div class="delivery-actions">
+            <button class="action-btn primary">📞 Call Customer</button>
+            <button class="action-btn secondary">🗺️ Navigate</button>
+            <button class="action-btn success">✅ Mark Delivered</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Deliveries -->
+      <div class="tab-pane" id="completed">
+        <div class="completed-list">
+          <div class="completed-card">
+            <div class="delivery-header">
+              <div class="delivery-info">
+                <div class="order-number">#ORD-2025-046</div>
+                <div class="delivery-time">12:30 PM</div>
+              </div>
+              <div class="delivery-amount">₹847</div>
+            </div>
+            
+            <div class="delivery-summary">
+              <div class="route-info">
+                <div class="pickup">Litterateur Cafe</div>
+                <div class="arrow">→</div>
+                <div class="dropoff">Charlie Brown</div>
+              </div>
+              <div class="delivery-stats">
+                <div class="stat">
+                  <span class="stat-label">Distance:</span>
+                  <span class="stat-value">2.1 km</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Time:</span>
+                  <span class="stat-value">18 min</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Earnings:</span>
+                  <span class="stat-value">₹85</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="delivery-rating">
+              <div class="rating-stars">⭐⭐⭐⭐⭐</div>
+              <div class="rating-text">Customer rated 5.0</div>
+            </div>
+          </div>
+
+          <div class="completed-card">
+            <div class="delivery-header">
+              <div class="delivery-info">
+                <div class="order-number">#ORD-2025-045</div>
+                <div class="delivery-time">11:45 AM</div>
+              </div>
+              <div class="delivery-amount">₹698</div>
+            </div>
+            
+            <div class="delivery-summary">
+              <div class="route-info">
+                <div class="pickup">Litterateur Cafe</div>
+                <div class="arrow">→</div>
+                <div class="dropoff">Diana Prince</div>
+              </div>
+              <div class="delivery-stats">
+                <div class="stat">
+                  <span class="stat-label">Distance:</span>
+                  <span class="stat-value">1.8 km</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Time:</span>
+                  <span class="stat-value">15 min</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Earnings:</span>
+                  <span class="stat-value">₹72</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="delivery-rating">
+              <div class="rating-stars">⭐⭐⭐⭐</div>
+              <div class="rating-text">Customer rated 4.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active">
+      <span class="nav-icon">📋</span>
+      <span>Deliveries</span>
+    </button>
+    <button class="nav-btn">
+      <span class="nav-icon">💰</span>
+      <span>Earnings</span>
+    </button>
+    <button class="nav-btn">
+      <span class="nav-icon">📊</span>
+      <span>Stats</span>
+    </button>
+    <button class="nav-btn">
+      <span class="nav-icon">⚙️</span>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+  <script>
+    // Tab switching
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.dataset.tab;
+        
+        // Update active states
+        tabButtons.forEach(tab => tab.classList.remove('active'));
+        tabPanes.forEach(pane => pane.classList.remove('active'));
+        
+        btn.classList.add('active');
+        document.getElementById(targetTab).classList.add('active');
+      });
+    });
+
+    // Bottom navigation
+    const navButtons = document.querySelectorAll('.nav-btn');
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(nav => nav.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Availability toggle
+    const availabilityToggle = document.getElementById('availabilityToggle');
+    const statusText = document.querySelector('.status-text');
+    const statusSpan = document.querySelector('.status');
+
+    availabilityToggle.addEventListener('change', () => {
+      if (availabilityToggle.checked) {
+        statusSpan.textContent = 'Online';
+        statusSpan.className = 'status online';
+        showToast('You are now online and available for deliveries');
+      } else {
+        statusSpan.textContent = 'Offline';
+        statusSpan.className = 'status offline';
+        showToast('You are now offline');
+      }
+    });
+
+    // Accept delivery
+    document.querySelectorAll('.action-btn.accept').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const deliveryCard = btn.closest('.delivery-card');
+        const orderNumber = deliveryCard.querySelector('.order-number').textContent;
+        
+        // Move to active tab
+        deliveryCard.style.transform = 'translateX(100%)';
+        deliveryCard.style.opacity = '0';
+        
+        setTimeout(() => {
+          deliveryCard.remove();
+          updateTabCounts();
+          showToast(`Accepted ${orderNumber}`);
+          
+          // Switch to active tab
+          document.querySelector('[data-tab="active"]').click();
+        }, 300);
+      });
+    });
+
+    // Decline delivery
+    document.querySelectorAll('.action-btn.decline').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const deliveryCard = btn.closest('.delivery-card');
+        const orderNumber = deliveryCard.querySelector('.order-number').textContent;
+        
+        deliveryCard.style.transform = 'translateX(-100%)';
+        deliveryCard.style.opacity = '0';
+        
+        setTimeout(() => {
+          deliveryCard.remove();
+          updateTabCounts();
+          showToast(`Declined ${orderNumber}`);
+        }, 300);
+      });
+    });
+
+    // Mark delivered
+    document.querySelectorAll('.action-btn.success').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (confirm('Mark this delivery as completed?')) {
+          showToast('Delivery marked as completed!');
+          // Move to completed tab
+          setTimeout(() => {
+            document.querySelector('[data-tab="completed"]').click();
+          }, 1000);
+        }
+      });
+    });
+
+    // Call customer
+    document.querySelectorAll('.action-btn.primary').forEach(btn => {
+      if (btn.textContent.includes('Call')) {
+        btn.addEventListener('click', () => {
+          showToast('Calling customer...');
+        });
+      }
+    });
+
+    // Navigate
+    document.querySelectorAll('.action-btn.secondary').forEach(btn => {
+      if (btn.textContent.includes('Navigate')) {
+        btn.addEventListener('click', () => {
+          showToast('Opening navigation...');
+        });
+      }
+    });
+
+    // Update tab counts
+    function updateTabCounts() {
+      const availableCount = document.querySelectorAll('#available .delivery-card').length;
+      const activeCount = document.querySelectorAll('#active .active-delivery').length;
+      const completedCount = document.querySelectorAll('#completed .completed-card').length;
+      
+      document.querySelector('[data-tab="available"] .tab-count').textContent = availableCount;
+      document.querySelector('[data-tab="active"] .tab-count').textContent = activeCount;
+      document.querySelector('[data-tab="completed"] .tab-count').textContent = completedCount;
+    }
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Simulate new delivery notifications
+    function addNewDelivery() {
+      const availableList = document.querySelector('#available .delivery-list');
+      if (availableList.children.length < 5) { // Limit to 5 available deliveries
+        const newDelivery = document.createElement('div');
+        newDelivery.className = 'delivery-card';
+        newDelivery.innerHTML = `
+          <div class="delivery-header">
+            <div class="delivery-info">
+              <div class="order-number">#ORD-2025-${Math.floor(Math.random() * 1000)}</div>
+              <div class="delivery-time">${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
+            </div>
+            <div class="delivery-amount">₹${Math.floor(Math.random() * 500) + 500}</div>
+          </div>
+          
+          <div class="delivery-details">
+            <div class="pickup-info">
+              <div class="location-type">📍 Pickup</div>
+              <div class="location-name">Litterateur Cafe</div>
+              <div class="location-address">123 Literary Lane, Cafe District</div>
+              <div class="location-distance">0.5 km away</div>
+            </div>
+            
+            <div class="route-arrow">↓</div>
+            
+            <div class="dropoff-info">
+              <div class="location-type">🏠 Drop-off</div>
+              <div class="location-name">New Customer</div>
+              <div class="location-address">Random Address</div>
+              <div class="location-distance">${(Math.random() * 3 + 1).toFixed(1)} km away</div>
+            </div>
+          </div>
+          
+          <div class="delivery-items">
+            <div class="items-preview">
+              <span class="item-emoji">🍽️</span>
+              <span class="item-count">Multiple items</span>
+            </div>
+            <div class="delivery-time-estimate">~${Math.floor(Math.random() * 10 + 15)} min delivery</div>
+          </div>
+          
+          <div class="delivery-actions">
+            <button class="action-btn accept">Accept Delivery</button>
+            <button class="action-btn decline">Decline</button>
+          </div>
+        `;
+        
+        availableList.insertBefore(newDelivery, availableList.firstChild);
+        updateTabCounts();
+        showToast('New delivery available!');
+        
+        // Re-attach event listeners
+        newDelivery.querySelector('.action-btn.accept').addEventListener('click', function() {
+          const deliveryCard = this.closest('.delivery-card');
+          const orderNumber = deliveryCard.querySelector('.order-number').textContent;
+          
+          deliveryCard.style.transform = 'translateX(100%)';
+          deliveryCard.style.opacity = '0';
+          
+          setTimeout(() => {
+            deliveryCard.remove();
+            updateTabCounts();
+            showToast(`Accepted ${orderNumber}`);
+            document.querySelector('[data-tab="active"]').click();
+          }, 300);
+        });
+        
+        newDelivery.querySelector('.action-btn.decline').addEventListener('click', function() {
+          const deliveryCard = this.closest('.delivery-card');
+          const orderNumber = deliveryCard.querySelector('.order-number').textContent;
+          
+          deliveryCard.style.transform = 'translateX(-100%)';
+          deliveryCard.style.opacity = '0';
+          
+          setTimeout(() => {
+            deliveryCard.remove();
+            updateTabCounts();
+            showToast(`Declined ${orderNumber}`);
+          }, 300);
+        });
+      }
+    }
+
+    // Add new delivery every 30 seconds when online
+    setInterval(() => {
+      if (availabilityToggle.checked) {
+        addNewDelivery();
+      }
+    }, 30000);
+
+    // Initialize
+    updateTabCounts();
+  </script>
+
+  <style>
+    :root {
+      --primary-green: #1B4332;
+      --cream-white: #F8F9FA;
+      --gold: #FFD700;
+      --text-dark: #2C3E50;
+      --text-light: #6C757D;
+      --border-light: #E9ECEF;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background: var(--cream-white);
+      padding-bottom: 80px; /* Space for bottom nav */
+    }
+
+    /* Header */
+    .delivery-header {
+      background: var(--primary-green);
+      color: white;
+      padding: 15px 20px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-info h1 {
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+
+    .partner-name {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .profile-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    /* Main Content */
+    .delivery-main {
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Availability Section */
+    .availability-section {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .toggle-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle-info h2 {
+      color: var(--primary-green);
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .status-text {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .status.online {
+      color: var(--success-color);
+      font-weight: bold;
+    }
+
+    .status.offline {
+      color: var(--danger-color);
+      font-weight: bold;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--success-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Earnings Widget */
+    .earnings-widget {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, var(--gold), #FFA500);
+      padding: 15px;
+      border-radius: 12px;
+      color: var(--primary-green);
+    }
+
+    .earnings-amount {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    .earnings-label {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .earnings-stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .earnings-stats .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: white;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 12px 8px;
+      background: var(--cream-white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .tab-btn:hover {
+      background: #e9ecef;
+    }
+
+    .tab-btn.active {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    .tab-icon {
+      font-size: 18px;
+    }
+
+    .tab-count {
+      background: rgba(255, 255, 255, 0.3);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .tab-btn.active .tab-count {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Tab Content */
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Delivery Cards */
+    .delivery-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+
+    .delivery-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .delivery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .delivery-info {
+      flex: 1;
+    }
+
+    .order-number {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--primary-green);
+      margin-bottom: 2px;
+    }
+
+    .delivery-time,
+    .delivery-status {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .delivery-amount {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary-green);
+    }
+
+    /* Delivery Details */
+    .delivery-details {
+      margin-bottom: 15px;
+    }
+
+    .pickup-info,
+    .dropoff-info {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .pickup-info {
+      background: rgba(40, 167, 69, 0.1);
+    }
+
+    .dropoff-info {
+      background: rgba(255, 193, 7, 0.1);
+    }
+
+    .location-type {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .location-name {
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    .location-address {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .location-distance {
+      font-size: 12px;
+      color: var(--primary-green);
+      font-weight: 500;
+    }
+
+    .route-arrow {
+      text-align: center;
+      font-size: 20px;
+      color: var(--text-light);
+      margin: 5px 0;
+    }
+
+    /* Delivery Items */
+    .delivery-items {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: var(--cream-white);
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .items-preview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .item-emoji {
+      font-size: 20px;
+    }
+
+    .item-count {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .delivery-time-estimate {
+      font-size: 12px;
+      color: var(--primary-green);
+      font-weight: 500;
+    }
+
+    /* Delivery Actions */
+    .delivery-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .action-btn.accept {
+      background: var(--success-color);
+      color: white;
+    }
+
+    .action-btn.decline {
+      background: var(--danger-color);
+      color: white;
+    }
+
+    .action-btn.primary {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    .action-btn.secondary {
+      background: var(--text-light);
+      color: white;
+    }
+
+    .action-btn.success {
+      background: var(--success-color);
+      color: white;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Active Delivery */
+    .active-delivery {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .delivery-progress {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 20px 0;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      position: relative;
+    }
+
+    .step-icon {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .step-label {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .step-time {
+      font-size: 10px;
+      color: var(--text-light);
+    }
+
+    .progress-step.completed {
+      color: var(--success-color);
+    }
+
+    .progress-step.active {
+      color: var(--primary-green);
+    }
+
+    .progress-line {
+      flex: 1;
+      height: 2px;
+      background: var(--border-light);
+      margin: 0 10px;
+    }
+
+    /* Delivery Map */
+    .delivery-map {
+      margin: 20px 0;
+    }
+
+    .map-placeholder {
+      background: var(--cream-white);
+      border: 2px dashed var(--border-light);
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .map-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .eta-info {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-green);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+    }
+
+    .eta-time {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    .eta-distance {
+      font-size: 12px;
+    }
+
+    /* Customer Info */
+    .customer-info {
+      margin: 20px 0;
+    }
+
+    .customer-info h3 {
+      color: var(--primary-green);
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .customer-contact {
+      margin-bottom: 10px;
+    }
+
+    .customer-name {
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    .customer-phone {
+      font-size: 14px;
+      color: var(--primary-green);
+    }
+
+    .customer-address,
+    .customer-notes {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 5px;
+    }
+
+    /* Completed Deliveries */
+    .completed-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 15px;
+    }
+
+    .delivery-summary {
+      margin: 15px 0;
+    }
+
+    .route-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .pickup,
+    .dropoff {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .arrow {
+      color: var(--text-light);
+    }
+
+    .delivery-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .delivery-stats .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .delivery-stats .stat-label {
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .delivery-stats .stat-value {
+      font-weight: bold;
+      color: var(--primary-green);
+    }
+
+    .delivery-rating {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .rating-stars {
+      font-size: 16px;
+    }
+
+    .rating-text {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .nav-btn.active {
+      color: var(--primary-green);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-green);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-hover);
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+      }
+      to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .delivery-main {
+        padding: 15px;
+      }
+
+      .nav-tabs {
+        flex-direction: column;
+      }
+
+      .tab-btn {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .delivery-actions {
+        flex-direction: column;
+      }
+
+      .earnings-widget {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+    }
+  </style>
+</Layout>

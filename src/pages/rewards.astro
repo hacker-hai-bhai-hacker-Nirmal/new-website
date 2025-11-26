@@ -1,0 +1,1141 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <!-- Launch Discount Banner -->
+  <div class="discount-banner">
+    <div class="sparkle-effect">✨</div>
+    <span>🎉 Launch Discount: Get Up to 60% Off! 🎉</span>
+    <div class="sparkle-effect">✨</div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">Litterateur</a>
+      <nav class="nav">
+        <a href="/menu">Menu</a>
+        <a href="/rewards">Rewards</a>
+        <a class="cta" href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section with Confetti -->
+    <section class="rewards-hero">
+      <div class="confetti-container">
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+        <div class="confetti"></div>
+      </div>
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">🎊 Invite & Earn 🎊</h1>
+          <div class="launch-offer">
+            <h2>Launch Offer: Start with 20% OFF + Earn Up to 60% Discount!</h2>
+          </div>
+          <p>Share Litterateur with your friends and watch your discounts grow exponentially</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Referral Progress Infographic -->
+    <section class="referral-progress">
+      <div class="container">
+        <h2>How Your Discount Grows</h2>
+        <div class="progress-steps">
+          <div class="progress-step">
+            <div class="step-icon">👥</div>
+            <div class="step-content">
+              <h3>First Referral</h3>
+              <p>20% OFF + 10% Bonus = <strong>30% Total Discount</strong></p>
+              <div class="discount-badge">30% OFF</div>
+            </div>
+          </div>
+          
+          <div class="progress-arrow">→</div>
+          
+          <div class="progress-step">
+            <div class="step-icon">📈</div>
+            <div class="step-content">
+              <h3>Each New Referral</h3>
+              <p>Growing Discount (exponentially approaching 60% max)</p>
+              <div class="discount-badge">Up to 60% OFF</div>
+            </div>
+          </div>
+          
+          <div class="progress-arrow">→</div>
+          
+          <div class="progress-step">
+            <div class="step-icon">🎯</div>
+            <div class="step-content">
+              <h3>Maximum Reward</h3>
+              <p>Share with friends → They get 20% OFF → You get closer to 60% discount</p>
+              <div class="discount-badge gold">60% OFF</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Your Referral Code -->
+    <section class="referral-code">
+      <div class="container">
+        <div class="code-container">
+          <h3>Your Unique Referral Code</h3>
+          <div class="code-box">
+            <div class="code-text">LITTERATEUR2025</div>
+            <button class="copy-btn" id="copyCode">📋 Copy</button>
+          </div>
+          <p class="code-info">Share this code with friends and you'll both get 20% OFF!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Share Options -->
+    <section class="share-options">
+      <div class="container">
+        <h2>Share Now</h2>
+        <div class="share-buttons">
+          <button class="share-btn whatsapp" data-platform="whatsapp">
+            <span class="share-icon">💬</span>
+            <span>WhatsApp</span>
+          </button>
+          <button class="share-btn instagram" data-platform="instagram">
+            <span class="share-icon">📷</span>
+            <span>Instagram</span>
+          </button>
+          <button class="share-btn facebook" data-platform="facebook">
+            <span class="share-icon">📘</span>
+            <span>Facebook</span>
+          </button>
+          <button class="share-btn twitter" data-platform="twitter">
+            <span class="share-icon">🐦</span>
+            <span>Twitter</span>
+          </button>
+          <button class="share-btn email" data-platform="email">
+            <span class="share-icon">✉️</span>
+            <span>Email</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Referral Leaderboard -->
+    <section class="leaderboard">
+      <div class="container">
+        <h2>🏆 Referral Leaderboard</h2>
+        <div class="leaderboard-subtitle">Top referrers this month (anonymized)</div>
+        
+        <div class="leaderboard-list">
+          <div class="leaderboard-item gold">
+            <div class="rank">🥇</div>
+            <div class="user-info">
+              <div class="user-name">Food Lover A</div>
+              <div class="user-stats">47 referrals • 60% discount</div>
+            </div>
+            <div class="user-discount">60% OFF</div>
+          </div>
+          
+          <div class="leaderboard-item silver">
+            <div class="rank">🥈</div>
+            <div class="user-info">
+              <div class="user-name">Coffee Enthusiast B</div>
+              <div class="user-stats">35 referrals • 55% discount</div>
+            </div>
+            <div class="user-discount">55% OFF</div>
+          </div>
+          
+          <div class="leaderboard-item bronze">
+            <div class="rank">🥉</div>
+            <div class="user-info">
+              <div class="user-name">Bookworm C</div>
+              <div class="user-stats">28 referrals • 50% discount</div>
+            </div>
+            <div class="user-discount">50% OFF</div>
+          </div>
+          
+          <div class="leaderboard-item">
+            <div class="rank">4</div>
+            <div class="user-info">
+              <div class="user-name">Gourmet D</div>
+              <div class="user-stats">22 referrals • 45% discount</div>
+            </div>
+            <div class="user-discount">45% OFF</div>
+          </div>
+          
+          <div class="leaderboard-item">
+            <div class="rank">5</div>
+            <div class="user-info">
+              <div class="user-name">Literary E</div>
+              <div class="user-stats">18 referrals • 40% discount</div>
+            </div>
+            <div class="user-discount">40% OFF</div>
+          </div>
+        </div>
+        
+        <div class="your-position">
+          <div class="position-item">
+            <div class="rank">12</div>
+            <div class="user-info">
+              <div class="user-name">You</div>
+              <div class="user-stats">8 referrals • 30% discount</div>
+            </div>
+            <div class="user-discount">30% OFF</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Token Rewards Section -->
+    <section class="token-rewards">
+      <div class="container">
+        <h2>🪙 Loyalty Tokens Program</h2>
+        <div class="token-intro">
+          <p>Earn tokens with every order and redeem them for additional discounts!</p>
+        </div>
+        
+        <div class="token-balance">
+          <div class="balance-display">
+            <div class="token-icon">🪙</div>
+            <div class="balance-text">
+              <div class="balance-label">Your Token Balance</div>
+              <div class="balance-amount">1,250 tokens</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="token-rules">
+          <h3>How Tokens Work</h3>
+          <div class="rules-grid">
+            <div class="rule-item">
+              <div class="rule-icon">💰</div>
+              <div class="rule-content">
+                <h4>₹100 spent = 10 tokens earned</h4>
+                <p>Every ₹100 you spend earns you 10 loyalty tokens</p>
+              </div>
+            </div>
+            
+            <div class="rule-item">
+              <div class="rule-icon">🎁</div>
+              <div class="rule-content">
+                <h4>100 tokens = 1% discount (max 15%)</h4>
+                <p>Redeem tokens for additional discounts on your orders</p>
+              </div>
+            </div>
+            
+            <div class="rule-item">
+              <div class="rule-icon">⭐</div>
+              <div class="rule-content">
+                <h4>Bonus tokens on special items</h4>
+                <p>Earn extra tokens on featured menu items</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="token-progress">
+          <h3>Next Reward Tier</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 62.5%"></div>
+          </div>
+          <div class="progress-text">
+            <span>1,250 / 2,000 tokens</span>
+            <span>750 tokens to 15% max discount</span>
+          </div>
+        </div>
+
+        <div class="token-actions">
+          <button class="token-btn redeem">🎁 Redeem Tokens</button>
+          <button class="token-btn history">📊 Token History</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Success Stories -->
+    <section class="success-stories">
+      <div class="container">
+        <h2>Success Stories</h2>
+        <div class="stories-grid">
+          <div class="story-card">
+            <div class="story-avatar">👤</div>
+            <div class="story-content">
+              <h4>"Saved ₹3,000 this month!"</h4>
+              <p>Shared with my office team and now we all get 40% off our lunch orders. Amazing program!</p>
+              <div class="story-author">- Anonymous User</div>
+            </div>
+          </div>
+          
+          <div class="story-card">
+            <div class="story-avatar">👤</div>
+            <div class="story-content">
+              <h4>"60% discount is real!"</h4>
+              <p>Reached maximum discount in 2 months. The food quality combined with these savings is unbeatable.</p>
+              <div class="story-author">- Happy Customer</div>
+            </div>
+          </div>
+          
+          <div class="story-card">
+            <div class="story-avatar">👤</div>
+            <div class="story-content">
+              <h4>"Tokens add up fast!"</h4>
+              <p>Already redeemed tokens for 12% extra discount this month. Love the loyalty program!</p>
+              <div class="story-author">- Regular Customer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Copy referral code
+    document.getElementById('copyCode').addEventListener('click', () => {
+      const codeText = document.querySelector('.code-text').textContent;
+      navigator.clipboard.writeText(codeText).then(() => {
+        showToast('Referral code copied to clipboard!');
+      });
+    });
+
+    // Share functionality
+    document.querySelectorAll('.share-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const platform = btn.dataset.platform;
+        const code = 'LITTERATEUR2025';
+        const message = `Get 20% OFF at Litterateur - Where culinary art meets literary excellence! Use my code: ${code}`;
+        
+        let shareUrl = '';
+        
+        switch(platform) {
+          case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            break;
+          case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(message)}`;
+            break;
+          case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+            break;
+          case 'email':
+            shareUrl = `mailto:?subject=20% OFF at Litterateur&body=${encodeURIComponent(message)}`;
+            break;
+          case 'instagram':
+            showToast('Share your referral code on Instagram Stories!');
+            return;
+        }
+        
+        if (shareUrl) {
+          window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+        
+        showToast(`Sharing on ${platform}...`);
+      });
+    });
+
+    // Token actions
+    document.querySelector('.token-btn.redeem').addEventListener('click', () => {
+      showToast('Opening token redemption...');
+    });
+
+    document.querySelector('.token-btn.history').addEventListener('click', () => {
+      showToast('Loading token history...');
+    });
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Animated confetti
+    function createConfetti() {
+      const confettiContainer = document.querySelector('.confetti-container');
+      const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+      
+      document.querySelectorAll('.confetti').forEach((confetti, index) => {
+        setInterval(() => {
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDelay = Math.random() * 2 + 's';
+        }, 3000 + index * 500);
+      });
+    }
+
+    createConfetti();
+  </script>
+
+  <style>
+    :root {
+      --primary-green: #1B4332;
+      --cream-white: #F8F9FA;
+      --gold: #FFD700;
+      --text-dark: #2C3E50;
+      --text-light: #6C757D;
+      --border-light: #E9ECEF;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background: var(--cream-white);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Discount Banner */
+    .discount-banner {
+      background: linear-gradient(45deg, var(--gold), #FFA500);
+      color: var(--primary-green);
+      text-align: center;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sparkle-effect {
+      display: inline-block;
+      animation: sparkle 2s infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    /* Header */
+    .site-header {
+      background: white;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .site-header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--primary-green);
+      text-decoration: none;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav a {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav a:hover {
+      color: var(--primary-green);
+    }
+
+    .cta {
+      background: var(--primary-green);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .cta:hover {
+      background: #2A5F3E;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Rewards Hero */
+    .rewards-hero {
+      position: relative;
+      padding: 80px 0;
+      background: linear-gradient(135deg, var(--primary-green), #2A5F3E);
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .confetti-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .hero-title {
+      font-size: 64px;
+      margin-bottom: 30px;
+      font-family: 'Playfair Display', serif;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .launch-offer {
+      background: rgba(255, 215, 0, 0.2);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .launch-offer h2 {
+      font-size: 36px;
+      color: var(--gold);
+      margin-bottom: 0;
+    }
+
+    /* Referral Progress */
+    .referral-progress {
+      padding: 80px 0;
+      background: white;
+    }
+
+    .referral-progress h2 {
+      text-align: center;
+      font-size: 48px;
+      color: var(--primary-green);
+      margin-bottom: 50px;
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .progress-step {
+      flex: 1;
+      text-align: center;
+      padding: 30px;
+      background: var(--cream-white);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .step-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .step-content h3 {
+      color: var(--primary-green);
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .step-content p {
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+
+    .discount-badge {
+      background: var(--primary-green);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 18px;
+      display: inline-block;
+    }
+
+    .discount-badge.gold {
+      background: var(--gold);
+      color: var(--primary-green);
+    }
+
+    .progress-arrow {
+      font-size: 36px;
+      color: var(--gold);
+      font-weight: bold;
+    }
+
+    /* Referral Code */
+    .referral-code {
+      padding: 60px 0;
+      background: var(--cream-white);
+    }
+
+    .code-container {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .code-container h3 {
+      font-size: 32px;
+      color: var(--primary-green);
+      margin-bottom: 30px;
+    }
+
+    .code-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      border: 3px solid var(--gold);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .code-text {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--primary-green);
+      font-family: 'Courier New', monospace;
+      letter-spacing: 2px;
+    }
+
+    .copy-btn {
+      background: var(--gold);
+      color: var(--primary-green);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .copy-btn:hover {
+      background: #FFA500;
+      transform: translateY(-2px);
+    }
+
+    .code-info {
+      color: var(--text-light);
+      font-size: 16px;
+    }
+
+    /* Share Options */
+    .share-options {
+      padding: 60px 0;
+      background: white;
+    }
+
+    .share-options h2 {
+      text-align: center;
+      font-size: 48px;
+      color: var(--primary-green);
+      margin-bottom: 40px;
+    }
+
+    .share-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .share-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 20px;
+      border: 2px solid var(--border-light);
+      border-radius: 16px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      min-width: 120px;
+    }
+
+    .share-btn:hover {
+      border-color: var(--primary-green);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .share-icon {
+      font-size: 32px;
+    }
+
+    .share-btn span:last-child {
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .share-btn.whatsapp:hover {
+      border-color: #25D366;
+    }
+
+    .share-btn.instagram:hover {
+      border-color: #E4405F;
+    }
+
+    .share-btn.facebook:hover {
+      border-color: #1877F2;
+    }
+
+    .share-btn.twitter:hover {
+      border-color: #1DA1F2;
+    }
+
+    /* Leaderboard */
+    .leaderboard {
+      padding: 80px 0;
+      background: var(--cream-white);
+    }
+
+    .leaderboard h2 {
+      text-align: center;
+      font-size: 48px;
+      color: var(--primary-green);
+      margin-bottom: 10px;
+    }
+
+    .leaderboard-subtitle {
+      text-align: center;
+      color: var(--text-light);
+      margin-bottom: 50px;
+    }
+
+    .leaderboard-list {
+      max-width: 800px;
+      margin: 0 auto 30px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+    }
+
+    .leaderboard-item:hover {
+      transform: translateX(5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .leaderboard-item.gold {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: var(--primary-green);
+    }
+
+    .leaderboard-item.silver {
+      background: linear-gradient(135deg, #C0C0C0, #B8B8B8);
+      color: var(--text-dark);
+    }
+
+    .leaderboard-item.bronze {
+      background: linear-gradient(135deg, #CD7F32, #B87333);
+      color: white;
+    }
+
+    .rank {
+      font-size: 32px;
+      font-weight: bold;
+      margin-right: 20px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .user-stats {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .user-discount {
+      font-size: 20px;
+      font-weight: bold;
+      padding: 8px 16px;
+      background: var(--primary-green);
+      color: white;
+      border-radius: 20px;
+    }
+
+    .your-position {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .position-item {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--gold), #FFA500);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .position-item .rank {
+      color: var(--primary-green);
+    }
+
+    .position-item .user-name {
+      color: var(--primary-green);
+    }
+
+    .position-item .user-stats {
+      color: rgba(27, 67, 50, 0.8);
+    }
+
+    /* Token Rewards */
+    .token-rewards {
+      padding: 80px 0;
+      background: white;
+    }
+
+    .token-rewards h2 {
+      text-align: center;
+      font-size: 48px;
+      color: var(--primary-green);
+      margin-bottom: 20px;
+    }
+
+    .token-intro {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .token-balance {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .balance-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 20px;
+      background: linear-gradient(135deg, var(--gold), #FFA500);
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-hover);
+    }
+
+    .token-icon {
+      font-size: 48px;
+    }
+
+    .balance-text {
+      text-align: left;
+    }
+
+    .balance-label {
+      color: var(--primary-green);
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .balance-amount {
+      color: var(--primary-green);
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .token-rules {
+      margin-bottom: 60px;
+    }
+
+    .token-rules h3 {
+      text-align: center;
+      font-size: 32px;
+      color: var(--primary-green);
+      margin-bottom: 40px;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 30px;
+      background: var(--cream-white);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .rule-icon {
+      font-size: 32px;
+      min-width: 40px;
+    }
+
+    .rule-content h4 {
+      color: var(--primary-green);
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .rule-content p {
+      color: var(--text-light);
+    }
+
+    .token-progress {
+      margin-bottom: 40px;
+    }
+
+    .token-progress h3 {
+      text-align: center;
+      font-size: 24px;
+      color: var(--primary-green);
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: var(--border-light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), #FFA500);
+      border-radius: 10px;
+      transition: width 1s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-light);
+    }
+
+    .token-actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .token-btn {
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .token-btn:hover {
+      background: #2A5F3E;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Success Stories */
+    .success-stories {
+      padding: 80px 0;
+      background: var(--cream-white);
+    }
+
+    .success-stories h2 {
+      text-align: center;
+      font-size: 48px;
+      color: var(--primary-green);
+      margin-bottom: 50px;
+    }
+
+    .stories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .story-card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 20px;
+    }
+
+    .story-avatar {
+      font-size: 48px;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .story-content h4 {
+      color: var(--primary-green);
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .story-content p {
+      color: var(--text-light);
+      margin-bottom: 15px;
+    }
+
+    .story-author {
+      color: var(--gold);
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-green);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-hover);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 48px;
+      }
+
+      .launch-offer h2 {
+        font-size: 28px;
+      }
+
+      .progress-steps {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .progress-arrow {
+        transform: rotate(90deg);
+      }
+
+      .share-buttons {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .rank {
+        font-size: 24px;
+        min-width: 40px;
+      }
+
+      .user-discount {
+        font-size: 16px;
+        padding: 6px 12px;
+      }
+
+      .balance-display {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .rules-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .token-actions {
+        flex-direction: column;
+      }
+
+      .stories-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        display: none;
+      }
+    }
+  </style>
+</Layout>

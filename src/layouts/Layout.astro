@@ -2,22 +2,510 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>New Website — Fast & Accessible</title>
+		<title>Litterateur — Where Culinary Art Meets Literary Excellence</title>
 		<link rel="stylesheet" href="/styles.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Georgia:wght@400;700&display=swap" rel="stylesheet">
 	</head>
 	<body>
+		<div class="loading-screen" id="loadingScreen">
+			<div class="loading-spinner">
+				<div class="spinner"></div>
+				<div class="loading-text">Litterateur</div>
+			</div>
+		</div>
+		
+		<div class="marquee-banner" id="marqueeBanner">
+			<div class="marquee-content">
+				<span>🎉 Launch Offer: Up to 60% OFF! 🎉</span>
+				<span>🎉 Launch Offer: Up to 60% OFF! 🎉</span>
+				<span>🎉 Launch Offer: Up to 60% OFF! 🎉</span>
+				<span>🎉 Launch Offer: Up to 60% OFF! 🎉</span>
+			</div>
+		</div>
+		
 		<slot />
+		
+		<div class="floating-whatsapp" id="whatsappButton">
+			<a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer">
+				<span>💬</span>
+			</a>
+		</div>
+		
+		<div class="scroll-to-top" id="scrollTop">
+			<span>↑</span>
+		</div>
 	</body>
 </html>
 
 <style>
-	html,
-	body {
+	:root {
+		--primary-green: #1B4332;
+		--cream-white: #F8F9FA;
+		--gold: #FFD700;
+		--text-dark: #2C3E50;
+		--text-light: #6C757D;
+		--border-light: #E9ECEF;
+		--shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		--shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+		--transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		--transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+	}
+
+	* {
 		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		font-family: 'Georgia', serif;
+		line-height: 1.6;
+		color: var(--text-dark);
+		background: var(--cream-white);
+		overflow-x: hidden;
+	}
+
+	/* Loading Screen */
+	.loading-screen {
+		position: fixed;
+		top: 0;
+		left: 0;
 		width: 100%;
 		height: 100%;
+		background: linear-gradient(135deg, var(--primary-green), #2A5F3E);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 9999;
+		transition: opacity 0.5s ease, visibility 0.5s ease;
+	}
+
+	.loading-screen.fade-out {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	.loading-spinner {
+		text-align: center;
+		color: white;
+	}
+
+	.spinner {
+		width: 60px;
+		height: 60px;
+		border: 4px solid rgba(255, 215, 0, 0.3);
+		border-top: 4px solid var(--gold);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+		margin: 0 auto 20px;
+	}
+
+	.loading-text {
+		font-family: 'Playfair Display', serif;
+		font-size: 32px;
+		font-weight: 900;
+		letter-spacing: 2px;
+		animation: pulse 2s ease-in-out infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+
+	@keyframes pulse {
+		0%, 100% { opacity: 1; transform: scale(1); }
+		50% { opacity: 0.8; transform: scale(1.05); }
+	}
+
+	/* Marquee Banner */
+	.marquee-banner {
+		background: linear-gradient(45deg, var(--gold), #FFA500);
+		color: var(--primary-green);
+		padding: 8px 0;
+		overflow: hidden;
+		white-space: nowrap;
+		position: relative;
+	}
+
+	.marquee-content {
+		display: inline-block;
+		padding-left: 100%;
+		animation: marquee 20s linear infinite;
+		font-weight: bold;
+		font-size: 14px;
+	}
+
+	.marquee-content span {
+		padding: 0 50px;
+	}
+
+	@keyframes marquee {
+		0% { transform: translate(0, 0); }
+		100% { transform: translate(-100%, 0); }
+	}
+
+	/* Floating WhatsApp */
+	.floating-whatsapp {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		width: 60px;
+		height: 60px;
+		background: #25D366;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: var(--shadow-hover);
+		z-index: 1000;
+		transition: var(--transition-smooth);
+		animation: bounceIn 0.6s ease;
+	}
+
+	.floating-whatsapp:hover {
+		transform: scale(1.1);
+		box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+	}
+
+	.floating-whatsapp a {
+		color: white;
+		text-decoration: none;
+		font-size: 28px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* Scroll to Top */
+	.scroll-to-top {
+		position: fixed;
+		bottom: 20px;
+		left: 20px;
+		width: 50px;
+		height: 50px;
+		background: var(--primary-green);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-size: 24px;
+		font-weight: bold;
+		cursor: pointer;
+		opacity: 0;
+		visibility: hidden;
+		transition: var(--transition-smooth);
+		box-shadow: var(--shadow);
+		z-index: 999;
+	}
+
+	.scroll-to-top.visible {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.scroll-to-top:hover {
+		background: #2A5F3E;
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-hover);
+	}
+
+	/* Parallax Effect */
+	.parallax {
+		background-attachment: fixed;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		position: relative;
+	}
+
+	.parallax::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(27, 67, 50, 0.3);
+		z-index: 1;
+	}
+
+	.parallax > * {
+		position: relative;
+		z-index: 2;
+	}
+
+	/* Animations */
+	@keyframes bounceIn {
+		0% {
+			opacity: 0;
+			transform: scale(0.3);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.05);
+		}
+		70% {
+			transform: scale(0.9);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	@keyframes slideInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	.animate-on-scroll {
+		opacity: 0;
+		transform: translateY(30px);
+		transition: var(--transition-smooth);
+	}
+
+	.animate-on-scroll.animated {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* Premium Typography */
+	h1, h2, h3, h4, h5, h6 {
+		font-family: 'Playfair Display', serif;
+		font-weight: 700;
+		line-height: 1.2;
+	}
+
+	/* Premium Buttons */
+	.premium-btn {
+		background: linear-gradient(135deg, var(--primary-green), #2A5F3E);
+		color: white;
+		border: none;
+		padding: 15px 30px;
+		border-radius: 12px;
+		font-weight: bold;
+		cursor: pointer;
+		transition: var(--transition-bounce);
+		position: relative;
+		overflow: hidden;
+		text-decoration: none;
+		display: inline-block;
+		text-align: center;
+	}
+
+	.premium-btn::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+		transition: left 0.5s;
+	}
+
+	.premium-btn:hover::before {
+		left: 100%;
+	}
+
+	.premium-btn:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-hover);
+	}
+
+	.premium-btn.gold {
+		background: linear-gradient(135deg, var(--gold), #FFA500);
+		color: var(--primary-green);
+	}
+
+	/* Premium Cards */
+	.premium-card {
+		background: white;
+		border-radius: 16px;
+		padding: 30px;
+		box-shadow: var(--shadow);
+		transition: var(--transition-smooth);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.premium-card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 4px;
+		background: linear-gradient(90deg, var(--primary-green), var(--gold));
+	}
+
+	.premium-card:hover {
+		transform: translateY(-5px);
+		box-shadow: var(--shadow-hover);
+	}
+
+	/* Scrollbar Styling */
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: var(--cream-white);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--primary-green);
+		border-radius: 5px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #2A5F3E;
+	}
+
+	/* Selection Color */
+	::selection {
+		background: var(--gold);
+		color: var(--primary-green);
+	}
+
+	/* Focus Styles */
+	button:focus,
+	a:focus,
+	input:focus,
+	textarea:focus,
+	select:focus {
+		outline: 2px solid var(--gold);
+		outline-offset: 2px;
+	}
+
+	/* Accessibility */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	/* Responsive Typography */
+	@media (max-width: 768px) {
+		.loading-text {
+			font-size: 24px;
+		}
+		
+		.marquee-content {
+			font-size: 12px;
+		}
+		
+		.floating-whatsapp {
+			width: 50px;
+			height: 50px;
+			bottom: 15px;
+			right: 15px;
+		}
+		
+		.floating-whatsapp a {
+			font-size: 24px;
+		}
+		
+		.scroll-to-top {
+			width: 45px;
+			height: 45px;
+			bottom: 15px;
+			left: 15px;
+		}
 	}
 </style>
+
+<script>
+	// Loading screen
+	window.addEventListener('load', () => {
+		setTimeout(() => {
+			const loadingScreen = document.getElementById('loadingScreen');
+			if (loadingScreen) {
+				loadingScreen.classList.add('fade-out');
+			}
+		}, 1500);
+	});
+
+	// Scroll to top functionality
+	const scrollTop = document.getElementById('scrollTop');
+	if (scrollTop) {
+		window.addEventListener('scroll', () => {
+			if (window.pageYOffset > 300) {
+				scrollTop.classList.add('visible');
+			} else {
+				scrollTop.classList.remove('visible');
+			}
+		});
+
+		scrollTop.addEventListener('click', () => {
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
+		});
+	}
+
+	// Animate on scroll
+	const observerOptions = {
+		threshold: 0.1,
+		rootMargin: '0px 0px -50px 0px'
+	};
+
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				entry.target.classList.add('animated');
+			}
+		});
+	}, observerOptions);
+
+	// Observe elements with animate-on-scroll class
+	document.addEventListener('DOMContentLoaded', () => {
+		const animatedElements = document.querySelectorAll('.animate-on-scroll');
+		animatedElements.forEach(el => observer.observe(el));
+	});
+
+	// Parallax effect
+	window.addEventListener('scroll', () => {
+		const scrolled = window.pageYOffset;
+		const parallaxElements = document.querySelectorAll('.parallax');
+		
+		parallaxElements.forEach(element => {
+			const speed = 0.5;
+			const yPos = -(scrolled * speed);
+			element.style.transform = `translateY(${yPos}px)`;
+		});
+	});
+</script>
