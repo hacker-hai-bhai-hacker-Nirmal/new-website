@@ -1,0 +1,13 @@
+{
+  "cloudflare.enableCodeCompletion": true,
+  "cloudflare.enableCodeLens": true,
+  "cloudflare.enableHoverDocumentation": true,
+  "cloudflare.enableErrorChecking": true,
+  "cloudflare.enableLogging": true,
+  "cloudflare.apiToken": "${env:CLOUDFLARE_API_TOKEN}",
+  "cloudflare.accountId": "${env:CLOUDFLARE_ACCOUNT_ID}",
+  "cloudflare.zoneId": "${env:CLOUDFLARE_ZONE_ID}",
+  "cloudflare.email": "${env:CLOUDFLARE_EMAIL}",
+  "cloudflare.apiKey": "${env:CLOUDFLARE_API_KEY}",
+  "cloudflare.workers.dev": true
+}

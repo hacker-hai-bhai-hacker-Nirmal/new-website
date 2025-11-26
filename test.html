@@ -3,16 +3,47 @@
 <head>
     <title>Test Page</title>
     <style>
-        body { font-family: Arial; padding: 20px; }
-        .notice { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        body { 
+            font-family: Arial; 
+            padding: 20px; 
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-banner { 
+            background: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%);
             color: white; 
-            padding: 15px; 
+            padding: 20px; 
             text-align: center; 
             margin: 20px 0;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .test-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid #4a6cf7;
         }
     </style>
 </head>
+<body>
+    <div class="test-banner">
+        Jai Bolenath - Deployment Verified
+    </div>
+    
+    <div class="test-info">
+        <h2>Deployment Test Page</h2>
+        <p>This page is used to verify successful deployments. If you can see "Jai Bolenath" in the banner above, your deployment is working correctly.</p>
+        <p>Last updated: <span id="deploy-time"></span></p>
+    </div>
+
+    <script>
+        // Add current deployment timestamp
+        document.getElementById('deploy-time').textContent = new Date().toLocaleString();
+    </script>
 <body>
     <h1>Litterateur Cafe - Test Page</h1>
     
