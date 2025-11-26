@@ -153,8 +153,8 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  // Import Appwrite from their own CDN
-  import Appwrite from 'https://cdn.appwrite.io/v1/client.js';
+  // Import Appwrite from skypack CDN (reliable with CORS)
+  import Appwrite from 'https://cdn.skypack.dev/appwrite@13.0.1';
 
   // Initialize Appwrite client
   const client = new Appwrite.Client()
