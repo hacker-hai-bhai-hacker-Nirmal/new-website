@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import { auth, db } from '../lib/appwrite.js'
 ---
 
 <Layout>
@@ -351,7 +350,214 @@ import { auth, db } from '../lib/appwrite.js'
   </div>
 
   <script type="module">
-    import { auth, db } from '../lib/appwrite.js';
+    // Simple Appwrite client without external dependencies
+    class SimpleAppwriteClient {
+      constructor() {
+        this.endpoint = 'https://fra.cloud.appwrite.io/v1';
+        this.projectId = '6900b1ed001604d8befb';
+        this.headers = {
+          'X-Appwrite-Project': this.projectId,
+          'Content-Type': 'application/json'
+        };
+      }
+
+      async get(endpoint) {
+        const response = await fetch(`${this.endpoint}${endpoint}`, {
+          method: 'GET',
+          headers: this.headers,
+          credentials: 'include'
+        });
+        return response.json();
+      }
+
+      async post(endpoint, data) {
+        const response = await fetch(`${this.endpoint}${endpoint}`, {
+          method: 'POST',
+          headers: this.headers,
+          body: JSON.stringify(data),
+          credentials: 'include'
+        });
+        return response.json();
+      }
+
+      async patch(endpoint, data) {
+        const response = await fetch(`${this.endpoint}${endpoint}`, {
+          method: 'PATCH',
+          headers: this.headers,
+          body: JSON.stringify(data),
+          credentials: 'include'
+        });
+        return response.json();
+      }
+
+      async delete(endpoint) {
+        const response = await fetch(`${this.endpoint}${endpoint}`, {
+          method: 'DELETE',
+          headers: this.headers,
+          credentials: 'include'
+        });
+        return response.json();
+      }
+    }
+
+    // Initialize Appwrite client
+    const client = new SimpleAppwriteClient();
+    
+    // Simple Account class
+    class Account {
+      constructor(client) {
+        this.client = client;
+      }
+
+      async get() {
+        return this.client.get('/account');
+      }
+
+      async deleteSession(sessionId = 'current') {
+        return this.client.delete(`/account/sessions/${sessionId}`);
+      }
+    }
+
+    // Simple Databases class
+    class Databases {
+      constructor(client) {
+        this.client = client;
+      }
+
+      async createDocument(databaseId, collectionId, documentId, data) {
+        return this.client.post(`/databases/${databaseId}/collections/${collectionId}/documents`, {
+          documentId,
+          data
+        });
+      }
+
+      async getDocument(databaseId, collectionId, documentId) {
+        return this.client.get(`/databases/${databaseId}/collections/${collectionId}/documents/${documentId}`);
+      }
+
+      async updateDocument(databaseId, collectionId, documentId, data) {
+        return this.client.patch(`/databases/${databaseId}/collections/${collectionId}/documents/${documentId}`, {
+          data
+        });
+      }
+
+      async listDocuments(databaseId, collectionId, queries = []) {
+        const queryString = queries.length > 0 ? `?${queries.join('&')}` : '';
+        return this.client.get(`/databases/${databaseId}/collections/${collectionId}/documents${queryString}`);
+      }
+    }
+
+    const account = new Account(client);
+    const databases = new Databases(client);
+    
+    // Simple Query utilities
+    const Query = {
+      equal: (attribute, value) => `${attribute}=${encodeURIComponent(value)}`
+    };
+
+    // Configuration
+    const config = {
+      databaseId: 'main-db',
+      collections: {
+        users: {
+          id: 'users'
+        }
+      }
+    };
+
+    // Auth helper functions
+    const auth = {
+      isLoggedIn: async () => {
+        try {
+          await account.get();
+          return true;
+        } catch (error) {
+          return false;
+        }
+      },
+      
+      getCurrentUser: async () => {
+        try {
+          return await account.get();
+        } catch (error) {
+          return null;
+        }
+      },
+      
+      logout: async () => {
+        try {
+          await account.deleteSession();
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+    };
+
+    // Database helper functions
+    const db = {
+      getUserProfile: async (userId) => {
+        try {
+          const response = await databases.listDocuments(
+            config.databaseId,
+            config.collections.users.id,
+            [Query.equal('userId', userId)]
+          );
+          return response.documents[0] || null;
+        } catch (error) {
+          return null;
+        }
+      },
+
+      createUserProfile: async (userId, profileData) => {
+        try {
+          return await databases.createDocument(
+            config.databaseId,
+            config.collections.users.id,
+            `user_${userId}`,
+            {
+              userId,
+              fullName: profileData.name || '',
+              email: profileData.email || '',
+              phoneNumber: profileData.phone || '',
+              referralCode: profileData.referralCode || '',
+              referredBy: profileData.referredBy || '',
+              referralCount: profileData.referrals || 0,
+              tokenBalance: profileData.tokens || 0
+            }
+          );
+        } catch (error) {
+          throw error;
+        }
+      },
+
+      updateUserProfile: async (userId, profileData) => {
+        try {
+          const existingProfile = await db.getUserProfile(userId);
+          if (!existingProfile) {
+            throw new Error('Profile not found');
+          }
+          
+          return await databases.updateDocument(
+            config.databaseId,
+            config.collections.users.id,
+            existingProfile.$id,
+            {
+              fullName: profileData.name,
+              email: profileData.email,
+              phoneNumber: profileData.phone
+            }
+          );
+        } catch (error) {
+          throw error;
+        }
+      },
+
+      getUserOrders: async (userId) => {
+        // Mock orders for now
+        return [];
+      }
+    };
 
     // Load user data on page load
     document.addEventListener('DOMContentLoaded', async () => {
