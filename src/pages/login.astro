@@ -205,7 +205,7 @@ import { ID, Query } from 'appwrite'
     }
 
     async create(userId, email, password, name) {
-      return this.client.post('/account/users', {
+      return this.client.post('/account', {
         userId,
         email,
         password,

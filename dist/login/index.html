@@ -60,7 +60,7 @@ I agree to the Terms & Conditions
     }
 
     async create(userId, email, password, name) {
-      return this.client.post('/account/users', {
+      return this.client.post('/account', {
         userId,
         email,
         password,
