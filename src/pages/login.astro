@@ -153,16 +153,17 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  // Import Appwrite from UMD build (browser compatible)
-  import { Client, Account, Databases, ID, Query } from 'https://unpkg.com/appwrite@13.0.1/dist/appwrite.js';
+  // Import Appwrite from UMD build with correct namespace
+  import Appwrite from 'https://unpkg.com/appwrite@13.0.1/dist/appwrite.js';
 
   // Initialize Appwrite client
-  const client = new Client()
+  const client = new Appwrite.Client()
       .setEndpoint('https://fra.cloud.appwrite.io/v1')
       .setProject('6900b1ed001604d8befb');
 
-  const account = new Account(client);
-  const databases = new Databases(client);
+  const account = new Appwrite.Account(client);
+  const databases = new Appwrite.Databases(client);
+  const { ID, Query } = Appwrite;
   
   // Configuration
   const config = {
