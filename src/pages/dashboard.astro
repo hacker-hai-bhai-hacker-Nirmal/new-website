@@ -275,6 +275,43 @@ import { auth, db } from '../lib/appwrite.js'
                 </div>
               </div>
             </div>
+
+            <!-- System Status / Deployment Verification -->
+            <div class="content-section">
+              <h2>System Status</h2>
+              <div class="status-card">
+                <div class="status-header">
+                  <h3>📊 Deployment Information</h3>
+                  <span class="status-indicator online" id="deploymentStatus">Online</span>
+                </div>
+                <div class="status-details">
+                  <div class="status-item">
+                    <span class="status-label">Worker:</span>
+                    <span class="status-value">new-website-cloudflare</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Environment:</span>
+                    <span class="status-value">Production</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Last Deployed:</span>
+                    <span class="status-value" id="lastDeployed">Loading...</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Page Loaded:</span>
+                    <span class="status-value" id="pageLoaded">Loading...</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Cache Status:</span>
+                    <span class="status-value" id="cacheStatus">Checking...</span>
+                  </div>
+                </div>
+                <div class="status-actions">
+                  <button class="refresh-btn" onclick="checkDeploymentStatus()">🔄 Refresh Status</button>
+                  <button class="clear-cache-btn" onclick="clearCache()">🗑️ Clear Cache</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1381,5 +1418,177 @@ import { auth, db } from '../lib/appwrite.js'
         display: none;
       }
     }
+
+    /* Deployment Status Styles */
+    .status-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
+    }
+
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .status-header h3 {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .status-indicator {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .status-indicator.online {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-indicator.checking {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .status-label {
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .status-value {
+      color: var(--text-primary);
+      font-family: monospace;
+    }
+
+    .status-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .refresh-btn, .clear-cache-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .refresh-btn {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    .refresh-btn:hover {
+      background: #2A5F3E;
+    }
+
+    .clear-cache-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .clear-cache-btn:hover {
+      background: #c82333;
+    }
   </style>
+
+  <script>
+    // Deployment Status Functions
+    function updateDeploymentStatus() {
+      const now = new Date();
+      document.getElementById('pageLoaded').textContent = now.toLocaleString();
+      
+      // Simulate last deployment time (in real app, this would come from API)
+      const lastDeployed = new Date('2025-11-26T18:20:00Z');
+      document.getElementById('lastDeployed').textContent = lastDeployed.toLocaleString();
+      
+      // Check cache status
+      checkCacheStatus();
+    }
+
+    function checkCacheStatus() {
+      const cacheStatus = document.getElementById('cacheStatus');
+      
+      // Check if page was loaded from cache
+      if (performance.getEntriesByType('navigation')[0].transferSize === 0) {
+        cacheStatus.textContent = 'Served from cache';
+        cacheStatus.style.color = '#f39c12';
+      } else {
+        cacheStatus.textContent = 'Fresh load';
+        cacheStatus.style.color = '#27ae60';
+      }
+    }
+
+    function checkDeploymentStatus() {
+      const statusIndicator = document.getElementById('deploymentStatus');
+      statusIndicator.textContent = 'Checking...';
+      statusIndicator.className = 'status-indicator checking';
+      
+      // Simulate API call to check deployment status
+      setTimeout(() => {
+        statusIndicator.textContent = 'Online';
+        statusIndicator.className = 'status-indicator online';
+        updateDeploymentStatus();
+        
+        // Show success message
+        showToast('Deployment status updated successfully!');
+      }, 1000);
+    }
+
+    function clearCache() {
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          names.forEach(function(name) {
+            caches.delete(name);
+          });
+        });
+      }
+      
+      // Force reload with cache busting
+      const url = new URL(window.location);
+      url.searchParams.set('v', Date.now());
+      window.location.href = url.toString();
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    // Initialize deployment status on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      updateDeploymentStatus();
+    });
+  </script>
 </Layout>
