@@ -153,7 +153,26 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  import { account, databases, config, ID, Query } from '../lib/appwrite.js';
+  // Import Appwrite directly in the browser
+  import { Client, Account, Databases, ID, Query } from 'https://cdn.jsdelivr.net/npm/appwrite@13.0.1/dist/esm/sdk.js';
+
+  // Initialize Appwrite client
+  const client = new Client()
+      .setEndpoint('https://fra.cloud.appwrite.io/v1')
+      .setProject('6900b1ed001604d8befb');
+
+  const account = new Account(client);
+  const databases = new Databases(client);
+  
+  // Configuration
+  const config = {
+    databaseId: 'main-db',
+    collections: {
+      users: {
+        id: 'users'
+      }
+    }
+  };
 
   // Check if user is already logged in
   document.addEventListener('DOMContentLoaded', async () => {
