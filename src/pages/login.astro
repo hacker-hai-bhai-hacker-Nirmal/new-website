@@ -273,8 +273,12 @@ import { ID, Query } from 'appwrite'
             {
               userId: session.userId,
               email: email,
-              name: session.name || email.split('@')[0],
-              preferences: {}
+              fullName: session.name || email.split('@')[0],
+              phoneNumber: '', // Optional field
+              referralCode: '', // Optional field
+              referredBy: '', // Optional field
+              referralCount: 0,
+              tokenBalance: 0
             }
           );
         }
@@ -351,13 +355,13 @@ import { ID, Query } from 'appwrite'
         ID.unique(),
         {
           userId: user.$id,
-          name: fullName,
+          fullName: fullName,
           email: email,
-          preferences: {
-            theme: 'light',
-            notifications: true,
-            emailUpdates: true
-          }
+          phoneNumber: '', // Optional field
+          referralCode: '', // Optional field
+          referredBy: '', // Optional field
+          referralCount: 0,
+          tokenBalance: 0
         }
       );
       
