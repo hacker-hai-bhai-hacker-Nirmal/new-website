@@ -114,8 +114,8 @@ export const config = {
         }
       ]
     },
-    menu: {
-      id: 'menu',
+    menu_items: {
+      id: 'menu_items',
       name: 'Menu Items',
       permissions: [
         'read("any")',

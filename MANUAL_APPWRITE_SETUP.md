@@ -12,7 +12,7 @@ Since the automated script has compatibility issues, let's set up the database m
 ### 2. Create Database
 1. In your dashboard, click **"Databases"** on the left
 2. Click **"Create Database"**
-3. **Database ID**: `litterateur_db`
+3. **Database ID**: `main-db`
 4. **Database Name**: `Litterateur Cafe Database`
 5. Click **"Create"**
 
@@ -114,7 +114,7 @@ Add a few more items if you like.
 ## ✅ Verification Checklist
 
 After setup, verify:
-- [ ] Database `litterateur_db` exists
+- [ ] Database `main-db` exists
 - [ ] Collections `users`, `orders`, `menu_items` exist
 - [ ] Email/password authentication is enabled
 - [ ] Test signup works
@@ -132,7 +132,7 @@ Once manual setup is complete:
 ## 🆘 Troubleshooting
 
 **If you get "Database not found" error:**
-- Check database ID is exactly `litterateur_db`
+- Check database ID is exactly `main-db`
 - Make sure you're in the correct project
 
 **If authentication fails:**

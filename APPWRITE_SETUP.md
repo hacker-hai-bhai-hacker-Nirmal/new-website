@@ -46,7 +46,7 @@ The database will be created automatically when users sign up, but you can pre-p
    ```
 
 This creates:
-- ✅ Database: `litterateur_db`
+- ✅ Database: `main-db`
 - ✅ Collections: users, orders, menu_items, referrals, tokens
 - ✅ Sample menu items
 - ✅ Proper indexes and relationships
@@ -207,7 +207,7 @@ npm test
 
 4. **"Database not found"**
    - Run the setup script: `node scripts/setup-appwrite.js`
-   - Or create database manually in Appwrite dashboard
+   - Or create database manually in Appwrite dashboard with ID `main-db`
 
 ### Debug Mode
 

@@ -63,10 +63,20 @@ if (typeof window !== 'undefined') {
     initDatabase();
 }
 
+// Helper function to get environment variables
+function getEnvVar(name) {
+    // For client-side code, use import.meta.env (Vite)
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+        return import.meta.env[name];
+    }
+    // Fallback for other environments
+    return undefined;
+}
+
 // Appwrite Configuration
 export const config = {
-    projectId: getEnvVar('VITE_APPWRITE_PROJECT_ID') || 'YOUR_PROJECT_ID',
-    databaseId: getEnvVar('VITE_APPWRITE_DATABASE_ID') || 'litterateur_db',
+    projectId: getEnvVar('VITE_APPWRITE_PROJECT_ID') || '6900b1ed001604d8befb',
+    databaseId: getEnvVar('VITE_APPWRITE_DATABASE_ID') || 'main-db',
     collections: {
         users: 'users',
         orders: 'orders',
