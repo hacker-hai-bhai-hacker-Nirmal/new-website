@@ -1,6 +1,6 @@
 // Appwrite Configuration
 export const config = {
-  databaseId: 'litterateur_db',
+  databaseId: 'main-db',
   collections: {
     users: {
       id: 'users',
