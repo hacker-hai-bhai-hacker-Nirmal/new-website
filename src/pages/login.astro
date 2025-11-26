@@ -153,17 +153,16 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  // Import Appwrite from skypack CDN (reliable with CORS)
-  import Appwrite from 'https://cdn.skypack.dev/appwrite@13.0.1';
+  // Import Appwrite from JSDelivr with ESM build
+  import { Client, Account, Databases, ID, Query } from 'https://cdn.jsdelivr.net/npm/appwrite@13.0.1/+esm';
 
   // Initialize Appwrite client
-  const client = new Appwrite.Client()
+  const client = new Client()
       .setEndpoint('https://fra.cloud.appwrite.io/v1')
       .setProject('6900b1ed001604d8befb');
 
-  const account = new Appwrite.Account(client);
-  const databases = new Appwrite.Databases(client);
-  const { ID, Query } = Appwrite;
+  const account = new Account(client);
+  const databases = new Databases(client);
   
   // Configuration
   const config = {
