@@ -43,25 +43,75 @@ import Layout from '../layouts/Layout.astro'
 
     async post(endpoint, data) {
       try {
+        console.log(`📡 POST to: ${this.endpoint}${endpoint}`);
+        console.log(`📦 Data:`, data);
+        
         const response = await fetch(`${this.endpoint}${endpoint}`, {
           method: 'POST',
           headers: this.headers,
           body: JSON.stringify(data)
         });
-        return response.json();
+        
+        console.log(`📋 Response status: ${response.status}`);
+        console.log(`📋 Response headers:`, response.headers);
+        
+        const responseText = await response.text();
+        console.log(`📋 Raw response:`, responseText);
+        
+        if (!response.ok) {
+          return { 
+            error: `HTTP ${response.status}: ${response.statusText}`,
+            status: response.status,
+            rawResponse: responseText
+          };
+        }
+        
+        try {
+          return JSON.parse(responseText);
+        } catch (parseError) {
+          return { 
+            error: `Failed to parse response: ${parseError.message}`,
+            rawResponse: responseText
+          };
+        }
       } catch (error) {
+        console.log(`❌ Network error:`, error);
         return { error: error.message };
       }
     }
 
     async get(endpoint) {
       try {
+        console.log(`📡 GET to: ${this.endpoint}${endpoint}`);
+        
         const response = await fetch(`${this.endpoint}${endpoint}`, {
           method: 'GET',
           headers: this.headers
         });
-        return response.json();
+        
+        console.log(`📋 Response status: ${response.status}`);
+        
+        const responseText = await response.text();
+        console.log(`📋 Raw response:`, responseText);
+        
+        if (!response.ok) {
+          return { 
+            error: `HTTP ${response.status}: ${response.statusText}`,
+            status: response.status,
+            rawResponse: responseText
+          };
+        }
+        
+        try {
+          return JSON.parse(responseText);
+        } catch (parseError) {
+          return { 
+            error: `Failed to parse response: ${parseError.message}`,
+            rawResponse: responseText
+          };
+        }
       } catch (error) {
+        console.log(`❌ Network error:`, error);
         return { error: error.message };
       }
     }
