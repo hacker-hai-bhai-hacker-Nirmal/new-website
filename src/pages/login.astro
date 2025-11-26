@@ -375,7 +375,13 @@ import { ID, Query } from 'appwrite'
       console.error('Signup error:', error);
       
       if (error.code === 400) {
-        showToast('Email already exists. Please login instead.', 'error');
+        showToast('Email already exists. Switching to login...', 'info');
+        // Switch to login form automatically
+        setTimeout(() => {
+          signupForm.style.display = 'none';
+          loginForm.style.display = 'block';
+          document.getElementById('email').value = email;
+        }, 1500);
       } else if (error.code === 429) {
         showToast('Too many signup attempts. Please try again later', 'error');
       } else {
