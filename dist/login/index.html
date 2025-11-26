@@ -118,8 +118,9 @@ I agree to the Terms & Conditions
       const response = await account.get();
       console.log('Appwrite connected successfully:', response);
       if (response) {
-        // User is logged in, redirect to dashboard
-        window.location.href = '/dashboard';
+        // User is logged in - TEMPORARILY DISABLE REDIRECT FOR TESTING
+        console.log('User is logged in, but staying on login page for testing');
+        // window.location.href = '/dashboard'; // DISABLED FOR TESTING
       }
     } catch (error) {
       console.log('Appwrite connection test failed:', error);
