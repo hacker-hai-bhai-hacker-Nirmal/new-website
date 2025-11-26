@@ -8,6 +8,7 @@ export const client = new Client()
 
 export const account = new Account(client);
 export const databases = new Databases(client);
+export { ID, Query };
 
 // Helper function to get database ID
 const getDatabaseId = () => {
