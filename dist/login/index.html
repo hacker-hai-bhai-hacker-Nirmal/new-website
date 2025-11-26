@@ -14,14 +14,16 @@ I agree to the Terms & Conditions
   document.addEventListener('DOMContentLoaded', async () => {
     // Test Appwrite connection
     try {
+      console.log('Testing Appwrite connection...');
       const response = await account.get();
-      console.log('Appwrite connected successfully');
+      console.log('Appwrite connected successfully:', response);
       if (response) {
         // User is logged in, redirect to dashboard
         window.location.href = '/dashboard';
       }
     } catch (error) {
-      console.log('Appwrite connection test:', error.message);
+      console.log('Appwrite connection test failed:', error);
+      console.log('Error details:', error.message, error.code, error.type);
       // User is not logged in, stay on login page
       console.log('User not logged in');
     }
