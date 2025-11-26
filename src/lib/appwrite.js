@@ -3,12 +3,18 @@ import config from './appwriteConfig';
 
 // Get configuration from environment variables
 const getEnvVar = (key) => {
+    // For Cloudflare Workers, use hardcoded values since env vars aren't available
+    const fallbacks = {
+        'VITE_APPWRITE_ENDPOINT': 'https://fra.cloud.appwrite.io/v1',
+        'VITE_APPWRITE_PROJECT_ID': '6900b1ed001604d8befb'
+    };
+    
     if (typeof window !== 'undefined') {
         // Browser environment
-        return window.env?.[key] || import.meta.env?.[key];
+        return window.env?.[key] || import.meta.env?.[key] || fallbacks[key];
     } else {
         // Server environment
-        return process.env[key];
+        return process.env[key] || fallbacks[key];
     }
 };
 
