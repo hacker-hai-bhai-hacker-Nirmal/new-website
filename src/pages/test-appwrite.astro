@@ -1,0 +1,180 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <div style="max-width: 800px; margin: 50px auto; padding: 20px; font-family: Arial, sans-serif;">
+    <h1>🧪 Appwrite Integration Test</h1>
+    
+    <div id="testResults">
+      <h2>Test Results:</h2>
+      <div id="results">Running tests...</div>
+    </div>
+    
+    <button onclick="runTests()" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px;">
+      Run Tests Again
+    </button>
+    
+    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
+      <h3>What This Tests:</h3>
+      <ol>
+        <li>Basic connection to Appwrite</li>
+        <li>API Key authentication</li>
+        <li>User creation (with unique test data)</li>
+        <li>Database document creation</li>
+        <li>User listing</li>
+      </ol>
+    </div>
+  </div>
+
+<script type="module">
+  // Ultra-simple Appwrite client
+  class TestAppwriteClient {
+    constructor() {
+      this.endpoint = 'https://fra.cloud.appwrite.io/v1';
+      this.projectId = '6900b1ed001604d8befb';
+      this.apiKey = '1d6cd6adc23d3c6dba6ca6a8536e0a90c65781f5104cc9dc707ca9718b68b3388cb29105a4cca27baf69714a9752100cb3c425bbd58f1a6ba52514f19b3c2f3a2fa50a68b239f8d963be5db2c651682031326b70ba21afa2b1f37763492144dcb586264908cdd64a9b63b5c9dc9b9e490072294a179e7061a220b7a8b2c5aba3';
+      this.headers = {
+        'X-Appwrite-Project': this.projectId,
+        'X-Appwrite-Key': this.apiKey,
+        'Content-Type': 'application/json'
+      };
+    }
+
+    async post(endpoint, data) {
+      try {
+        const response = await fetch(`${this.endpoint}${endpoint}`, {
+          method: 'POST',
+          headers: this.headers,
+          body: JSON.stringify(data)
+        });
+        return response.json();
+      } catch (error) {
+        return { error: error.message };
+      }
+    }
+
+    async get(endpoint) {
+      try {
+        const response = await fetch(`${this.endpoint}${endpoint}`, {
+          method: 'GET',
+          headers: this.headers
+        });
+        return response.json();
+      } catch (error) {
+        return { error: error.message };
+      }
+    }
+  }
+
+  const client = new TestAppwriteClient();
+  const results = document.getElementById('results');
+
+  function log(message, type = 'info') {
+    const color = type === 'success' ? 'green' : type === 'error' ? 'red' : type === 'warning' ? 'orange' : 'blue';
+    results.innerHTML += `<div style="color: ${color}; margin: 5px 0;">${message}</div>`;
+    console.log(message);
+  }
+
+  async function runTests() {
+    results.innerHTML = '';
+    log('🚀 Starting Appwrite Integration Tests...', 'info');
+
+    // Test 1: Basic Connection
+    log('📡 Test 1: Testing basic connection...', 'info');
+    try {
+      const response = await client.get('/health');
+      if (response.error) {
+        log(`❌ Connection failed: ${response.error}`, 'error');
+      } else {
+        log('✅ Basic connection successful', 'success');
+      }
+    } catch (error) {
+      log(`❌ Connection error: ${error.message}`, 'error');
+    }
+
+    // Test 2: Create a Test User
+    log('👤 Test 2: Creating test user...', 'info');
+    const timestamp = Date.now();
+    const testUser = {
+      userId: `test_${timestamp}`,
+      email: `test_${timestamp}@example.com`,
+      password: 'test123456',
+      name: `Test User ${timestamp}`
+    };
+    
+    log(`📧 Email: ${testUser.email}`, 'info');
+    log(`🆔 User ID: ${testUser.userId}`, 'info');
+
+    try {
+      const userResponse = await client.post('/account', testUser);
+      
+      if (userResponse.error) {
+        log(`❌ User creation failed: ${userResponse.error}`, 'error');
+        if (userResponse.type) log(`🔍 Error type: ${userResponse.type}`, 'warning');
+        if (userResponse.code) log(`🔍 Error code: ${userResponse.code}`, 'warning');
+      } else {
+        log('✅ User created successfully!', 'success');
+        log(`📋 User ID: ${userResponse.$id}`, 'info');
+        log(`📧 User email: ${userResponse.email}`, 'info');
+
+        // Test 3: Create Database Record
+        log('🗄️ Test 3: Creating database record...', 'info');
+        const dbData = {
+          userId: userResponse.$id,
+          fullName: testUser.name,
+          email: testUser.email,
+          phoneNumber: '',
+          referralCode: '',
+          referredBy: '',
+          referralCount: 0,
+          tokenBalance: 0
+        };
+
+        try {
+          const dbResponse = await client.post('/databases/main-db/collections/users/documents', {
+            documentId: `doc_${timestamp}`,
+            data: dbData
+          });
+
+          if (dbResponse.error) {
+            log(`❌ Database record failed: ${dbResponse.error}`, 'error');
+          } else {
+            log('✅ Database record created!', 'success');
+            log(`📋 Document ID: ${dbResponse.$id}`, 'info');
+          }
+        } catch (dbError) {
+          log(`❌ Database error: ${dbError.message}`, 'error');
+        }
+
+        // Test 4: List Users
+        log('📋 Test 4: Listing users...', 'info');
+        try {
+          const usersResponse = await client.get('/users');
+          if (usersResponse.error) {
+            log(`❌ User listing failed: ${usersResponse.error}`, 'error');
+          } else {
+            log(`✅ Found ${usersResponse.total || 0} users`, 'success');
+            if (usersResponse.users && usersResponse.users.length > 0) {
+              log('📝 Recent users:', 'info');
+              usersResponse.users.slice(0, 3).forEach(user => {
+                log(`  - ${user.email} (${user.name})`, 'info');
+              });
+            }
+          }
+        } catch (listError) {
+          log(`❌ User listing error: ${listError.message}`, 'error');
+        }
+      }
+    } catch (error) {
+      log(`❌ User creation error: ${error.message}`, 'error');
+    }
+
+    log('🏁 Tests completed!', 'info');
+    log('📊 Check your Appwrite console at: https://cloud.appwrite.io/console/project-fra-6900b1ed001604d8befb/auth', 'info');
+  }
+
+  // Run tests automatically when page loads
+  document.addEventListener('DOMContentLoaded', runTests);
+</script>
+</Layout>
