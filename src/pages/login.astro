@@ -153,8 +153,8 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  // Import Appwrite directly in the browser
-  import { Client, Account, Databases, ID, Query } from 'https://cdn.jsdelivr.net/npm/appwrite@13.0.1/dist/esm/sdk.js';
+  // Import Appwrite from UMD build (browser compatible)
+  import { Client, Account, Databases, ID, Query } from 'https://unpkg.com/appwrite@13.0.1/dist/appwrite.js';
 
   // Initialize Appwrite client
   const client = new Client()
