@@ -153,8 +153,8 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  // Import Appwrite from UMD build with correct namespace
-  import Appwrite from 'https://unpkg.com/appwrite@13.0.1/dist/appwrite.js';
+  // Import Appwrite from their own CDN
+  import Appwrite from 'https://cdn.appwrite.io/v1/client.js';
 
   // Initialize Appwrite client
   const client = new Appwrite.Client()
