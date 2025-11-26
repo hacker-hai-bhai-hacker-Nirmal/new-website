@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
+import { auth, db } from '../lib/appwrite.js'
 ---
 
 <Layout>
@@ -30,9 +31,9 @@ import Layout from '../layouts/Layout.astro'
             <div class="profile-card">
               <div class="profile-avatar">👤</div>
               <div class="profile-info">
-                <h2>John Doe</h2>
-                <p>+91 98765 43210</p>
-                <p>john@example.com</p>
+                <h2 id="userName">Loading...</h2>
+                <p id="userPhone">Loading...</p>
+                <p id="userEmail">Loading...</p>
               </div>
               <button class="edit-profile-btn">✏️ Edit Profile</button>
             </div>
@@ -43,7 +44,7 @@ import Layout from '../layouts/Layout.astro'
               <div class="stat-item">
                 <div class="stat-icon">🪙</div>
                 <div class="stat-details">
-                  <div class="stat-value">1,250</div>
+                  <div class="stat-value" id="userTokens">0</div>
                   <div class="stat-label">Tokens</div>
                 </div>
               </div>
@@ -312,7 +313,115 @@ import Layout from '../layouts/Layout.astro'
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { auth, db } from '../lib/appwrite.js';
+
+    // Load user data on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Check if user is logged in
+        const isLoggedIn = await auth.isLoggedIn();
+        if (!isLoggedIn) {
+          window.location.href = '/login';
+          return;
+        }
+
+        // Get current user
+        const user = await auth.getCurrentUser();
+        if (!user) {
+          window.location.href = '/login';
+          return;
+        }
+
+        // Get user profile
+        let userProfile;
+        try {
+          userProfile = await db.getUserProfile(user.$id);
+        } catch (error) {
+          // Profile doesn't exist, create it
+          userProfile = await db.createUserProfile(user.$id, {
+            name: user.name || user.email || 'User',
+            email: user.email || '',
+            phone: user.phone || '',
+            tokens: 100,
+            referrals: 0,
+            currentDiscount: 20,
+            joinDate: new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+            referralCode: `LITTERATEUR${user.$id.slice(-6).toUpperCase()}`
+          });
+        }
+
+        // Update UI with user data
+        document.getElementById('userName').textContent = userProfile.name || user.name || 'User';
+        document.getElementById('userPhone').textContent = userProfile.phone || user.phone || 'Not provided';
+        document.getElementById('userEmail').textContent = userProfile.email || user.email || 'Not provided';
+        document.getElementById('userTokens').textContent = userProfile.tokens || 0;
+
+        // Load user orders
+        const orders = await db.getUserOrders(user.$id);
+        updateOrderHistory(orders);
+
+        // Load token transactions
+        // TODO: Implement token transactions loading
+
+        // Load referral activity
+        // TODO: Implement referral activity loading
+
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+        showToast('Error loading dashboard data');
+      }
+    });
+
+    // Update order history in UI
+    function updateOrderHistory(orders) {
+      const orderHistoryContainer = document.querySelector('.order-history');
+      if (!orderHistoryContainer) return;
+
+      if (orders.length === 0) {
+        orderHistoryContainer.innerHTML = '<p class="no-orders">No orders yet. Start ordering to see your history here!</p>';
+        return;
+      }
+
+      const ordersHTML = orders.slice(0, 5).map(order => `
+        <div class="order-item">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-id">Order #${order.$id.slice(-8).toUpperCase()}</div>
+              <div class="order-date">${new Date(order.orderDate).toLocaleDateString()}</div>
+            </div>
+            <div class="order-status ${order.status}">${order.status}</div>
+          </div>
+          <div class="order-details">
+            <div class="order-items">${JSON.parse(order.items || '[]').map(item => item.name).join(', ')}</div>
+            <div class="order-amount">₹${order.finalAmount}</div>
+          </div>
+          <div class="order-actions">
+            <button class="track-btn">Track Order</button>
+            <button class="reorder-btn">Reorder</button>
+          </div>
+        </div>
+      `).join('');
+
+      orderHistoryContainer.innerHTML = ordersHTML;
+
+      // Add event listeners to new buttons
+      document.querySelectorAll('.track-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          showToast('Opening order tracking...');
+        });
+      });
+
+      document.querySelectorAll('.reorder-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          showToast('Items added to cart!');
+          setTimeout(() => {
+            window.location.href = '/menu';
+          }, 1500);
+        });
+      });
+    }
     // Edit Profile Modal
     const editProfileBtn = document.querySelector('.edit-profile-btn');
     const modal = document.getElementById('editProfileModal');
@@ -338,11 +447,47 @@ import Layout from '../layouts/Layout.astro'
     });
 
     // Form submission
-    document.querySelector('.edit-profile-form').addEventListener('submit', (e) => {
+    document.querySelector('.edit-profile-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      showToast('Profile updated successfully!');
-      modal.style.display = 'none';
+      
+      try {
+        const user = await auth.getCurrentUser();
+        const formData = new FormData(e.target);
+        
+        const updatedProfile = {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          phone: formData.get('phone')
+        };
+        
+        await db.updateUserProfile(user.$id, updatedProfile);
+        
+        // Update UI
+        document.getElementById('userName').textContent = updatedProfile.name;
+        document.getElementById('userEmail').textContent = updatedProfile.email;
+        document.getElementById('userPhone').textContent = updatedProfile.phone;
+        
+        showToast('Profile updated successfully!');
+        modal.style.display = 'none';
+      } catch (error) {
+        console.error('Profile update error:', error);
+        showToast('Error updating profile');
+      }
     });
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        try {
+          await auth.logout();
+          window.location.href = '/login';
+        } catch (error) {
+          console.error('Logout error:', error);
+          showToast('Error logging out');
+        }
+      });
+    }
 
     // Quick Actions
     document.querySelectorAll('.action-btn').forEach(btn => {

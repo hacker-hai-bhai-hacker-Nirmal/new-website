@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
+import { auth } from '../lib/appwrite.js'
 ---
 
 <Layout>
@@ -80,6 +81,20 @@ import Layout from '../layouts/Layout.astro'
               </div>
 
               <button type="submit" class="auth-submit">Sign In</button>
+
+              <div class="social-login">
+                <p>Or continue with</p>
+                <div class="social-buttons">
+                  <button type="button" class="social-btn google" id="googleLogin">
+                    <span class="social-icon">🔍</span>
+                    Google
+                  </button>
+                  <button type="button" class="social-btn phone" id="phoneLogin">
+                    <span class="social-icon">📱</span>
+                    Phone OTP
+                  </button>
+                </div>
+              </div>
 
               <div class="auth-links">
                 <a href="#" class="forgot-password">Forgot Password?</a>
@@ -187,7 +202,21 @@ import Layout from '../layouts/Layout.astro'
     </section>
   </main>
 
-  <script>
+  <script type="module">
+    import { auth, db, config } from '../lib/appwrite.js';
+
+    // Check if user is already logged in
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const isLoggedIn = await auth.isLoggedIn();
+        if (isLoggedIn) {
+          window.location.href = '/dashboard';
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+      }
+    });
+
     // Form switching
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
@@ -228,6 +257,11 @@ import Layout from '../layouts/Layout.astro'
       return phoneRegex.test(phone.replace(/\s/g, ''));
     }
 
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
     function showError(errorId) {
       const errorElement = document.getElementById(errorId);
       errorElement.style.display = 'block';
@@ -237,36 +271,81 @@ import Layout from '../layouts/Layout.astro'
     }
 
     // Login form submission
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
       const countryCode = document.getElementById('countryCode').value;
       const fullPhone = countryCode + phone.replace(/\s/g, '');
       
-      if (!validatePhone(phone)) {
-        showError('phoneError');
+      if (!validatePhone(phone) && !validateEmail(email)) {
+        showToast('Please enter valid phone number or email');
         return;
       }
       
-      // Simulate login success
-      showToast('Login successful! Redirecting...');
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 2000);
+      if (!password) {
+        showToast('Please enter password');
+        return;
+      }
+      
+      try {
+        let session;
+        
+        // Try email login first, then phone login
+        if (email && validateEmail(email)) {
+          session = await auth.login(email, password);
+        } else if (phone && validatePhone(phone)) {
+          session = await auth.loginWithPhone(fullPhone, password);
+        } else {
+          showToast('Please enter valid credentials');
+          return;
+        }
+        
+        // Create user profile if it doesn't exist
+        const user = await auth.getCurrentUser();
+        if (user) {
+          try {
+            await db.getUserProfile(user.$id);
+          } catch (error) {
+            // Profile doesn't exist, create it
+            await db.createUserProfile(user.$id, {
+              name: user.name || user.email || user.phone,
+              email: user.email || '',
+              phone: user.phone || '',
+              tokens: 100,
+              referrals: 0,
+              currentDiscount: 20,
+              joinDate: new Date().toISOString(),
+              lastLogin: new Date().toISOString()
+            });
+          }
+        }
+        
+        showToast('Login successful! Redirecting...');
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Login error:', error);
+        showToast(error.message || 'Login failed. Please try again.');
+      }
     });
 
     // Signup form submission
-    signupForm.addEventListener('submit', (e) => {
+    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const phone = document.getElementById('signupPhone').value;
       const fullName = document.getElementById('signupFullName').value;
+      const email = document.getElementById('signupEmail').value;
       const password = document.getElementById('signupPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       const agreeTerms = document.getElementById('agreeTerms').checked;
       
-      if (!validatePhone(phone)) {
+      if (!validatePhone(phone) && !validateEmail(email)) {
         showError('signupPhoneError');
         return;
       }
@@ -276,17 +355,85 @@ import Layout from '../layouts/Layout.astro'
         return;
       }
       
+      if (password.length < 8) {
+        showToast('Password must be at least 8 characters');
+        return;
+      }
+      
       if (!agreeTerms) {
         showToast('Please agree to the Terms & Conditions');
         return;
       }
       
-      // Simulate signup success
-      showToast('Account created successfully! Redirecting...');
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 2000);
+      try {
+        let user;
+        
+        // Create account with email or phone
+        if (email && validateEmail(email)) {
+          user = await auth.createAccount(email, password, fullName);
+        } else if (phone && validatePhone(phone)) {
+          const countryCode = document.getElementById('signupCountryCode').value;
+          const fullPhone = countryCode + phone.replace(/\s/g, '');
+          // For phone signup, we need to create with email first, then update
+          const tempEmail = `user${Date.now()}@litterateur.temp`;
+          user = await auth.createAccount(tempEmail, password, fullName);
+          // Update phone number would need additional API call
+        } else {
+          showToast('Please enter valid phone number or email');
+          return;
+        }
+        
+        // Create user profile
+        await db.createUserProfile(user.$id, {
+          name: fullName,
+          email: email || '',
+          phone: phone || '',
+          tokens: 100, // Welcome bonus
+          referrals: 0,
+          currentDiscount: 20, // Launch discount
+          joinDate: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+          referralCode: `LITTERATEUR${user.$id.slice(-6).toUpperCase()}`
+        });
+        
+        // Auto login after signup
+        await auth.login(email || `user${Date.now()}@litterateur.temp`, password);
+        
+        showToast('Account created successfully! Redirecting...');
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Signup error:', error);
+        showToast(error.message || 'Signup failed. Please try again.');
+      }
     });
+
+    // Google OAuth login
+    document.getElementById('googleLogin')?.addEventListener('click', async () => {
+      try {
+        await auth.loginWithGoogle();
+      } catch (error) {
+        console.error('Google login error:', error);
+        showToast('Google login failed. Please try again.');
+      }
+    });
+
+    // Phone OTP login
+    document.getElementById('phoneLogin')?.addEventListener('click', () => {
+      showToast('Phone OTP login coming soon!');
+      // TODO: Implement phone OTP flow
+    });
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
 
     // Social login handlers
     document.querySelectorAll('.social-btn').forEach(btn => {
