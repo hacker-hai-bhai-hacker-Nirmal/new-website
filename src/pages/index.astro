@@ -25,6 +25,15 @@ import Layout from '../layouts/Layout.astro'
     </div>
   </header>
 
+  <!-- Deployment Test Notification -->
+  <div class="deployment-notice" id="deploymentNotice">
+    <div class="notice-content">
+      <span class="notice-icon">🚀</span>
+      <span class="notice-text" id="noticeText">Workers Deployment Test - Updated: 2025-11-26 11:55</span>
+      <button class="notice-close" id="noticeClose">×</button>
+    </div>
+  </div>
+
   <main>
     <!-- Hero Section -->
     <section class="hero">
@@ -203,6 +212,23 @@ import Layout from '../layouts/Layout.astro'
         });
       });
     });
+
+    // Deployment notice close functionality
+    const noticeClose = document.getElementById('noticeClose');
+    const deploymentNotice = document.getElementById('deploymentNotice');
+    
+    if (noticeClose && deploymentNotice) {
+      noticeClose.addEventListener('click', () => {
+        deploymentNotice.style.display = 'none';
+        // Store in localStorage so it stays closed on page reload
+        localStorage.setItem('deploymentNoticeClosed', 'true');
+      });
+      
+      // Check if notice was previously closed
+      if (localStorage.getItem('deploymentNoticeClosed') === 'true') {
+        deploymentNotice.style.display = 'none';
+      }
+    }
   </script>
 
   <style>
@@ -255,7 +281,66 @@ import Layout from '../layouts/Layout.astro'
 
     @keyframes sparkle {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+    }
+
+    /* Deployment Notice */
+    .deployment-notice {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      position: relative;
+      box-shadow: var(--shadow);
+      border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .notice-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .notice-icon {
+      font-size: 20px;
+      margin-right: 12px;
+      animation: pulse 2s infinite;
+    }
+
+    .notice-text {
+      flex: 1;
+      font-weight: 600;
+      font-size: 16px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .notice-close {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      margin-left: 15px;
+    }
+
+    .notice-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
     }
 
     /* Header */
