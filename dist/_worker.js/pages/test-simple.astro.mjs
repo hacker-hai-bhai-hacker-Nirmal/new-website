@@ -1,6 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead, l as renderScript } from '../chunks/astro/server_C-K2zirC.mjs';
-import { $ as $$Layout } from '../chunks/Layout_BacGBy6P.mjs';
+import { $ as $$Layout } from '../chunks/Layout_DVntI8GC.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$TestSimple = createComponent(($$result, $$props, $$slots) => {
