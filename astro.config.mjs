@@ -8,6 +8,10 @@ export default defineConfig({
     platformProxy: {
       enabled: true,
     },
+    // Disable sessions to avoid KV binding requirement
+    session: {
+      enabled: false,
+    },
   }),
   output: 'server',
   vite: {
