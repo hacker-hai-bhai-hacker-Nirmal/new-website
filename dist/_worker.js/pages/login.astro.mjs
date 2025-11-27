@@ -83,30 +83,39 @@ const $$Login = createComponent(async ($$result, $$props, $$slots) => {
         console.log('\u23F3 Loading state activated');
         
         try {
-          console.log('\u{1F528} Attempting login with Appwrite SDK:', { email, password: '***' });
+          console.log('\u{1F528} Attempting login via API:', { email, password: '***' });
           
-          // Initialize Appwrite SDK
-          const client = new Client()
-            .setEndpoint('https://fra.cloud.appwrite.io/v1')
-            .setProject('6900b1ed001604d8befb');
+          // Use API endpoint for login
+          const response = await fetch('/api/auth', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              action: 'login',
+              email,
+              password
+            })
+          });
           
-          const account = new Account(client);
+          const result = await response.json();
           
-          // Attempt to login with Appwrite SDK
-          const session = await account.createEmailPasswordSession(email, password);
-          
-          console.log('\u2705 Login successful:', session);
-          alert('Login successful! Redirecting to dashboard...');
-          
-          // Store session info
-          localStorage.setItem('userSession', JSON.stringify(session));
-          localStorage.setItem('userEmail', email);
-          
-          // Redirect to dashboard after successful login
-          setTimeout(() => {
-            console.log('\u{1F504} Redirecting to dashboard...');
-            window.location.href = '/dashboard';
-          }, 1500);
+          if (result.success) {
+            console.log('\u2705 Login successful:', result.data);
+            alert('Login successful! Redirecting to dashboard...');
+            
+            // Store session info
+            localStorage.setItem('userSession', JSON.stringify(result.data));
+            localStorage.setItem('userEmail', email);
+            
+            // Redirect to dashboard after successful login
+            setTimeout(() => {
+              console.log('\u{1F504} Redirecting to dashboard...');
+              window.location.href = '/dashboard';
+            }, 1500);
+          } else {
+            throw new Error(result.error);
+          }
           
         } catch (error) {
           console.error('\u274C Login error:', error);
@@ -167,32 +176,37 @@ const $$Login = createComponent(async ($$result, $$props, $$slots) => {
         console.log('\u2705 Signup validation passed');
         
         try {
-          console.log('\u{1F528} Attempting signup with Appwrite SDK:', { fullName, email, password: '***' });
+          console.log('\u{1F528} Attempting signup via API:', { fullName, email, password: '***' });
           
-          // Initialize Appwrite SDK
-          const client = new Client()
-            .setEndpoint('https://fra.cloud.appwrite.io/v1')
-            .setProject('6900b1ed001604d8befb');
+          // Use API endpoint for signup
+          const response = await fetch('/api/auth', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              action: 'signup',
+              fullName,
+              email,
+              password
+            })
+          });
           
-          const account = new Account(client);
+          const result = await response.json();
           
-          // Create account with Appwrite SDK
-          const user = await account.create(
-            ID.unique(),
-            email,
-            password,
-            fullName
-          );
-          
-          console.log('\u2705 Account created:', user);
-          alert('Account created successfully! You can now sign in.');
-          
-          // Switch back to login form
-          signupForm.style.display = 'none';
-          loginForm.style.display = 'block';
-          
-          // Pre-fill email in login form
-          document.getElementById('email').value = email;
+          if (result.success) {
+            console.log('\u2705 Account created:', result.data);
+            alert('Account created successfully! You can now sign in.');
+            
+            // Switch back to login form
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            
+            // Pre-fill email in login form
+            document.getElementById('email').value = email;
+          } else {
+            throw new Error(result.error);
+          }
           
         } catch (error) {
           console.error('\u274C Signup error:', error);
