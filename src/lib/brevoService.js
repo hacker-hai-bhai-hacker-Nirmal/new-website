@@ -1,7 +1,7 @@
 // src/lib/brevoService.js
 // Brevo (Sendinblue) Email Service Integration
 
-const BREVO_API_KEY = import.meta.env.BREVO_API_KEY || 'your_brevo_api_key_here';
+const BREVO_API_KEY = import.meta.env.BREVO_API_KEY;
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 /**
@@ -24,7 +24,7 @@ export const sendOtpEmail = async (toEmail, otp, userName = 'User') => {
     const emailData = {
       sender: {
         name: 'Litterateur',
-        email: 'noreply@litterateur.app'
+        email: 'nirmalbajiya@gmail.com' // Use verified Gmail sender
       },
       to: [
         {
@@ -174,7 +174,7 @@ export const sendWelcomeEmail = async (toEmail, userName) => {
     const emailData = {
       sender: {
         name: 'Litterateur',
-        email: 'noreply@litterateur.app'
+        email: 'nirmalbajiya@gmail.com' // Use verified Gmail sender
       },
       to: [
         {
