@@ -5,8 +5,7 @@ import cloudflare from '@astrojs/cloudflare';
 // https://astro.build/config
 export default defineConfig({
   adapter: cloudflare({
-    mode: 'advanced',
-    functionPerRoute: false,
+    mode: 'direct',
   }),
   output: 'server',
   vite: {
