@@ -5,11 +5,19 @@ const BREVO_API_KEY = 'xsmtpsib-12f061b3ecca73d776fcfae9c9b205d1b04975921b2';
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 /**
+ * @typedef {Object} EmailResult
+ * @property {boolean} success - Whether the email was sent successfully
+ * @property {string} [messageId] - Brevo message ID if successful
+ * @property {string} message - Result message
+ * @property {string} [error] - Error message if failed
+ */
+
+/**
  * Send OTP email using Brevo API
  * @param {string} toEmail - Recipient email address
  * @param {string} otp - One-time password
  * @param {string} userName - User's name (optional)
- * @returns {Promise<Object>} Response object
+ * @returns {Promise<EmailResult>} Response object
  */
 export const sendOtpEmail = async (toEmail, otp, userName = 'User') => {
   try {
@@ -159,7 +167,7 @@ export const sendOtpEmail = async (toEmail, otp, userName = 'User') => {
  * Send welcome email after successful registration/login
  * @param {string} toEmail - Recipient email address
  * @param {string} userName - User's name
- * @returns {Promise<Object>} Response object
+ * @returns {Promise<EmailResult>} Response object
  */
 export const sendWelcomeEmail = async (toEmail, userName) => {
   try {

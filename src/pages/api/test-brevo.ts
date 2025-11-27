@@ -1,12 +1,13 @@
 // src/pages/api/test-brevo.ts
 import type { APIRoute } from 'astro';
 import { sendOtpEmail } from '../../lib/brevoService';
+import type { EmailResult } from '../../types/brevo';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     // Test Brevo API with a sample OTP
     const testOtp = '123456';
-    const result = await sendOtpEmail('nirmalbajiya@gmail.com', testOtp, 'Nirmal');
+    const result: EmailResult = await sendOtpEmail('nirmalbajiya@gmail.com', testOtp, 'Nirmal');
 
     return new Response(
       JSON.stringify({ 

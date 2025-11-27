@@ -3,6 +3,7 @@ import type { APIRoute } from 'astro';
 import { account } from '../../../lib/appwrite';
 import { ID } from 'appwrite';
 import { sendOtpEmail } from '../../../lib/brevoService';
+import type { EmailResult } from '../../../types/brevo';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -32,7 +33,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Send OTP email using Brevo
-    const emailResult = await sendOtpEmail(email, otp, 'User');
+    const emailResult: EmailResult = await sendOtpEmail(email, otp, 'User');
 
     if (!emailResult.success) {
       console.error('Brevo email failed:', emailResult.error);
