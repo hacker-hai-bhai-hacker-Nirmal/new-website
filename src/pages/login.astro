@@ -153,121 +153,24 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  // Simple Appwrite client without external dependencies
-  class SimpleAppwriteClient {
-    constructor() {
-      this.endpoint = 'https://fra.cloud.appwrite.io/v1';
-      this.projectId = '6900b1ed001604d8befb';
-      this.apiKey = 'standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75';
-      this.headers = {
-        'X-Appwrite-Project': this.projectId,
-        'X-Appwrite-Key': this.apiKey,
-        'Content-Type': 'application/json'
-      };
-    }
-
-    async get(endpoint) {
-      const response = await fetch(`${this.endpoint}${endpoint}`, {
-        method: 'GET',
-        headers: this.headers,
-        credentials: 'include'
-      });
-      return response.json();
-    }
-
-    async post(endpoint, data) {
-      const response = await fetch(`${this.endpoint}${endpoint}`, {
-        method: 'POST',
-        headers: this.headers,
-        body: JSON.stringify(data),
-        credentials: 'include'
-      });
-      return response.json();
-    }
-  }
-
-  // Initialize Appwrite client
-  const client = new SimpleAppwriteClient();
-  
-  // Simple Account class
-  class Account {
-    constructor(client) {
-      this.client = client;
-    }
-
-    async get() {
-      return this.client.get('/account');
-    }
-
-    async createEmailPasswordSession(email, password) {
-      return this.client.post('/account/sessions/email', {
-        email,
-        password
-      });
-    }
-
-    async create(userId, email, password, name) {
-      return this.client.post('/account', {
-        userId,
-        email,
-        password,
-        name
-      });
-    }
-  }
-
-  // Simple Databases class
-  class Databases {
-    constructor(client) {
-      this.client = client;
-    }
-
-    async createDocument(databaseId, collectionId, documentId, data) {
-      return this.client.post(`/databases/${databaseId}/collections/${collectionId}/documents`, {
-        documentId,
-        data
-      });
-    }
-
-    async listDocuments(databaseId, collectionId, queries = []) {
-      const queryString = queries.length > 0 ? `?${queries.join('&')}` : '';
-      return this.client.get(`/databases/${databaseId}/collections/${collectionId}/documents${queryString}`);
-    }
-  }
-
-  const account = new Account(client);
-  const databases = new Databases(client);
-  
-  // Simple ID and Query utilities
-  const ID = {
-    unique: () => 'unique_' + Math.random().toString(36).substr(2, 9)
-  };
-
-  const Query = {
-    equal: (attribute, value) => `${attribute}=${encodeURIComponent(value)}`
-  };
-  
-  // Configuration
-  const config = {
-    databaseId: 'main-db',
-    collections: {
-      users: {
-        id: 'users'
-      }
-    }
-  };
+  // Import authentication utilities
+  import { auth, navigation, showToast } from '/utils/auth.js';
 
   // Check if user is already logged in
   document.addEventListener('DOMContentLoaded', async () => {
     // Test Appwrite connection
     try {
       console.log('Testing Appwrite connection...');
-      const response = await account.get();
+      const response = await auth.getCurrentUser();
       console.log('Appwrite connected successfully:', response);
       if (response) {
-        // User is logged in - TEMPORARILY DISABLE REDIRECT FOR TESTING
-        console.log('User is logged in, but staying on login page for testing');
-        // window.location.href = '/dashboard'; // DISABLED FOR TESTING
+        // User is logged in - redirect to dashboard
+        console.log('User is logged in, redirecting to dashboard');
+        showToast('Already logged in! Redirecting...', 'info');
+        setTimeout(() => {
+          navigation.safeNavigate('/dashboard');
+        }, 1000);
+        return;
       }
     } catch (error) {
       console.log('Appwrite connection test failed:', error);
@@ -276,18 +179,6 @@ import { ID, Query } from 'appwrite'
       console.log('User not logged in');
     }
   });
-
-  // Show toast notification
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.remove();
-    }, 3000);
-  }
 
   // Form switching
   const loginForm = document.getElementById('loginForm');
@@ -355,44 +246,43 @@ import { ID, Query } from 'appwrite'
     }
     
     try {
+      // Simple Appwrite client for login
+      class SimpleAppwriteClient {
+        constructor() {
+          this.endpoint = 'https://fra.cloud.appwrite.io/v1';
+          this.projectId = '6900b1ed001604d8befb';
+          this.apiKey = 'standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75';
+          this.headers = {
+            'X-Appwrite-Project': this.projectId,
+            'X-Appwrite-Key': this.apiKey,
+            'Content-Type': 'application/json'
+          };
+        }
+
+        async post(endpoint, data) {
+          const response = await fetch(`${this.endpoint}${endpoint}`, {
+            method: 'POST',
+            headers: this.headers,
+            body: JSON.stringify(data),
+            credentials: 'include'
+          });
+          return response.json();
+        }
+      }
+
+      const client = new SimpleAppwriteClient();
+      
       // Attempt to login with Appwrite
-      const session = await account.createEmailPasswordSession(email, password);
+      const session = await client.post('/account/sessions/email', {
+        email,
+        password
+      });
       
       showToast('Login successful! Redirecting...', 'success');
       
-      // Store user info in database if not exists
-      try {
-        const userDoc = await databases.listDocuments(
-          config.databaseId,
-          config.collections.users.id,
-          [Query.equal('userId', session.userId)]
-        );
-        
-        if (userDoc.documents.length === 0) {
-          // Create user record
-          await databases.createDocument(
-            config.databaseId,
-            config.collections.users.id,
-            ID.unique(),
-            {
-              userId: session.userId,
-              email: email,
-              fullName: session.name || email.split('@')[0],
-              phoneNumber: '', // Optional field
-              referralCode: '', // Optional field
-              referredBy: '', // Optional field
-              referralCount: 0,
-              tokenBalance: 0
-            }
-          );
-        }
-      } catch (dbError) {
-        console.log('User record check failed:', dbError);
-      }
-      
       // Redirect to dashboard after successful login
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        navigation.safeNavigate('/dashboard');
       }, 1500);
       
     } catch (error) {

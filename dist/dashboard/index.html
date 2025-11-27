@@ -217,14 +217,20 @@
         // Check if user is logged in
         const isLoggedIn = await auth.isLoggedIn();
         if (!isLoggedIn) {
-          window.location.href = '/login';
+          showToast('Please login to access dashboard', 'error');
+          setTimeout(() => {
+            navigation.safeNavigate('/login');
+          }, 1500);
           return;
         }
 
         // Get current user
         const user = await auth.getCurrentUser();
         if (!user) {
-          window.location.href = '/login';
+          showToast('Session expired. Please login again', 'error');
+          setTimeout(() => {
+            navigation.safeNavigate('/login');
+          }, 1500);
           return;
         }
 
@@ -375,11 +381,18 @@
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async () => {
         try {
-          await auth.logout();
-          window.location.href = '/login';
+          const success = await auth.logout();
+          if (success) {
+            showToast('Logged out successfully!', 'success');
+            setTimeout(() => {
+              navigation.safeNavigate('/login');
+            }, 1000);
+          } else {
+            showToast('Error logging out', 'error');
+          }
         } catch (error) {
           console.error('Logout error:', error);
-          showToast('Error logging out');
+          showToast('Error logging out', 'error');
         }
       });
     }
@@ -390,7 +403,7 @@
         const action = btn.textContent.trim();
         switch(action) {
           case '🛒 View Cart':
-            window.location.href = '/checkout';
+            navigation.safeNavigate('/checkout');
             break;
           case '🎁 Redeem Tokens':
             showToast('Opening token redemption...');

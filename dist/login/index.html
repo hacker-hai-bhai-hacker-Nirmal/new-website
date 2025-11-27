@@ -8,121 +8,24 @@ Phone OTP
 </button> </div> </div> <div class="auth-links" data-astro-cid-sgpqyurt> <a href="#" class="forgot-password" data-astro-cid-sgpqyurt>Forgot Password?</a> <span class="divider" data-astro-cid-sgpqyurt>|</span> <a href="#" class="toggle-auth" id="toggleToSignup" data-astro-cid-sgpqyurt>New User? Sign Up</a> </div> </form> <!-- Signup Form (Hidden by default) --> <form class="auth-form" id="signupForm" style="display: none;" data-astro-cid-sgpqyurt> <div class="form-group" data-astro-cid-sgpqyurt> <label for="signupFullName" data-astro-cid-sgpqyurt>Full Name *</label> <input type="text" id="signupFullName" name="signupFullName" placeholder="John Doe" required data-astro-cid-sgpqyurt> </div> <div class="form-group" data-astro-cid-sgpqyurt> <label for="signupEmail" data-astro-cid-sgpqyurt>Email Address *</label> <input type="email" id="signupEmail" name="signupEmail" placeholder="john@example.com" required data-astro-cid-sgpqyurt> <span class="error-message" id="signupEmailError" data-astro-cid-sgpqyurt>Please enter a valid email</span> </div> <div class="form-group" data-astro-cid-sgpqyurt> <label for="signupPassword" data-astro-cid-sgpqyurt>Password *</label> <div class="password-input-group" data-astro-cid-sgpqyurt> <input type="password" id="signupPassword" name="signupPassword" placeholder="Create a password" required data-astro-cid-sgpqyurt> <button type="button" class="toggle-password" id="toggleSignupPassword" data-astro-cid-sgpqyurt> <span class="eye-icon" data-astro-cid-sgpqyurt>👁️</span> </button> </div> </div> <div class="form-group" data-astro-cid-sgpqyurt> <label for="confirmPassword" data-astro-cid-sgpqyurt>Confirm Password *</label> <div class="password-input-group" data-astro-cid-sgpqyurt> <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required data-astro-cid-sgpqyurt> <button type="button" class="toggle-password" id="toggleConfirmPassword" data-astro-cid-sgpqyurt> <span class="eye-icon" data-astro-cid-sgpqyurt>👁️</span> </button> </div> </div> <div class="form-group checkbox-group" data-astro-cid-sgpqyurt> <label class="checkbox-label" data-astro-cid-sgpqyurt> <input type="checkbox" id="agreeTerms" name="agreeTerms" required data-astro-cid-sgpqyurt> <span class="checkmark" data-astro-cid-sgpqyurt></span>
 I agree to the Terms & Conditions
 </label> </div> <button type="submit" class="auth-submit" data-astro-cid-sgpqyurt>Sign Up</button> <div class="auth-links" data-astro-cid-sgpqyurt> <a href="#" class="toggle-auth" id="toggleToLogin" data-astro-cid-sgpqyurt>Already have an account? Sign In</a> </div> </form> <!-- Trust Badges --> <div class="trust-badges" data-astro-cid-sgpqyurt> <div class="trust-badge" data-astro-cid-sgpqyurt> <span class="trust-icon" data-astro-cid-sgpqyurt>🔒</span> <span data-astro-cid-sgpqyurt>Secure Login</span> </div> <div class="trust-badge" data-astro-cid-sgpqyurt> <span class="trust-icon" data-astro-cid-sgpqyurt>🛡️</span> <span data-astro-cid-sgpqyurt>Your data is safe with us</span> </div> </div> </div> </div> </div> </section> </main>  <div class="floating-whatsapp" id="whatsappButton" data-astro-cid-sckkx6r4> <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" data-astro-cid-sckkx6r4> <span data-astro-cid-sckkx6r4>💬</span> </a> </div> <div class="scroll-to-top" id="scrollTop" data-astro-cid-sckkx6r4> <span data-astro-cid-sckkx6r4>↑</span> </div>  <script type="module">window.addEventListener("load",()=>{setTimeout(()=>{const e=document.getElementById("loadingScreen");e&&e.classList.add("fade-out")},1500)});const s=document.getElementById("scrollTop");s&&(window.addEventListener("scroll",()=>{window.pageYOffset>300?s.classList.add("visible"):s.classList.remove("visible")}),s.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})}));const l={threshold:.1,rootMargin:"0px 0px -50px 0px"},a=new IntersectionObserver(e=>{e.forEach(t=>{t.isIntersecting&&t.target.classList.add("animated")})},l);document.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll(".animate-on-scroll").forEach(t=>a.observe(t))});window.addEventListener("scroll",()=>{const e=window.pageYOffset;document.querySelectorAll(".parallax").forEach(o=>{const n=-(e*.5);o.style.transform=`translateY(${n}px)`})});</script></body></html> <script type="module">
-  // Simple Appwrite client without external dependencies
-  class SimpleAppwriteClient {
-    constructor() {
-      this.endpoint = 'https://fra.cloud.appwrite.io/v1';
-      this.projectId = '6900b1ed001604d8befb';
-      this.apiKey = 'standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75';
-      this.headers = {
-        'X-Appwrite-Project': this.projectId,
-        'X-Appwrite-Key': this.apiKey,
-        'Content-Type': 'application/json'
-      };
-    }
-
-    async get(endpoint) {
-      const response = await fetch(`${this.endpoint}${endpoint}`, {
-        method: 'GET',
-        headers: this.headers,
-        credentials: 'include'
-      });
-      return response.json();
-    }
-
-    async post(endpoint, data) {
-      const response = await fetch(`${this.endpoint}${endpoint}`, {
-        method: 'POST',
-        headers: this.headers,
-        body: JSON.stringify(data),
-        credentials: 'include'
-      });
-      return response.json();
-    }
-  }
-
-  // Initialize Appwrite client
-  const client = new SimpleAppwriteClient();
-  
-  // Simple Account class
-  class Account {
-    constructor(client) {
-      this.client = client;
-    }
-
-    async get() {
-      return this.client.get('/account');
-    }
-
-    async createEmailPasswordSession(email, password) {
-      return this.client.post('/account/sessions/email', {
-        email,
-        password
-      });
-    }
-
-    async create(userId, email, password, name) {
-      return this.client.post('/account', {
-        userId,
-        email,
-        password,
-        name
-      });
-    }
-  }
-
-  // Simple Databases class
-  class Databases {
-    constructor(client) {
-      this.client = client;
-    }
-
-    async createDocument(databaseId, collectionId, documentId, data) {
-      return this.client.post(`/databases/${databaseId}/collections/${collectionId}/documents`, {
-        documentId,
-        data
-      });
-    }
-
-    async listDocuments(databaseId, collectionId, queries = []) {
-      const queryString = queries.length > 0 ? `?${queries.join('&')}` : '';
-      return this.client.get(`/databases/${databaseId}/collections/${collectionId}/documents${queryString}`);
-    }
-  }
-
-  const account = new Account(client);
-  const databases = new Databases(client);
-  
-  // Simple ID and Query utilities
-  const ID = {
-    unique: () => 'unique_' + Math.random().toString(36).substr(2, 9)
-  };
-
-  const Query = {
-    equal: (attribute, value) => `${attribute}=${encodeURIComponent(value)}`
-  };
-  
-  // Configuration
-  const config = {
-    databaseId: 'main-db',
-    collections: {
-      users: {
-        id: 'users'
-      }
-    }
-  };
+  // Import authentication utilities
+  import { auth, navigation, showToast } from '/utils/auth.js';
 
   // Check if user is already logged in
   document.addEventListener('DOMContentLoaded', async () => {
     // Test Appwrite connection
     try {
       console.log('Testing Appwrite connection...');
-      const response = await account.get();
+      const response = await auth.getCurrentUser();
       console.log('Appwrite connected successfully:', response);
       if (response) {
-        // User is logged in - TEMPORARILY DISABLE REDIRECT FOR TESTING
-        console.log('User is logged in, but staying on login page for testing');
-        // window.location.href = '/dashboard'; // DISABLED FOR TESTING
+        // User is logged in - redirect to dashboard
+        console.log('User is logged in, redirecting to dashboard');
+        showToast('Already logged in! Redirecting...', 'info');
+        setTimeout(() => {
+          navigation.safeNavigate('/dashboard');
+        }, 1000);
+        return;
       }
     } catch (error) {
       console.log('Appwrite connection test failed:', error);
@@ -131,18 +34,6 @@ I agree to the Terms & Conditions
       console.log('User not logged in');
     }
   });
-
-  // Show toast notification
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.remove();
-    }, 3000);
-  }
 
   // Form switching
   const loginForm = document.getElementById('loginForm');
@@ -210,44 +101,43 @@ I agree to the Terms & Conditions
     }
     
     try {
+      // Simple Appwrite client for login
+      class SimpleAppwriteClient {
+        constructor() {
+          this.endpoint = 'https://fra.cloud.appwrite.io/v1';
+          this.projectId = '6900b1ed001604d8befb';
+          this.apiKey = 'standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75';
+          this.headers = {
+            'X-Appwrite-Project': this.projectId,
+            'X-Appwrite-Key': this.apiKey,
+            'Content-Type': 'application/json'
+          };
+        }
+
+        async post(endpoint, data) {
+          const response = await fetch(`${this.endpoint}${endpoint}`, {
+            method: 'POST',
+            headers: this.headers,
+            body: JSON.stringify(data),
+            credentials: 'include'
+          });
+          return response.json();
+        }
+      }
+
+      const client = new SimpleAppwriteClient();
+      
       // Attempt to login with Appwrite
-      const session = await account.createEmailPasswordSession(email, password);
+      const session = await client.post('/account/sessions/email', {
+        email,
+        password
+      });
       
       showToast('Login successful! Redirecting...', 'success');
       
-      // Store user info in database if not exists
-      try {
-        const userDoc = await databases.listDocuments(
-          config.databaseId,
-          config.collections.users.id,
-          [Query.equal('userId', session.userId)]
-        );
-        
-        if (userDoc.documents.length === 0) {
-          // Create user record
-          await databases.createDocument(
-            config.databaseId,
-            config.collections.users.id,
-            ID.unique(),
-            {
-              userId: session.userId,
-              email: email,
-              fullName: session.name || email.split('@')[0],
-              phoneNumber: '', // Optional field
-              referralCode: '', // Optional field
-              referredBy: '', // Optional field
-              referralCount: 0,
-              tokenBalance: 0
-            }
-          );
-        }
-      } catch (dbError) {
-        console.log('User record check failed:', dbError);
-      }
-      
       // Redirect to dashboard after successful login
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        navigation.safeNavigate('/dashboard');
       }, 1500);
       
     } catch (error) {
