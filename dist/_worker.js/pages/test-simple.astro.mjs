@@ -2,7 +2,7 @@ globalThis.process ??= {}; globalThis.process.env ??= {};
 import { c as createComponent, i as renderComponent, e as renderTemplate, m as maybeRenderHead } from '../chunks/astro_C1ciDD7V.mjs';
 export { f as renderers } from '../chunks/astro_C1ciDD7V.mjs';
 import '../chunks/kleur_DHimoS-P.mjs';
-import { $ as $$Layout } from '../chunks/Layout_CZaCZank.mjs';
+import { $ as $$Layout } from '../chunks/Layout_DP5YSPHz.mjs';
 
 const $$TestSimple = createComponent(($$result, $$props, $$slots) => {
   return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Simple JavaScript Test" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<main> <div style="padding: 20px; font-family: Arial, sans-serif;"> <h1>Simple JavaScript Test</h1> <p>Test basic JavaScript functionality:</p> <button onclick="alert('Inline onclick works!')" style="padding: 10px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px;">

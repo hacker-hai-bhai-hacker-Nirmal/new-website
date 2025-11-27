@@ -2,7 +2,7 @@ globalThis.process ??= {}; globalThis.process.env ??= {};
 import { c as createComponent, i as renderComponent, e as renderTemplate, m as maybeRenderHead } from '../chunks/astro_C1ciDD7V.mjs';
 export { f as renderers } from '../chunks/astro_C1ciDD7V.mjs';
 import '../chunks/kleur_DHimoS-P.mjs';
-import { $ as $$Layout } from '../chunks/Layout_CZaCZank.mjs';
+import { $ as $$Layout } from '../chunks/Layout_DP5YSPHz.mjs';
 /* empty css                                    */
 
 const $$Delivery = createComponent(($$result, $$props, $$slots) => {

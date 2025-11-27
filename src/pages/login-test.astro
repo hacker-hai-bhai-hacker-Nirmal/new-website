@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Login Test">
+  <main>
+    <div style="padding: 20px; font-family: Arial, sans-serif;">
+      <h1>Login Test - Minimal JavaScript</h1>
+      
+      <button onclick="console.log('Test clicked!'); alert('JavaScript works!');" style="padding: 10px; background: red; color: white; border: none;">
+        🧪 Test JavaScript
+      </button>
+      
+      <form id="testForm" style="margin-top: 20px;">
+        <input type="email" id="email" placeholder="Email" style="padding: 10px; margin: 5px; border: 1px solid #ccc;">
+        <br>
+        <input type="password" id="password" placeholder="Password" style="padding: 10px; margin: 5px; border: 1px solid #ccc;">
+        <br>
+        <button type="submit" style="padding: 10px; background: #007bff; color: white; border: none;">
+          Test Login
+        </button>
+      </form>
+      
+      <div id="output" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6;">
+        <p>Output will appear here...</p>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    console.log('Minimal login script loaded');
+    
+    document.getElementById('testForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      console.log('Form submitted!');
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      const output = document.getElementById('output');
+      output.innerHTML = `<p style="color: green;">Form submitted with email: ${email}</p>`;
+    });
+  </script>
+</Layout>
