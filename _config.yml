@@ -1,0 +1,11 @@
+# Cloudflare Pages Configuration
+build:
+  command: "npm run build"
+  publish: "dist"
+
+# Environment variables for Pages
+environment:
+  variables:
+    APPWRITE_PROJECT_ID: "6900b1ed001604d8befb"
+    APPWRITE_ENDPOINT: "https://fra.cloud.appwrite.io/v1"
+    APPWRITE_DATABASE_ID: "main-db"
