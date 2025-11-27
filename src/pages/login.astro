@@ -237,6 +237,18 @@ import { ID, Query } from 'appwrite'
   setupPasswordToggle('toggleSignupPassword', 'signupPassword');
   setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
 
+  // Toast notification function
+  function showToast(message, type = 'success', duration = 3000) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.remove();
+    }, duration);
+  }
+
   // Enhanced form validation
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -345,10 +357,8 @@ import { ID, Query } from 'appwrite'
         constructor() {
           this.endpoint = 'https://fra.cloud.appwrite.io/v1';
           this.projectId = '6900b1ed001604d8befb';
-          this.apiKey = 'standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75';
           this.headers = {
             'X-Appwrite-Project': this.projectId,
-            'X-Appwrite-Key': this.apiKey,
             'Content-Type': 'application/json'
           };
         }
@@ -360,6 +370,12 @@ import { ID, Query } from 'appwrite'
             body: JSON.stringify(data),
             credentials: 'include'
           });
+          
+          if (!response.ok) {
+            const error = await response.json();
+            throw error;
+          }
+          
           return response.json();
         }
       }
@@ -372,11 +388,12 @@ import { ID, Query } from 'appwrite'
         password
       });
       
+      console.log('Login successful:', session);
       showToast('Login successful! Redirecting...', 'success');
       
       // Redirect to dashboard after successful login
       setTimeout(() => {
-        navigation.safeNavigate('/dashboard');
+        window.location.href = '/dashboard';
       }, 1500);
       
     } catch (error) {
@@ -387,7 +404,7 @@ import { ID, Query } from 'appwrite'
       } else if (error.code === 429) {
         showToast('Too many login attempts. Please try again later', 'error');
       } else {
-        showToast('Login failed. Please try again', 'error');
+        showToast('Login failed: ' + (error.message || 'Unknown error'), 'error');
       }
     } finally {
       // Reset loading state
