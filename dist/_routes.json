@@ -4,9 +4,22 @@
     "/*"
   ],
   "exclude": [
+    "/",
     "/_astro/*",
+    "/.assetsignore",
     "/favicon.svg",
     "/styles.css",
-    "/test.html"
+    "/test.html",
+    "/admin",
+    "/checkout",
+    "/dashboard",
+    "/delivery",
+    "/kitchen",
+    "/login",
+    "/login-test",
+    "/menu",
+    "/rewards",
+    "/test-appwrite",
+    "/test-simple"
   ]
 }
