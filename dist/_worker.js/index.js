@@ -1,7 +1,7 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { f as renderers } from './chunks/astro_C1ciDD7V.mjs';
 import { c as createExports } from './chunks/@astrojs_DNDSpFo-.mjs';
-import { manifest } from './manifest_OLbaySpq.mjs';
+import { manifest } from './manifest_DOSEn_kY.mjs';
 
 const _page0 = () => import('./pages/_image.astro.mjs');
 const _page1 = () => import('./pages/admin.astro.mjs');
