@@ -1,4 +1,4 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-const renderers = [];
+const server = {};
 
-export { renderers };
+export { server };

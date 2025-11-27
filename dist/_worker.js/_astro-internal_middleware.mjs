@@ -1,6 +1,7 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { h as defineMiddleware, s as sequence } from './chunks/astro_C1ciDD7V.mjs';
-import './chunks/es-module-lexer_Bic5RHXJ.mjs';
+import { d as defineMiddleware, s as sequence } from './chunks/index_DVjdh327.mjs';
+import './chunks/astro-designed-error-pages_BCArJAjR.mjs';
+import './chunks/astro/server_C-K2zirC.mjs';
 
 // Astro Middleware for Route Protection
 
@@ -9,7 +10,7 @@ import './chunks/es-module-lexer_Bic5RHXJ.mjs';
 const protectedRoutes = ['/dashboard', '/checkout', '/rewards', '/admin', '/kitchen'];
 const authOnlyRoutes = ['/login'];
 
-const onRequest$1 = defineMiddleware(async (context, next) => {
+const onRequest$2 = defineMiddleware(async (context, next) => {
   const { pathname } = new URL(context.request.url);
   
   // Check if route requires authentication
@@ -29,9 +30,18 @@ const onRequest$1 = defineMiddleware(async (context, next) => {
   return next();
 });
 
+const onRequest$1 = (context, next) => {
+  if (context.isPrerendered) {
+    context.locals.runtime ??= {
+      env: process.env
+    };
+  }
+  return next();
+};
+
 const onRequest = sequence(
-	
-	onRequest$1
+	onRequest$1,
+	onRequest$2
 	
 );
 
