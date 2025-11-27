@@ -3,7 +3,9 @@
 Litterateur
 </a> <nav class="nav" data-astro-cid-sgpqyurt> <a href="/menu" data-astro-cid-sgpqyurt>Menu</a> <a href="/rewards" data-astro-cid-sgpqyurt>Rewards</a> <a class="cta" href="/login" data-astro-cid-sgpqyurt>Sign In</a> </nav> </div> </header> <main data-astro-cid-sgpqyurt> <section class="auth-section" data-astro-cid-sgpqyurt> <div class="container" data-astro-cid-sgpqyurt> <div class="auth-container" data-astro-cid-sgpqyurt> <div class="auth-image" data-astro-cid-sgpqyurt> <div class="image-content" data-astro-cid-sgpqyurt> <div class="floating-elements" data-astro-cid-sgpqyurt> <div class="float-item coffee" data-astro-cid-sgpqyurt>☕</div> <div class="float-item book" data-astro-cid-sgpqyurt>📖</div> <div class="float-item food" data-astro-cid-sgpqyurt>🍽️</div> </div> <div class="image-text" data-astro-cid-sgpqyurt> <h2 data-astro-cid-sgpqyurt>Literary Dining Experience</h2> <p data-astro-cid-sgpqyurt>Where every meal tells a story</p> </div> </div> </div> <div class="auth-form-container" data-astro-cid-sgpqyurt> <div class="auth-header" data-astro-cid-sgpqyurt> <div class="auth-badge" data-astro-cid-sgpqyurt> <span data-astro-cid-sgpqyurt>🎉 Welcome Back!</span> </div> <h1 data-astro-cid-sgpqyurt>Sign In to Litterateur</h1> <p data-astro-cid-sgpqyurt>Unlock exclusive rewards and personalized offers</p> </div> <!-- Login Form --> <form class="auth-form" id="loginForm" data-astro-cid-sgpqyurt> <div class="form-group" data-astro-cid-sgpqyurt> <label for="email" data-astro-cid-sgpqyurt>Email Address *</label> <div class="input-wrapper" data-astro-cid-sgpqyurt> <input type="email" id="email" name="email" placeholder="john@example.com" required data-astro-cid-sgpqyurt> <span class="input-icon" data-astro-cid-sgpqyurt>📧</span> </div> <span class="error-message" id="emailError" data-astro-cid-sgpqyurt>Please enter a valid email</span> </div> <div class="form-group" data-astro-cid-sgpqyurt> <label for="password" data-astro-cid-sgpqyurt>Password *</label> <div class="input-wrapper" data-astro-cid-sgpqyurt> <input type="password" id="password" name="password" placeholder="Enter your password" required data-astro-cid-sgpqyurt> <button type="button" class="toggle-password" id="togglePassword" data-astro-cid-sgpqyurt> <span class="eye-icon" data-astro-cid-sgpqyurt>👁️</span> </button> </div> <span class="error-message" id="passwordError" data-astro-cid-sgpqyurt>Password must be at least 6 characters</span> </div> <div class="form-group checkbox-group" data-astro-cid-sgpqyurt> <label class="checkbox-label" data-astro-cid-sgpqyurt> <input type="checkbox" id="rememberMe" name="rememberMe" data-astro-cid-sgpqyurt> <span class="checkmark" data-astro-cid-sgpqyurt></span>
 Remember Me
-</label> </div> <button type="submit" class="auth-submit" id="loginSubmit" data-astro-cid-sgpqyurt> <span class="btn-text" data-astro-cid-sgpqyurt>Sign In</span> <span class="btn-loader" style="display: none;" data-astro-cid-sgpqyurt>⏳</span> </button> <div class="social-login" data-astro-cid-sgpqyurt> <p data-astro-cid-sgpqyurt>Or continue with</p> <div class="social-buttons" data-astro-cid-sgpqyurt> <button type="button" class="social-btn google" id="googleLogin" data-astro-cid-sgpqyurt> <span class="social-icon" data-astro-cid-sgpqyurt>🔍</span>
+</label> </div> <button type="submit" class="auth-submit" id="loginSubmit" data-astro-cid-sgpqyurt> <span class="btn-text" data-astro-cid-sgpqyurt>Sign In</span> <span class="btn-loader" style="display: none;" data-astro-cid-sgpqyurt>⏳</span> </button> <!-- Test button for debugging --> <button type="button" onclick="console.log('🧪 Test button clicked!')" style="margin-top: 10px; padding: 10px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;" data-astro-cid-sgpqyurt>
+🧪 Test JavaScript
+</button> <div class="social-login" data-astro-cid-sgpqyurt> <p data-astro-cid-sgpqyurt>Or continue with</p> <div class="social-buttons" data-astro-cid-sgpqyurt> <button type="button" class="social-btn google" id="googleLogin" data-astro-cid-sgpqyurt> <span class="social-icon" data-astro-cid-sgpqyurt>🔍</span>
 Google
 </button> <button type="button" class="social-btn phone" id="phoneLogin" data-astro-cid-sgpqyurt> <span class="social-icon" data-astro-cid-sgpqyurt>📱</span>
 Phone OTP
@@ -145,6 +147,7 @@ I agree to the Terms & Conditions
 
   // Login form submission
   loginForm.addEventListener('submit', async (e) => {
+    console.log('🚀 Form submit event triggered!');
     e.preventDefault();
     
     const email = document.getElementById('email').value.trim();
@@ -152,6 +155,8 @@ I agree to the Terms & Conditions
     const submitBtn = document.getElementById('loginSubmit');
     const btnText = submitBtn.querySelector('.btn-text');
     const btnLoader = submitBtn.querySelector('.btn-loader');
+    
+    console.log('📝 Form data:', { email, password: password ? '***' : 'empty' });
     
     // Clear previous errors
     hideError('email', 'emailError');
@@ -161,29 +166,38 @@ I agree to the Terms & Conditions
     let hasError = false;
     
     if (!email) {
+      console.log('❌ Email validation failed');
       showError('email', 'emailError');
       hasError = true;
     } else if (!validateEmail(email)) {
+      console.log('❌ Email format invalid');
       showError('email', 'emailError');
       hasError = true;
     }
     
     if (!password) {
+      console.log('❌ Password validation failed');
       showError('password', 'passwordError');
       hasError = true;
     } else if (!validatePassword(password)) {
+      console.log('❌ Password length invalid');
       showError('password', 'passwordError');
       hasError = true;
     }
     
     if (hasError) {
+      console.log('❌ Form validation failed, stopping');
       return;
     }
+    
+    console.log('✅ Form validation passed');
     
     // Show loading state
     submitBtn.disabled = true;
     btnText.style.display = 'none';
     btnLoader.style.display = 'inline';
+    
+    console.log('⏳ Loading state activated');
     
     try {
       console.log('🔨 Attempting login with:', { email, password: '***' });

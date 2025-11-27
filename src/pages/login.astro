@@ -88,6 +88,11 @@ import { ID, Query } from 'appwrite'
                 <span class="btn-loader" style="display: none;">⏳</span>
               </button>
 
+              <!-- Test button for debugging -->
+              <button type="button" onclick="console.log('🧪 Test button clicked!')" style="margin-top: 10px; padding: 10px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                🧪 Test JavaScript
+              </button>
+
               <div class="social-login">
                 <p>Or continue with</p>
                 <div class="social-buttons">
@@ -311,6 +316,7 @@ import { ID, Query } from 'appwrite'
 
   // Login form submission
   loginForm.addEventListener('submit', async (e) => {
+    console.log('🚀 Form submit event triggered!');
     e.preventDefault();
     
     const email = document.getElementById('email').value.trim();
@@ -318,6 +324,8 @@ import { ID, Query } from 'appwrite'
     const submitBtn = document.getElementById('loginSubmit');
     const btnText = submitBtn.querySelector('.btn-text');
     const btnLoader = submitBtn.querySelector('.btn-loader');
+    
+    console.log('📝 Form data:', { email, password: password ? '***' : 'empty' });
     
     // Clear previous errors
     hideError('email', 'emailError');
@@ -327,29 +335,38 @@ import { ID, Query } from 'appwrite'
     let hasError = false;
     
     if (!email) {
+      console.log('❌ Email validation failed');
       showError('email', 'emailError');
       hasError = true;
     } else if (!validateEmail(email)) {
+      console.log('❌ Email format invalid');
       showError('email', 'emailError');
       hasError = true;
     }
     
     if (!password) {
+      console.log('❌ Password validation failed');
       showError('password', 'passwordError');
       hasError = true;
     } else if (!validatePassword(password)) {
+      console.log('❌ Password length invalid');
       showError('password', 'passwordError');
       hasError = true;
     }
     
     if (hasError) {
+      console.log('❌ Form validation failed, stopping');
       return;
     }
+    
+    console.log('✅ Form validation passed');
     
     // Show loading state
     submitBtn.disabled = true;
     btnText.style.display = 'none';
     btnLoader.style.display = 'inline';
+    
+    console.log('⏳ Loading state activated');
     
     try {
       console.log('🔨 Attempting login with:', { email, password: '***' });
