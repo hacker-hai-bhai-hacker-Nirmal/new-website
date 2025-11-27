@@ -319,6 +319,124 @@ import Layout from '../layouts/Layout.astro'
         </div>
       </section>
 
+      <!-- Customers Management -->
+      <section id="customers" class="content-section">
+        <h2>Customers Management</h2>
+        <div class="customers-controls">
+          <div class="customer-stats">
+            <div class="stat-card">
+              <div class="stat-value" id="totalAuthUsers">0</div>
+              <div class="stat-label">Authentication Users</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="totalProfileUsers">0</div>
+              <div class="stat-label">Profile Users</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="newUsersToday">0</div>
+              <div class="stat-label">New Today</div>
+            </div>
+          </div>
+          <button class="action-btn primary" id="refreshUsers">🔄 Refresh Users</button>
+        </div>
+
+        <div class="customers-tabs">
+          <button class="tab-btn active" data-tab="auth-users">Authentication Users</button>
+          <button class="tab-btn" data-tab="profile-users">Profile Users</button>
+          <button class="tab-btn" data-tab="all-users">All Users</button>
+        </div>
+
+        <!-- Authentication Users Table -->
+        <div id="auth-users" class="tab-content active">
+          <div class="table-container">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Registration Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="authUsersTableBody">
+                <tr>
+                  <td colspan="6" class="loading-row">Loading authentication users...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Profile Users Table -->
+        <div id="profile-users" class="tab-content">
+          <div class="table-container">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Token Balance</th>
+                  <th>Total Spent</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="profileUsersTableBody">
+                <tr>
+                  <td colspan="7" class="loading-row">Loading profile users...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- All Users Combined View -->
+        <div id="all-users" class="tab-content">
+          <div class="combined-users-container">
+            <div class="users-summary">
+              <h3>Users Summary</h3>
+              <div class="summary-grid" id="usersSummary">
+                <div class="summary-item">
+                  <span class="summary-label">Auth Users Only:</span>
+                  <span class="summary-value" id="authOnlyCount">0</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Profile Users Only:</span>
+                  <span class="summary-value" id="profileOnlyCount">0</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Complete Users:</span>
+                  <span class="summary-value" id="completeUsersCount">0</span>
+                </div>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="users-table">
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Has Profile</th>
+                    <th>Registration</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="allUsersTableBody">
+                  <tr>
+                    <td colspan="7" class="loading-row">Loading all users...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Other sections would be similar... -->
     </main>
   </div>
@@ -423,6 +541,198 @@ import Layout from '../layouts/Layout.astro'
       const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
       activeUsers.textContent = Math.max(250, currentUsers + change);
     }, 30000);
+
+    // Users Management Functionality
+    let authUsers = [];
+    let profileUsers = [];
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.dataset.tab;
+        
+        // Update active tab button
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Show corresponding content
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(targetTab).classList.add('active');
+      });
+    });
+
+    // Load users data
+    async function loadUsersData() {
+      try {
+        // Load authentication users
+        const authResponse = await fetch('/api/users/auth');
+        if (authResponse.ok) {
+          authUsers = await authResponse.json();
+        }
+
+        // Load profile users
+        const profileResponse = await fetch('/api/users/profile');
+        if (profileResponse.ok) {
+          profileUsers = await profileResponse.json();
+        }
+
+        updateUsersDisplay();
+      } catch (error) {
+        console.error('Error loading users:', error);
+        showToast('Error loading users data');
+      }
+    }
+
+    // Update users display
+    function updateUsersDisplay() {
+      // Update stats
+      document.getElementById('totalAuthUsers').textContent = authUsers.length;
+      document.getElementById('totalProfileUsers').textContent = profileUsers.length;
+      
+      // Calculate new users today (simplified)
+      const today = new Date().toDateString();
+      const newAuthUsers = authUsers.filter(user => 
+        new Date(user.$createdAt).toDateString() === today
+      ).length;
+      document.getElementById('newUsersToday').textContent = newAuthUsers;
+
+      // Update authentication users table
+      updateAuthUsersTable();
+      
+      // Update profile users table
+      updateProfileUsersTable();
+      
+      // Update all users combined view
+      updateAllUsersTable();
+    }
+
+    // Update authentication users table
+    function updateAuthUsersTable() {
+      const tbody = document.getElementById('authUsersTableBody');
+      
+      if (authUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data">No authentication users found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = authUsers.map(user => `
+        <tr>
+          <td>${user.$id}</td>
+          <td>${user.name || 'N/A'}</td>
+          <td>${user.email}</td>
+          <td>${new Date(user.$createdAt).toLocaleDateString()}</td>
+          <td><span class="status-badge ${user.status ? 'active' : 'inactive'}">${user.status ? 'Active' : 'Inactive'}</span></td>
+          <td>
+            <button class="action-btn-small" onclick="viewUserDetails('${user.$id}', 'auth')">View</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Update profile users table
+    function updateProfileUsersTable() {
+      const tbody = document.getElementById('profileUsersTableBody');
+      
+      if (profileUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="no-data">No profile users found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = profileUsers.map(user => `
+        <tr>
+          <td>${user.userId}</td>
+          <td>${user.fullName}</td>
+          <td>${user.email || 'N/A'}</td>
+          <td>${user.phoneNumber || 'N/A'}</td>
+          <td>${user.tokenBalance || 0}</td>
+          <td>₹${(user.totalSpent || 0).toLocaleString()}</td>
+          <td>
+            <button class="action-btn-small" onclick="viewUserDetails('${user.userId}', 'profile')">View</button>
+            <button class="action-btn-small" onclick="editUserProfile('${user.userId}')">Edit</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Update all users combined table
+    function updateAllUsersTable() {
+      const tbody = document.getElementById('allUsersTableBody');
+      
+      // Create a map of profile users by userId
+      const profileMap = new Map(profileUsers.map(user => [user.userId, user]));
+      
+      // Combine data
+      const allUsers = authUsers.map(authUser => {
+        const profile = profileMap.get(authUser.$id);
+        return {
+          ...authUser,
+          hasProfile: !!profile,
+          profile: profile
+        };
+      });
+
+      // Update summary counts
+      const authOnly = allUsers.filter(user => !user.hasProfile).length;
+      const profileOnly = profileUsers.filter(profile => 
+        !authUsers.find(auth => auth.$id === profile.userId)
+      ).length;
+      const completeUsers = allUsers.filter(user => user.hasProfile).length;
+
+      document.getElementById('authOnlyCount').textContent = authOnly;
+      document.getElementById('profileOnlyCount').textContent = profileOnly;
+      document.getElementById('completeUsersCount').textContent = completeUsers;
+
+      if (allUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="no-data">No users found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = allUsers.map(user => `
+        <tr>
+          <td>${user.$id}</td>
+          <td>${user.name || (user.profile?.fullName) || 'N/A'}</td>
+          <td>${user.email}</td>
+          <td>
+            <span class="status-badge ${user.hasProfile ? 'complete' : 'incomplete'}">
+              ${user.hasProfile ? '✅ Complete' : '❌ Missing'}
+            </span>
+          </td>
+          <td>${new Date(user.$createdAt).toLocaleDateString()}</td>
+          <td><span class="status-badge ${user.status ? 'active' : 'inactive'}">${user.status ? 'Active' : 'Inactive'}</span></td>
+          <td>
+            <button class="action-btn-small" onclick="viewUserDetails('${user.$id}', 'combined')">View</button>
+            ${!user.hasProfile ? `<button class="action-btn-small" onclick="createProfile('${user.$id}')">Create Profile</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Refresh users button
+    document.getElementById('refreshUsers').addEventListener('click', () => {
+      showToast('Refreshing users data...');
+      loadUsersData();
+    });
+
+    // User action functions
+    function viewUserDetails(userId, type) {
+      showToast(`Viewing details for user ${userId} (${type})`);
+      // TODO: Implement user details modal
+    }
+
+    function editUserProfile(userId) {
+      showToast(`Editing profile for user ${userId}`);
+      // TODO: Implement profile editing modal
+    }
+
+    function createProfile(userId) {
+      showToast(`Creating profile for user ${userId}`);
+      // TODO: Implement profile creation modal
+    }
+
+    // Load users on page load
+    loadUsersData();
   </script>
 
   <style>
@@ -1138,6 +1448,239 @@ import Layout from '../layouts/Layout.astro'
       
       .filter-controls {
         flex-direction: column;
+      }
+    }
+
+    /* Customers Management Styles */
+    .customers-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      gap: 20px;
+    }
+
+    .customer-stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 20px;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .stat-card .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--gold);
+      margin-bottom: 5px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 14px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .customers-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--dark-border);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      padding: 12px 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: var(--cream-white);
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .table-container {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .users-table th {
+      background: var(--primary-green);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .users-table td {
+      padding: 15px;
+      border-bottom: 1px solid var(--dark-border);
+      color: var(--cream-white);
+    }
+
+    .users-table tr:hover {
+      background: rgba(255, 215, 0, 0.05);
+    }
+
+    .loading-row, .no-data {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+      font-style: italic;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-badge.active {
+      background: #28a745;
+      color: white;
+    }
+
+    .status-badge.inactive {
+      background: #6c757d;
+      color: white;
+    }
+
+    .status-badge.complete {
+      background: #28a745;
+      color: white;
+    }
+
+    .status-badge.incomplete {
+      background: #dc3545;
+      color: white;
+    }
+
+    .action-btn-small {
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 5px;
+      transition: all 0.3s;
+    }
+
+    .action-btn-small:hover {
+      background: #2A5F3E;
+      transform: translateY(-1px);
+    }
+
+    .combined-users-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .users-summary {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .users-summary h3 {
+      color: var(--gold);
+      margin-bottom: 15px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(255, 215, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .summary-label {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .summary-value {
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .customers-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .customer-stats {
+        justify-content: center;
+      }
+
+      .customers-tabs {
+        flex-wrap: wrap;
+      }
+
+      .tab-btn {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .users-table {
+        font-size: 14px;
+      }
+
+      .users-table th,
+      .users-table td {
+        padding: 10px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
