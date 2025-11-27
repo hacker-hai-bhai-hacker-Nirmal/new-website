@@ -35,8 +35,6 @@ async function handleEvent(event, env, ctx) {
 
   // Comprehensive logging
   console.log(`🚀 Request: ${event.request.method} ${pathname}`);
-  console.log(`📄 User-Agent: ${event.request.headers.get('user-agent')}`);
-  console.log(`🔗 Referer: ${event.request.headers.get('referer')}`);
 
   // Handle API routes
   if (pathname.startsWith('/api/')) {
@@ -44,37 +42,31 @@ async function handleEvent(event, env, ctx) {
     return handleApiRequest(event.request, pathname, searchParams);
   }
 
-  // Serve static assets
+  // Serve static assets - simplified approach
   try {
     console.log(`📦 Serving static asset: ${pathname}`);
     
-    // If it's a directory, serve index.html (no-cache for HTML)
+    // If it's a directory, serve index.html
     if (pathname.endsWith('/')) {
       console.log(`📄 Serving index.html for directory: ${pathname}`);
-      return await serveAsset(event, {
+      return await getAssetFromKV(event, {
         mapRequestToAsset: req => new Request(`${new URL(req.url).origin}index.html`, req),
-        cacheControl: { bypassCache: true },
       });
     }
 
     // Otherwise, try to serve the requested asset
     console.log(`📄 Serving direct asset: ${pathname}`);
-    return await serveAsset(event, {
-      mapRequestToAsset: req => {
-        // First try to get the exact asset
-        return mapRequestToAsset(req);
-      },
-      cacheControl: { bypassCache: true },
+    return await getAssetFromKV(event, {
+      mapRequestToAsset: req => mapRequestToAsset(req),
     });
   } catch (e) {
     console.log(`❌ Asset not found: ${pathname} - ${e.message}`);
     
-    // If asset not found, try to serve as SPA route (no-cache)
+    // If asset not found, try to serve as SPA route
     try {
       console.log(`🔄 Trying SPA fallback for: ${pathname}`);
-      return await serveAsset(event, {
+      return await getAssetFromKV(event, {
         mapRequestToAsset: req => new Request(`${new URL(req.url).origin}index.html`, req),
-        cacheControl: { bypassCache: true },
       });
     } catch (e) {
       console.log(`❌ SPA fallback failed: ${pathname} - ${e.message}`);
@@ -89,8 +81,16 @@ async function serveAsset(event, options) {
   const res = await getAssetFromKV(event, options);
   const ct = res.headers.get('content-type') || '';
   const headers = new Headers(res.headers);
-  const url = new URL(event.request.url);
-  const pathname = url.pathname;
+  
+  // Get pathname from event.request.url for safety
+  let pathname = '';
+  try {
+    const url = new URL(event.request.url);
+    pathname = url.pathname;
+  } catch (e) {
+    console.log('Error getting pathname:', e.message);
+    pathname = '';
+  }
 
   // Fix Content-Type for JavaScript files
   if (pathname.endsWith('.js') || pathname.endsWith('.mjs')) {
