@@ -1,3 +1,0 @@
-# Ignore worker directory to prevent server code exposure
-_worker.js/
-_worker.js
