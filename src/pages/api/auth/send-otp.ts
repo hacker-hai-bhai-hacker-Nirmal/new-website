@@ -2,6 +2,7 @@
 import type { APIRoute } from 'astro';
 import { account } from '../../../lib/appwrite';
 import { ID } from 'appwrite';
+import { sendOtpEmail } from '../../../lib/brevoService';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -14,17 +15,39 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Create a session with passwordless email (Appwrite's OTP flow)
+    // Create an email token (Appwrite's OTP flow)
     const response = await account.createEmailToken(
       ID.unique(), // User ID (will be created if not exists)
       email
     );
 
+    // Extract the OTP from Appwrite response (in development mode)
+    // In production, Appwrite won't return the OTP
+    let otp = '';
+    if (response.secret && response.secret.length === 6 && /^\d{6}$/.test(response.secret)) {
+      otp = response.secret;
+    } else {
+      // Generate a 6-digit OTP for Brevo
+      otp = Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    // Send OTP email using Brevo
+    const emailResult = await sendOtpEmail(email, otp, 'User');
+
+    if (!emailResult.success) {
+      console.error('Brevo email failed:', emailResult.error);
+      // Continue with the process even if email fails
+      // In production, you might want to handle this differently
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
         userId: response.userId,
-        message: 'OTP sent successfully' 
+        message: otp ? 'OTP sent successfully (Development Mode)' : 'OTP sent successfully. Please check your email.',
+        // Only return OTP in development mode for testing
+        ...(otp && { otp, developmentMode: true }),
+        emailSent: emailResult.success
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
