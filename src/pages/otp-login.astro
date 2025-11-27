@@ -1,8 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro'
+import { getCurrentSession } from '../lib/authService';
+
+// Check if user is already logged in
+const session = await getCurrentSession();
+if (session.success) {
+  return Astro.redirect('/dashboard');
+}
 ---
 
-<Layout>
+<Layout title="Login with OTP | Litterateur">
   <div class="otp-login-container">
     <div class="login-card">
       <div class="login-header">
@@ -73,12 +80,6 @@ import Layout from '../layouts/Layout.astro'
           </div>
         </div>
       </div>
-
-      <!-- Demo Notice -->
-      <div class="demo-notice">
-        <p><strong>Demo Mode:</strong> For testing, the OTP will be shown on screen.</p>
-        <p>In production, OTP will be sent to your email.</p>
-      </div>
     </div>
   </div>
 </Layout>
@@ -86,7 +87,7 @@ import Layout from '../layouts/Layout.astro'
 <script>
   // OTP Login System
   let userEmail = '';
-  let generatedOtp = '';
+  let userId = '';
 
   // Email form submission
   document.getElementById('emailForm').addEventListener('submit', async (e) => {
@@ -118,7 +119,7 @@ import Layout from '../layouts/Layout.astro'
       const data = await response.json();
 
       if (data.success) {
-        generatedOtp = data.otp; // Demo only - remove in production
+        userId = data.userId; // Store userId for verification
         showOtpStep(data);
       } else {
         showError(data.error || 'Failed to send OTP');
@@ -153,7 +154,7 @@ import Layout from '../layouts/Layout.astro'
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: userEmail, otp })
+        body: JSON.stringify({ userId, otp })
       });
 
       const data = await response.json();
@@ -162,7 +163,8 @@ import Layout from '../layouts/Layout.astro'
         // Store user session
         localStorage.setItem('userSession', JSON.stringify({
           user: data.user,
-          session: data.session
+          sessionId: data.sessionId,
+          userId: data.userId
         }));
         
         showSuccessStep();
@@ -200,7 +202,7 @@ import Layout from '../layouts/Layout.astro'
       const data = await response.json();
 
       if (data.success) {
-        generatedOtp = data.otp; // Demo only - remove in production
+        userId = data.userId; // Update userId with new one
         showSuccess('New verification code sent!');
       } else {
         showError(data.error || 'Failed to resend OTP');
@@ -218,10 +220,8 @@ import Layout from '../layouts/Layout.astro'
     document.getElementById('emailStep').classList.remove('active');
     document.getElementById('otpStep').classList.add('active');
     
-    // Demo: Show the OTP (remove in production)
-    if (data.otp) {
-      showSuccess(`Demo OTP: ${data.otp} (In production, this will be emailed to you)`);
-    }
+    // Show success message
+    showSuccess('OTP sent to your email! Please check your inbox.');
   }
 
   // Show success step

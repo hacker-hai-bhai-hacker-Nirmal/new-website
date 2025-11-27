@@ -1,0 +1,184 @@
+---
+// src/pages/verify-otp.astro
+import Layout from '../layouts/Layout.astro';
+import { account } from '../lib/appwrite';
+
+// Get URL parameters
+const url = new URL(Astro.request.url);
+const userId = url.searchParams.get('userId');
+const secret = url.searchParams.get('secret');
+
+let verificationStatus = 'verifying';
+let errorMessage = '';
+
+if (userId && secret) {
+  try {
+    // Complete the OTP verification
+    const session = await account.updateMagicURLSession(userId, secret);
+    verificationStatus = 'success';
+    
+    // Store the session in a cookie
+    Astro.cookies.set('appwrite-session', session.secret, {
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: true,
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+  } catch (error: any) {
+    console.error('Verification error:', error);
+    verificationStatus = 'error';
+    errorMessage = error.message || 'Failed to verify OTP';
+  }
+} else {
+  verificationStatus = 'error';
+  errorMessage = 'Invalid verification link';
+}
+---
+
+<Layout title="Verify OTP | Litterateur">
+  <div class="verification-container">
+    <div class="verification-card">
+      {verificationStatus === 'verifying' && (
+        <div class="verification-status">
+          <div class="spinner"></div>
+          <h2>Verifying your email...</h2>
+          <p>Please wait while we verify your email address.</p>
+        </div>
+      )}
+      
+      {verificationStatus === 'success' && (
+        <div class="verification-status success">
+          <div class="icon">✓</div>
+          <h2>Email Verified!</h2>
+          <p>Your email has been successfully verified. Redirecting you to your dashboard...</p>
+          <a href="/dashboard" class="btn primary">Go to Dashboard</a>
+        </div>
+      )}
+      
+      {verificationStatus === 'error' && (
+        <div class="verification-status error">
+          <div class="icon">✕</div>
+          <h2>Verification Failed</h2>
+          <p>{errorMessage || 'An error occurred during verification.'}</p>
+          <a href="/otp-login" class="btn secondary">Back to Login</a>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Redirect to dashboard on success
+  if (document.querySelector('.verification-status.success')) {
+    setTimeout(() => {
+      window.location.href = '/dashboard';
+    }, 3000);
+  }
+</script>
+
+<style>
+  .verification-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-green) 0%, #2c5f2d 100%);
+    padding: 2rem;
+  }
+
+  .verification-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    max-width: 500px;
+    width: 100%;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .verification-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .verification-status h2 {
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  .verification-status p {
+    color: #666;
+    margin: 0.5rem 0 0;
+    line-height: 1.6;
+  }
+
+  .icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .success .icon {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .error .icon {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn.primary {
+    background: var(--primary-green);
+    color: white;
+  }
+
+  .btn.primary:hover {
+    background: #2c5f2d;
+    transform: translateY(-2px);
+  }
+
+  .btn.secondary {
+    background: transparent;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+  }
+
+  .btn.secondary:hover {
+    background: rgba(46, 125, 50, 0.1);
+  }
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
