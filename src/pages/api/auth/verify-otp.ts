@@ -13,8 +13,11 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Verify the OTP and create a session
-    const session = await account.updateMagicURLSession(userId, otp);
+    // Create session using the email token (OTP)
+    const session = await account.createSession(
+      userId,
+      otp
+    );
     
     // Get user details
     const user = await account.get();

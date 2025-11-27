@@ -14,11 +14,10 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Create a magic URL session (Appwrite's OTP flow)
-    const response = await account.createMagicURLSession(
+    // Create a session with passwordless email (Appwrite's OTP flow)
+    const response = await account.createEmailToken(
       ID.unique(), // User ID (will be created if not exists)
-      email,
-      `${new URL(request.url).origin}/verify-otp` // Redirect URL after verification
+      email
     );
 
     return new Response(

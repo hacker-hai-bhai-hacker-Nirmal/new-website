@@ -9,11 +9,10 @@ import { ID } from 'appwrite';
  */
 export const sendOtp = async (email) => {
   try {
-    // Create a session with magic URL (OTP flow)
-    const response = await account.createMagicURLSession(
+    // Create an email token (OTP flow)
+    const response = await account.createEmailToken(
       ID.unique(), // User ID (will be created if not exists)
-      email,
-      `${window.location.origin}/verify-otp` // Redirect URL after verification
+      email
     );
 
     return {
@@ -39,8 +38,8 @@ export const sendOtp = async (email) => {
  */
 export const verifyOtp = async (userId, secret) => {
   try {
-    // Update the magic URL session to verify OTP
-    const session = await account.updateMagicURLSession(userId, secret);
+    // Create session using the email token (OTP)
+    const session = await account.createSession(userId, secret);
     
     // Store session in localStorage for persistence
     localStorage.setItem('appwriteSession', JSON.stringify({

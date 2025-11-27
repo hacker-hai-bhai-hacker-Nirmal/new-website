@@ -13,8 +13,8 @@ let errorMessage = '';
 
 if (userId && secret) {
   try {
-    // Complete the OTP verification
-    const session = await account.updateMagicURLSession(userId, secret);
+    // Create session using the email token (OTP)
+    const session = await account.createSession(userId, secret);
     verificationStatus = 'success';
     
     // Store the session in a cookie
