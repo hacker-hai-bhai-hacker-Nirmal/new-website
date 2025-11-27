@@ -76,48 +76,6 @@ async function handleEvent(event, env, ctx) {
   }
 }
 
-// Helper to add cache headers and fix Content-Type for JavaScript
-async function serveAsset(event, options) {
-  const res = await getAssetFromKV(event, options);
-  const ct = res.headers.get('content-type') || '';
-  const headers = new Headers(res.headers);
-  
-  // Get pathname from event.request.url for safety
-  let pathname = '';
-  try {
-    const url = new URL(event.request.url);
-    pathname = url.pathname;
-  } catch (e) {
-    console.log('Error getting pathname:', e.message);
-    pathname = '';
-  }
-
-  // Fix Content-Type for JavaScript files
-  if (pathname.endsWith('.js') || pathname.endsWith('.mjs')) {
-    headers.set('Content-Type', 'application/javascript; charset=utf-8');
-    console.log(`Fixed Content-Type for JavaScript: ${pathname}`);
-  }
-
-  if (ct.includes('text/html')) {
-    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    headers.set('Pragma', 'no-cache');
-    headers.set('Expires', '0');
-  } else {
-    // short cache for static assets to reflect changes quickly
-    headers.set('Cache-Control', 'public, max-age=300, immutable');
-  }
-
-  // Add debugging headers
-  headers.set('X-Debug-Pathname', pathname);
-  headers.set('X-Debug-Content-Type', headers.get('Content-Type'));
-
-  return new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
-    headers,
-  });
-}
-
 /**
  * Handle API requests for authentication and other backend functions
  */
