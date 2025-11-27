@@ -2044,6 +2044,526 @@ class Account {
     }
 }
 
+class Databases {
+    constructor(client) {
+        this.client = client;
+    }
+    listTransactions(paramsOrFirst) {
+        let params;
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                queries: paramsOrFirst
+            };
+        }
+        const queries = params.queries;
+        const apiPath = '/databases/transactions';
+        const payload = {};
+        if (typeof queries !== 'undefined') {
+            payload['queries'] = queries;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {};
+        return this.client.call('get', uri, apiHeaders, payload);
+    }
+    createTransaction(paramsOrFirst) {
+        let params;
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                ttl: paramsOrFirst
+            };
+        }
+        const ttl = params.ttl;
+        const apiPath = '/databases/transactions';
+        const payload = {};
+        if (typeof ttl !== 'undefined') {
+            payload['ttl'] = ttl;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('post', uri, apiHeaders, payload);
+    }
+    getTransaction(paramsOrFirst) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                transactionId: paramsOrFirst
+            };
+        }
+        const transactionId = params.transactionId;
+        if (typeof transactionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "transactionId"');
+        }
+        const apiPath = '/databases/transactions/{transactionId}'.replace('{transactionId}', transactionId);
+        const payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {};
+        return this.client.call('get', uri, apiHeaders, payload);
+    }
+    updateTransaction(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                transactionId: paramsOrFirst,
+                commit: rest[0],
+                rollback: rest[1]
+            };
+        }
+        const transactionId = params.transactionId;
+        const commit = params.commit;
+        const rollback = params.rollback;
+        if (typeof transactionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "transactionId"');
+        }
+        const apiPath = '/databases/transactions/{transactionId}'.replace('{transactionId}', transactionId);
+        const payload = {};
+        if (typeof commit !== 'undefined') {
+            payload['commit'] = commit;
+        }
+        if (typeof rollback !== 'undefined') {
+            payload['rollback'] = rollback;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('patch', uri, apiHeaders, payload);
+    }
+    deleteTransaction(paramsOrFirst) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                transactionId: paramsOrFirst
+            };
+        }
+        const transactionId = params.transactionId;
+        if (typeof transactionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "transactionId"');
+        }
+        const apiPath = '/databases/transactions/{transactionId}'.replace('{transactionId}', transactionId);
+        const payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('delete', uri, apiHeaders, payload);
+    }
+    createOperations(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                transactionId: paramsOrFirst,
+                operations: rest[0]
+            };
+        }
+        const transactionId = params.transactionId;
+        const operations = params.operations;
+        if (typeof transactionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "transactionId"');
+        }
+        const apiPath = '/databases/transactions/{transactionId}/operations'.replace('{transactionId}', transactionId);
+        const payload = {};
+        if (typeof operations !== 'undefined') {
+            payload['operations'] = operations;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('post', uri, apiHeaders, payload);
+    }
+    listDocuments(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                queries: rest[1],
+                transactionId: rest[2],
+                total: rest[3]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const queries = params.queries;
+        const transactionId = params.transactionId;
+        const total = params.total;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
+        const payload = {};
+        if (typeof queries !== 'undefined') {
+            payload['queries'] = queries;
+        }
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        if (typeof total !== 'undefined') {
+            payload['total'] = total;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {};
+        return this.client.call('get', uri, apiHeaders, payload);
+    }
+    createDocument(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                documentId: rest[1],
+                data: rest[2],
+                permissions: rest[3],
+                transactionId: rest[4]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const documentId = params.documentId;
+        const data = params.data;
+        const permissions = params.permissions;
+        const transactionId = params.transactionId;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        if (typeof data === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "data"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
+        const payload = {};
+        if (typeof documentId !== 'undefined') {
+            payload['documentId'] = documentId;
+        }
+        if (typeof data !== 'undefined') {
+            payload['data'] = data;
+        }
+        if (typeof permissions !== 'undefined') {
+            payload['permissions'] = permissions;
+        }
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('post', uri, apiHeaders, payload);
+    }
+    getDocument(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                documentId: rest[1],
+                queries: rest[2],
+                transactionId: rest[3]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const documentId = params.documentId;
+        const queries = params.queries;
+        const transactionId = params.transactionId;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+        const payload = {};
+        if (typeof queries !== 'undefined') {
+            payload['queries'] = queries;
+        }
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {};
+        return this.client.call('get', uri, apiHeaders, payload);
+    }
+    upsertDocument(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                documentId: rest[1],
+                data: rest[2],
+                permissions: rest[3],
+                transactionId: rest[4]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const documentId = params.documentId;
+        const data = params.data;
+        const permissions = params.permissions;
+        const transactionId = params.transactionId;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        if (typeof data === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "data"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+        const payload = {};
+        if (typeof data !== 'undefined') {
+            payload['data'] = data;
+        }
+        if (typeof permissions !== 'undefined') {
+            payload['permissions'] = permissions;
+        }
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('put', uri, apiHeaders, payload);
+    }
+    updateDocument(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                documentId: rest[1],
+                data: rest[2],
+                permissions: rest[3],
+                transactionId: rest[4]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const documentId = params.documentId;
+        const data = params.data;
+        const permissions = params.permissions;
+        const transactionId = params.transactionId;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+        const payload = {};
+        if (typeof data !== 'undefined') {
+            payload['data'] = data;
+        }
+        if (typeof permissions !== 'undefined') {
+            payload['permissions'] = permissions;
+        }
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('patch', uri, apiHeaders, payload);
+    }
+    deleteDocument(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                documentId: rest[1],
+                transactionId: rest[2]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const documentId = params.documentId;
+        const transactionId = params.transactionId;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
+        const payload = {};
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('delete', uri, apiHeaders, payload);
+    }
+    decrementDocumentAttribute(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                documentId: rest[1],
+                attribute: rest[2],
+                value: rest[3],
+                min: rest[4],
+                transactionId: rest[5]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const documentId = params.documentId;
+        const attribute = params.attribute;
+        const value = params.value;
+        const min = params.min;
+        const transactionId = params.transactionId;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        if (typeof attribute === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "attribute"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/decrement'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId).replace('{attribute}', attribute);
+        const payload = {};
+        if (typeof value !== 'undefined') {
+            payload['value'] = value;
+        }
+        if (typeof min !== 'undefined') {
+            payload['min'] = min;
+        }
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('patch', uri, apiHeaders, payload);
+    }
+    incrementDocumentAttribute(paramsOrFirst, ...rest) {
+        let params;
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {});
+        }
+        else {
+            params = {
+                databaseId: paramsOrFirst,
+                collectionId: rest[0],
+                documentId: rest[1],
+                attribute: rest[2],
+                value: rest[3],
+                max: rest[4],
+                transactionId: rest[5]
+            };
+        }
+        const databaseId = params.databaseId;
+        const collectionId = params.collectionId;
+        const documentId = params.documentId;
+        const attribute = params.attribute;
+        const value = params.value;
+        const max = params.max;
+        const transactionId = params.transactionId;
+        if (typeof databaseId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "databaseId"');
+        }
+        if (typeof collectionId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "collectionId"');
+        }
+        if (typeof documentId === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "documentId"');
+        }
+        if (typeof attribute === 'undefined') {
+            throw new AppwriteException('Missing required parameter: "attribute"');
+        }
+        const apiPath = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/{attribute}/increment'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId).replace('{attribute}', attribute);
+        const payload = {};
+        if (typeof value !== 'undefined') {
+            payload['value'] = value;
+        }
+        if (typeof max !== 'undefined') {
+            payload['max'] = max;
+        }
+        if (typeof transactionId !== 'undefined') {
+            payload['transactionId'] = transactionId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+        const apiHeaders = {
+            'content-type': 'application/json',
+        };
+        return this.client.call('patch', uri, apiHeaders, payload);
+    }
+}
+
 var RealtimeCode;
 (function (RealtimeCode) {
     RealtimeCode[RealtimeCode["NORMAL_CLOSURE"] = 1000] = "NORMAL_CLOSURE";
@@ -2450,4 +2970,4 @@ var ExecutionStatus;
     ExecutionStatus["Scheduled"] = "scheduled";
 })(ExecutionStatus || (ExecutionStatus = {}));
 
-export { Account, AppwriteException, AuthenticationFactor, AuthenticatorType, Browser, Client, Condition, CreditCard, ExecutionMethod, ExecutionStatus, ExecutionTrigger, Flag, ID, ImageFormat, ImageGravity, OAuthProvider };
+export { Account, AppwriteException, AuthenticationFactor, AuthenticatorType, Browser, Client, Condition, CreditCard, Databases, ExecutionMethod, ExecutionStatus, ExecutionTrigger, Flag, ID, ImageFormat, ImageGravity, OAuthProvider };
