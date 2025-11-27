@@ -352,6 +352,8 @@ import { ID, Query } from 'appwrite'
     btnLoader.style.display = 'inline';
     
     try {
+      console.log('🔨 Attempting login with:', { email, password: '***' });
+      
       // Simple Appwrite client for login
       class SimpleAppwriteClient {
         constructor() {
@@ -364,6 +366,9 @@ import { ID, Query } from 'appwrite'
         }
 
         async post(endpoint, data) {
+          console.log('📡 Making request to:', `${this.endpoint}${endpoint}`);
+          console.log('📦 Request data:', { ...data, password: '***' });
+          
           const response = await fetch(`${this.endpoint}${endpoint}`, {
             method: 'POST',
             headers: this.headers,
@@ -371,12 +376,23 @@ import { ID, Query } from 'appwrite'
             credentials: 'include'
           });
           
+          console.log('📊 Response status:', response.status);
+          console.log('📊 Response headers:', Object.fromEntries(response.headers.entries()));
+          
+          const responseText = await response.text();
+          console.log('📄 Response text:', responseText);
+          
           if (!response.ok) {
-            const error = await response.json();
+            let error;
+            try {
+              error = JSON.parse(responseText);
+            } catch (e) {
+              error = { message: responseText, code: response.status };
+            }
             throw error;
           }
           
-          return response.json();
+          return JSON.parse(responseText);
         }
       }
 
@@ -388,24 +404,33 @@ import { ID, Query } from 'appwrite'
         password
       });
       
-      console.log('Login successful:', session);
+      console.log('✅ Login successful:', session);
       showToast('Login successful! Redirecting...', 'success');
+      
+      // Store session info
+      localStorage.setItem('userSession', JSON.stringify(session));
+      localStorage.setItem('userEmail', email);
       
       // Redirect to dashboard after successful login
       setTimeout(() => {
+        console.log('🔄 Redirecting to dashboard...');
         window.location.href = '/dashboard';
       }, 1500);
       
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ Login error:', error);
       
-      if (error.code === 401) {
-        showToast('Invalid email or password', 'error');
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.code === 401 || error.message?.includes('invalid_credentials')) {
+        errorMessage = 'Invalid email or password';
       } else if (error.code === 429) {
-        showToast('Too many login attempts. Please try again later', 'error');
-      } else {
-        showToast('Login failed: ' + (error.message || 'Unknown error'), 'error');
+        errorMessage = 'Too many login attempts. Please try again later';
+      } else if (error.message) {
+        errorMessage = 'Login failed: ' + error.message;
       }
+      
+      showToast(errorMessage, 'error');
     } finally {
       // Reset loading state
       submitBtn.disabled = false;
