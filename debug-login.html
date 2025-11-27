@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Debug</title>
+</head>
+<body>
+    <h1>Login Debug Test</h1>
+    
+    <div id="debug-info">
+        <h2>Debug Information:</h2>
+        <div id="debug-output"></div>
+    </div>
+    
+    <div id="test-section">
+        <h2>JavaScript Tests:</h2>
+        
+        <!-- Test 1: Inline onclick -->
+        <button onclick="console.log('Inline onclick works!'); updateDebug('Inline onclick: SUCCESS');">
+            Test 1: Inline onclick
+        </button>
+        
+        <!-- Test 2: Event listener -->
+        <button id="test2">
+            Test 2: Event listener
+        </button>
+        
+        <!-- Test 3: Module script test -->
+        <button id="test3">
+            Test 3: Module script
+        </button>
+        
+        <!-- Test 4: Simple alert -->
+        <button onclick="alert('Alert works!'); updateDebug('Alert: SUCCESS');">
+            Test 4: Alert
+        </button>
+    </div>
+    
+    <div id="network-test">
+        <h2>Network Test:</h2>
+        <button onclick="testFetch()">Test Fetch API</button>
+        <button onclick="testAppwrite()">Test Appwrite Connection</button>
+    </div>
+    
+    <script>
+        // Debug helper
+        function updateDebug(message) {
+            const output = document.getElementById('debug-output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `<p>[${timestamp}] ${message}</p>`;
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        // Test basic JavaScript
+        updateDebug('Basic script loaded');
+        
+        // Test event listener
+        document.getElementById('test2').addEventListener('click', function() {
+            console.log('Event listener works!');
+            updateDebug('Event listener: SUCCESS');
+        });
+        
+        // Test module script
+        document.getElementById('test3').addEventListener('click', function() {
+            console.log('Module script test works!');
+            updateDebug('Module script: SUCCESS');
+        });
+        
+        // Test fetch API
+        async function testFetch() {
+            try {
+                updateDebug('Testing fetch API...');
+                const response = await fetch('https://httpbin.org/get');
+                const data = await response.json();
+                updateDebug('Fetch API: SUCCESS - ' + JSON.stringify(data.url));
+            } catch (error) {
+                updateDebug('Fetch API: FAILED - ' + error.message);
+            }
+        }
+        
+        // Test Appwrite connection
+        async function testAppwrite() {
+            try {
+                updateDebug('Testing Appwrite connection...');
+                const response = await fetch('https://fra.cloud.appwrite.io/v1/account/sessions', {
+                    method: 'GET',
+                    headers: {
+                        'X-Appwrite-Project': '6900b1ed001604d8befb',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                updateDebug('Appwrite: Status ' + response.status);
+            } catch (error) {
+                updateDebug('Appwrite: FAILED - ' + error.message);
+            }
+        }
+        
+        // Check browser info
+        updateDebug('Browser: ' + navigator.userAgent);
+        updateDebug('URL: ' + window.location.href);
+        updateDebug('Scripts enabled: ' + (typeof document.createElement('script').async !== 'undefined'));
+        
+        // Check if we're in Cloudflare Workers
+        if (window.location.hostname.includes('workers.dev')) {
+            updateDebug('Environment: Cloudflare Workers detected');
+        }
+        
+        // Check for any errors
+        window.addEventListener('error', function(e) {
+            updateDebug('JavaScript Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+        });
+        
+        // Check for unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+            updateDebug('Unhandled Promise Rejection: ' + e.reason);
+        });
+    </script>
+    
+    <script type="module">
+        // Test module script
+        updateDebug('Module script loaded');
+        
+        import('data:text/javascript,console.log("Dynamic import works!")')
+            .then(() => updateDebug('Dynamic import: SUCCESS'))
+            .catch(err => updateDebug('Dynamic import: FAILED - ' + err.message));
+    </script>
+</body>
+</html>
