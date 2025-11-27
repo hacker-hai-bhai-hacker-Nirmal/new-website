@@ -6,10 +6,231 @@ export { renderers } from '../renderers.mjs';
 
 var __freeze = Object.freeze;
 var __defProp = Object.defineProperty;
-var __template = (cooked, raw) => __freeze(__defProp(cooked, "raw", { value: __freeze(raw || cooked.slice()) }));
+var __template = (cooked, raw) => __freeze(__defProp(cooked, "raw", { value: __freeze(cooked.slice()) }));
 var _a;
 const $$Login = createComponent(async ($$result, $$props, $$slots) => {
-  return renderTemplate(_a || (_a = __template(["", " <script type=\"module\">\n  // Simple standalone login functionality\n  console.log('\u{1F680} Login script loaded!');\n  \n  // Wait for DOM to be ready - ONLY ONCE\n  document.addEventListener('DOMContentLoaded', () => {\n    console.log('\u{1F4C4} DOM Content Loaded');\n    \n    // Test basic functionality\n    const testBtn = document.querySelector('button[onclick*=\"Test JavaScript\"]');\n    if (testBtn) {\n      console.log('\u2705 Test button found');\n    } else {\n      console.log('\u274C Test button not found');\n    }\n    \n    // Form elements\n    const loginForm = document.getElementById('loginForm');\n    const signupForm = document.getElementById('signupForm');\n    const toggleToSignup = document.getElementById('toggleToSignup');\n    const toggleToLogin = document.getElementById('toggleToLogin');\n    \n    console.log('\u{1F4C4} Setting up form handlers...');\n    \n    // Form switching handlers\n    if (toggleToSignup) {\n      toggleToSignup.addEventListener('click', (e) => {\n        console.log('\u{1F504} Switching to signup');\n        e.preventDefault();\n        loginForm.style.display = 'none';\n        signupForm.style.display = 'block';\n      });\n    }\n\n    if (toggleToLogin) {\n      toggleToLogin.addEventListener('click', (e) => {\n        console.log('\u{1F504} Switching to login');\n        e.preventDefault();\n        signupForm.style.display = 'none';\n        loginForm.style.display = 'block';\n      });\n    }\n\n    // Login form submission\n    if (loginForm) {\n      loginForm.addEventListener('submit', async (e) => {\n        console.log('\u{1F680} Form submit event triggered!');\n        e.preventDefault();\n        \n        const email = document.getElementById('email').value.trim();\n        const password = document.getElementById('password').value;\n        const submitBtn = document.getElementById('loginSubmit');\n        const btnText = submitBtn.querySelector('.btn-text');\n        const btnLoader = submitBtn.querySelector('.btn-loader');\n        \n        console.log('\u{1F4DD} Form data:', { email, password: password ? '***' : 'empty' });\n        \n        // Basic validation\n        if (!email || !password) {\n          console.log('\u274C Please fill in all fields');\n          alert('Please fill in all fields');\n          return;\n        }\n        \n        console.log('\u2705 Form validation passed');\n        \n        // Show loading state\n        submitBtn.disabled = true;\n        btnText.style.display = 'none';\n        btnLoader.style.display = 'inline';\n        \n        console.log('\u23F3 Loading state activated');\n        \n        try {\n          console.log('\u{1F528} Attempting login with:', { email, password: '***' });\n          \n          // Simple Appwrite client for login\n          class SimpleAppwriteClient {\n            constructor() {\n              this.endpoint = 'https://fra.cloud.appwrite.io/v1';\n              this.projectId = '6900b1ed001604d8befb';\n              this.headers = {\n                'X-Appwrite-Project': this.projectId,\n                'Content-Type': 'application/json'\n              };\n            }\n\n            async post(endpoint, data) {\n              console.log('\u{1F4E1} Making request to:', `${this.endpoint}${endpoint}`);\n              console.log('\u{1F4E6} Request data:', { ...data, password: '***' });\n              \n              const response = await fetch(`${this.endpoint}${endpoint}`, {\n                method: 'POST',\n                headers: this.headers,\n                body: JSON.stringify(data),\n                credentials: 'include'\n              });\n              \n              console.log('\u{1F4CA} Response status:', response.status);\n              \n              const responseText = await response.text();\n              console.log('\u{1F4C4} Response text:', responseText);\n              \n              if (!response.ok) {\n                let error;\n                try {\n                  error = JSON.parse(responseText);\n                } catch (e) {\n                  error = { message: responseText, code: response.status };\n                }\n                throw error;\n              }\n              \n              return JSON.parse(responseText);\n            }\n          }\n\n          const client = new SimpleAppwriteClient();\n          \n          // Attempt to login with Appwrite\n          const session = await client.post('/account/sessions/email', {\n            email,\n            password\n          });\n          \n          console.log('\u2705 Login successful:', session);\n          alert('Login successful! Redirecting to dashboard...');\n          \n          // Store session info\n          localStorage.setItem('userSession', JSON.stringify(session));\n          localStorage.setItem('userEmail', email);\n          \n          // Redirect to dashboard after successful login\n          setTimeout(() => {\n            console.log('\u{1F504} Redirecting to dashboard...');\n            window.location.href = '/dashboard';\n          }, 1500);\n          \n        } catch (error) {\n          console.error('\u274C Login error:', error);\n          \n          let errorMessage = 'Login failed. Please try again.';\n          \n          if (error.code === 401 || error.message?.includes('invalid_credentials')) {\n            errorMessage = 'Invalid email or password';\n          } else if (error.code === 429) {\n            errorMessage = 'Too many login attempts. Please try again later';\n          } else if (error.message) {\n            errorMessage = 'Login failed: ' + error.message;\n          }\n          \n          alert(errorMessage);\n        } finally {\n          // Reset loading state\n          submitBtn.disabled = false;\n          btnText.style.display = 'inline';\n          btnLoader.style.display = 'none';\n        }\n      });\n    }\n    \n    // Signup form submission\n    if (signupForm) {\n      signupForm.addEventListener('submit', async (e) => {\n        console.log('\u{1F680} Signup form submit event triggered!');\n        e.preventDefault();\n        \n        const fullName = document.getElementById('signupFullName').value.trim();\n        const email = document.getElementById('signupEmail').value.trim();\n        const password = document.getElementById('signupPassword').value;\n        const confirmPassword = document.getElementById('confirmPassword').value;\n        const agreeTerms = document.getElementById('agreeTerms').checked;\n        \n        console.log('\u{1F4DD} Signup data:', { fullName, email, password: password ? '***' : 'empty', agreeTerms });\n        \n        // Basic validation\n        if (!fullName || !email || !password || !confirmPassword) {\n          console.log('\u274C Please fill in all fields');\n          alert('Please fill in all fields');\n          return;\n        }\n        \n        if (password !== confirmPassword) {\n          console.log('\u274C Passwords do not match');\n          alert('Passwords do not match');\n          return;\n        }\n        \n        if (!agreeTerms) {\n          console.log('\u274C Please agree to terms');\n          alert('Please agree to the Terms & Conditions');\n          return;\n        }\n        \n        console.log('\u2705 Signup validation passed');\n        \n        try {\n          console.log('\u{1F528} Attempting signup with:', { fullName, email, password: '***' });\n          \n          // Simple Appwrite client for signup\n          class SimpleAppwriteClient {\n            constructor() {\n              this.endpoint = 'https://fra.cloud.appwrite.io/v1';\n              this.projectId = '6900b1ed001604d8befb';\n              this.headers = {\n                'X-Appwrite-Project': this.projectId,\n                'Content-Type': 'application/json'\n              };\n            }\n\n            async post(endpoint, data) {\n              console.log('\u{1F4E1} Making request to:', `${this.endpoint}${endpoint}`);\n              console.log('\u{1F4E6} Request data:', { ...data, password: '***' });\n              \n              const response = await fetch(`${this.endpoint}${endpoint}`, {\n                method: 'POST',\n                headers: this.headers,\n                body: JSON.stringify(data),\n                credentials: 'include'\n              });\n              \n              console.log('\u{1F4CA} Response status:', response.status);\n              \n              const responseText = await response.text();\n              console.log('\u{1F4C4} Response text:', responseText);\n              \n              if (!response.ok) {\n                let error;\n                try {\n                  error = JSON.parse(responseText);\n                } catch (e) {\n                  error = { message: responseText, code: response.status };\n                }\n                throw error;\n              }\n              \n              return JSON.parse(responseText);\n            }\n          }\n\n          const client = new SimpleAppwriteClient();\n          \n          // Create account with Appwrite\n          const user = await client.post('/account', {\n            userId: 'unique()',\n            email,\n            password,\n            name: fullName\n          });\n          \n          console.log('\u2705 Account created:', user);\n          alert('Account created successfully! You can now sign in.');\n          \n          // Switch back to login form\n          signupForm.style.display = 'none';\n          loginForm.style.display = 'block';\n          \n          // Pre-fill email in login form\n          document.getElementById('email').value = email;\n          \n        } catch (error) {\n          console.error('\u274C Signup error:', error);\n          \n          let errorMessage = 'Signup failed. Please try again.';\n          \n          if (error.code === 400) {\n            errorMessage = 'Email already exists or invalid data';\n          } else if (error.code === 429) {\n            errorMessage = 'Too many signup attempts. Please try again later';\n          } else if (error.message) {\n            errorMessage = 'Signup failed: ' + error.message;\n          }\n          \n          alert(errorMessage);\n        }\n      });\n    }\n    \n    // Setup password toggles\n    function setupPasswordToggle(toggleId, inputId) {\n      const toggle = document.getElementById(toggleId);\n      const input = document.getElementById(inputId);\n      \n      if (toggle && input) {\n        toggle.addEventListener('click', () => {\n          const type = input.type === 'password' ? 'text' : 'password';\n          input.type = type;\n          toggle.querySelector('.eye-icon').textContent = type === 'password' ? '\u{1F441}\uFE0F' : '\u{1F441}\uFE0F\u200D\u{1F5E8}\uFE0F';\n        });\n      }\n    }\n\n    setupPasswordToggle('togglePassword', 'password');\n    setupPasswordToggle('toggleSignupPassword', 'signupPassword');\n    setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');\n  });\n<\/script> "], ["", " <script type=\"module\">\n  // Simple standalone login functionality\n  console.log('\u{1F680} Login script loaded!');\n  \n  // Wait for DOM to be ready - ONLY ONCE\n  document.addEventListener('DOMContentLoaded', () => {\n    console.log('\u{1F4C4} DOM Content Loaded');\n    \n    // Test basic functionality\n    const testBtn = document.querySelector('button[onclick*=\"Test JavaScript\"]');\n    if (testBtn) {\n      console.log('\u2705 Test button found');\n    } else {\n      console.log('\u274C Test button not found');\n    }\n    \n    // Form elements\n    const loginForm = document.getElementById('loginForm');\n    const signupForm = document.getElementById('signupForm');\n    const toggleToSignup = document.getElementById('toggleToSignup');\n    const toggleToLogin = document.getElementById('toggleToLogin');\n    \n    console.log('\u{1F4C4} Setting up form handlers...');\n    \n    // Form switching handlers\n    if (toggleToSignup) {\n      toggleToSignup.addEventListener('click', (e) => {\n        console.log('\u{1F504} Switching to signup');\n        e.preventDefault();\n        loginForm.style.display = 'none';\n        signupForm.style.display = 'block';\n      });\n    }\n\n    if (toggleToLogin) {\n      toggleToLogin.addEventListener('click', (e) => {\n        console.log('\u{1F504} Switching to login');\n        e.preventDefault();\n        signupForm.style.display = 'none';\n        loginForm.style.display = 'block';\n      });\n    }\n\n    // Login form submission\n    if (loginForm) {\n      loginForm.addEventListener('submit', async (e) => {\n        console.log('\u{1F680} Form submit event triggered!');\n        e.preventDefault();\n        \n        const email = document.getElementById('email').value.trim();\n        const password = document.getElementById('password').value;\n        const submitBtn = document.getElementById('loginSubmit');\n        const btnText = submitBtn.querySelector('.btn-text');\n        const btnLoader = submitBtn.querySelector('.btn-loader');\n        \n        console.log('\u{1F4DD} Form data:', { email, password: password ? '***' : 'empty' });\n        \n        // Basic validation\n        if (!email || !password) {\n          console.log('\u274C Please fill in all fields');\n          alert('Please fill in all fields');\n          return;\n        }\n        \n        console.log('\u2705 Form validation passed');\n        \n        // Show loading state\n        submitBtn.disabled = true;\n        btnText.style.display = 'none';\n        btnLoader.style.display = 'inline';\n        \n        console.log('\u23F3 Loading state activated');\n        \n        try {\n          console.log('\u{1F528} Attempting login with:', { email, password: '***' });\n          \n          // Simple Appwrite client for login\n          class SimpleAppwriteClient {\n            constructor() {\n              this.endpoint = 'https://fra.cloud.appwrite.io/v1';\n              this.projectId = '6900b1ed001604d8befb';\n              this.headers = {\n                'X-Appwrite-Project': this.projectId,\n                'Content-Type': 'application/json'\n              };\n            }\n\n            async post(endpoint, data) {\n              console.log('\u{1F4E1} Making request to:', \\`\\${this.endpoint}\\${endpoint}\\`);\n              console.log('\u{1F4E6} Request data:', { ...data, password: '***' });\n              \n              const response = await fetch(\\`\\${this.endpoint}\\${endpoint}\\`, {\n                method: 'POST',\n                headers: this.headers,\n                body: JSON.stringify(data),\n                credentials: 'include'\n              });\n              \n              console.log('\u{1F4CA} Response status:', response.status);\n              \n              const responseText = await response.text();\n              console.log('\u{1F4C4} Response text:', responseText);\n              \n              if (!response.ok) {\n                let error;\n                try {\n                  error = JSON.parse(responseText);\n                } catch (e) {\n                  error = { message: responseText, code: response.status };\n                }\n                throw error;\n              }\n              \n              return JSON.parse(responseText);\n            }\n          }\n\n          const client = new SimpleAppwriteClient();\n          \n          // Attempt to login with Appwrite\n          const session = await client.post('/account/sessions/email', {\n            email,\n            password\n          });\n          \n          console.log('\u2705 Login successful:', session);\n          alert('Login successful! Redirecting to dashboard...');\n          \n          // Store session info\n          localStorage.setItem('userSession', JSON.stringify(session));\n          localStorage.setItem('userEmail', email);\n          \n          // Redirect to dashboard after successful login\n          setTimeout(() => {\n            console.log('\u{1F504} Redirecting to dashboard...');\n            window.location.href = '/dashboard';\n          }, 1500);\n          \n        } catch (error) {\n          console.error('\u274C Login error:', error);\n          \n          let errorMessage = 'Login failed. Please try again.';\n          \n          if (error.code === 401 || error.message?.includes('invalid_credentials')) {\n            errorMessage = 'Invalid email or password';\n          } else if (error.code === 429) {\n            errorMessage = 'Too many login attempts. Please try again later';\n          } else if (error.message) {\n            errorMessage = 'Login failed: ' + error.message;\n          }\n          \n          alert(errorMessage);\n        } finally {\n          // Reset loading state\n          submitBtn.disabled = false;\n          btnText.style.display = 'inline';\n          btnLoader.style.display = 'none';\n        }\n      });\n    }\n    \n    // Signup form submission\n    if (signupForm) {\n      signupForm.addEventListener('submit', async (e) => {\n        console.log('\u{1F680} Signup form submit event triggered!');\n        e.preventDefault();\n        \n        const fullName = document.getElementById('signupFullName').value.trim();\n        const email = document.getElementById('signupEmail').value.trim();\n        const password = document.getElementById('signupPassword').value;\n        const confirmPassword = document.getElementById('confirmPassword').value;\n        const agreeTerms = document.getElementById('agreeTerms').checked;\n        \n        console.log('\u{1F4DD} Signup data:', { fullName, email, password: password ? '***' : 'empty', agreeTerms });\n        \n        // Basic validation\n        if (!fullName || !email || !password || !confirmPassword) {\n          console.log('\u274C Please fill in all fields');\n          alert('Please fill in all fields');\n          return;\n        }\n        \n        if (password !== confirmPassword) {\n          console.log('\u274C Passwords do not match');\n          alert('Passwords do not match');\n          return;\n        }\n        \n        if (!agreeTerms) {\n          console.log('\u274C Please agree to terms');\n          alert('Please agree to the Terms & Conditions');\n          return;\n        }\n        \n        console.log('\u2705 Signup validation passed');\n        \n        try {\n          console.log('\u{1F528} Attempting signup with:', { fullName, email, password: '***' });\n          \n          // Simple Appwrite client for signup\n          class SimpleAppwriteClient {\n            constructor() {\n              this.endpoint = 'https://fra.cloud.appwrite.io/v1';\n              this.projectId = '6900b1ed001604d8befb';\n              this.headers = {\n                'X-Appwrite-Project': this.projectId,\n                'Content-Type': 'application/json'\n              };\n            }\n\n            async post(endpoint, data) {\n              console.log('\u{1F4E1} Making request to:', \\`\\${this.endpoint}\\${endpoint}\\`);\n              console.log('\u{1F4E6} Request data:', { ...data, password: '***' });\n              \n              const response = await fetch(\\`\\${this.endpoint}\\${endpoint}\\`, {\n                method: 'POST',\n                headers: this.headers,\n                body: JSON.stringify(data),\n                credentials: 'include'\n              });\n              \n              console.log('\u{1F4CA} Response status:', response.status);\n              \n              const responseText = await response.text();\n              console.log('\u{1F4C4} Response text:', responseText);\n              \n              if (!response.ok) {\n                let error;\n                try {\n                  error = JSON.parse(responseText);\n                } catch (e) {\n                  error = { message: responseText, code: response.status };\n                }\n                throw error;\n              }\n              \n              return JSON.parse(responseText);\n            }\n          }\n\n          const client = new SimpleAppwriteClient();\n          \n          // Create account with Appwrite\n          const user = await client.post('/account', {\n            userId: 'unique()',\n            email,\n            password,\n            name: fullName\n          });\n          \n          console.log('\u2705 Account created:', user);\n          alert('Account created successfully! You can now sign in.');\n          \n          // Switch back to login form\n          signupForm.style.display = 'none';\n          loginForm.style.display = 'block';\n          \n          // Pre-fill email in login form\n          document.getElementById('email').value = email;\n          \n        } catch (error) {\n          console.error('\u274C Signup error:', error);\n          \n          let errorMessage = 'Signup failed. Please try again.';\n          \n          if (error.code === 400) {\n            errorMessage = 'Email already exists or invalid data';\n          } else if (error.code === 429) {\n            errorMessage = 'Too many signup attempts. Please try again later';\n          } else if (error.message) {\n            errorMessage = 'Signup failed: ' + error.message;\n          }\n          \n          alert(errorMessage);\n        }\n      });\n    }\n    \n    // Setup password toggles\n    function setupPasswordToggle(toggleId, inputId) {\n      const toggle = document.getElementById(toggleId);\n      const input = document.getElementById(inputId);\n      \n      if (toggle && input) {\n        toggle.addEventListener('click', () => {\n          const type = input.type === 'password' ? 'text' : 'password';\n          input.type = type;\n          toggle.querySelector('.eye-icon').textContent = type === 'password' ? '\u{1F441}\uFE0F' : '\u{1F441}\uFE0F\u200D\u{1F5E8}\uFE0F';\n        });\n      }\n    }\n\n    setupPasswordToggle('togglePassword', 'password');\n    setupPasswordToggle('toggleSignupPassword', 'signupPassword');\n    setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');\n  });\n<\/script> "])), renderComponent($$result, "Layout", $$Layout, { "data-astro-cid-sgpqyurt": true }, { "default": async ($$result2) => renderTemplate`  ${maybeRenderHead()}<div class="discount-banner" data-astro-cid-sgpqyurt> <div class="sparkle-effect" data-astro-cid-sgpqyurt>✨</div> <span data-astro-cid-sgpqyurt>🎉 Launch Discount: Get Up to 60% Off! 🎉</span> <div class="sparkle-effect" data-astro-cid-sgpqyurt>✨</div> </div> <header class="site-header" data-astro-cid-sgpqyurt> <div class="container" data-astro-cid-sgpqyurt> <a class="brand" href="/" data-astro-cid-sgpqyurt> <span class="brand-icon" data-astro-cid-sgpqyurt>📚</span>
+  return renderTemplate(_a || (_a = __template(["", ` <script type="module">
+  // Simple standalone login functionality
+  console.log('\u{1F680} Login script loaded!');
+  
+  // Wait for DOM to be ready - ONLY ONCE
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('\u{1F4C4} DOM Content Loaded');
+    
+    // Test basic functionality
+    const testBtn = document.querySelector('button[onclick*="Test JavaScript"]');
+    if (testBtn) {
+      console.log('\u2705 Test button found');
+    } else {
+      console.log('\u274C Test button not found');
+    }
+    
+    // Form elements
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const toggleToSignup = document.getElementById('toggleToSignup');
+    const toggleToLogin = document.getElementById('toggleToLogin');
+    
+    console.log('\u{1F4C4} Setting up form handlers...');
+    
+    // Form switching handlers
+    if (toggleToSignup) {
+      toggleToSignup.addEventListener('click', (e) => {
+        console.log('\u{1F504} Switching to signup');
+        e.preventDefault();
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+      });
+    }
+
+    if (toggleToLogin) {
+      toggleToLogin.addEventListener('click', (e) => {
+        console.log('\u{1F504} Switching to login');
+        e.preventDefault();
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+      });
+    }
+
+    // Login form submission
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        console.log('\u{1F680} Form submit event triggered!');
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const submitBtn = document.getElementById('loginSubmit');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoader = submitBtn.querySelector('.btn-loader');
+        
+        console.log('\u{1F4DD} Form data:', { email, password: password ? '***' : 'empty' });
+        
+        // Basic validation
+        if (!email || !password) {
+          console.log('\u274C Please fill in all fields');
+          alert('Please fill in all fields');
+          return;
+        }
+        
+        console.log('\u2705 Form validation passed');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline';
+        
+        console.log('\u23F3 Loading state activated');
+        
+        try {
+          console.log('\u{1F528} Attempting login with Appwrite SDK:', { email, password: '***' });
+          
+          // Initialize Appwrite SDK
+          const client = new Client()
+            .setEndpoint('https://fra.cloud.appwrite.io/v1')
+            .setProject('6900b1ed001604d8befb');
+          
+          const account = new Account(client);
+          
+          // Attempt to login with Appwrite SDK
+          const session = await account.createEmailPasswordSession(email, password);
+          
+          console.log('\u2705 Login successful:', session);
+          alert('Login successful! Redirecting to dashboard...');
+          
+          // Store session info
+          localStorage.setItem('userSession', JSON.stringify(session));
+          localStorage.setItem('userEmail', email);
+          
+          // Redirect to dashboard after successful login
+          setTimeout(() => {
+            console.log('\u{1F504} Redirecting to dashboard...');
+            window.location.href = '/dashboard';
+          }, 1500);
+          
+        } catch (error) {
+          console.error('\u274C Login error:', error);
+          
+          let errorMessage = 'Login failed. Please try again.';
+          
+          if (error.code === 401 || error.message?.includes('invalid_credentials')) {
+            errorMessage = 'Invalid email or password';
+          } else if (error.code === 429) {
+            errorMessage = 'Too many login attempts. Please try again later';
+          } else if (error.message) {
+            errorMessage = 'Login failed: ' + error.message;
+          }
+          
+          alert(errorMessage);
+        } finally {
+          // Reset loading state
+          submitBtn.disabled = false;
+          btnText.style.display = 'inline';
+          btnLoader.style.display = 'none';
+        }
+      });
+    }
+    
+    // Signup form submission
+    if (signupForm) {
+      signupForm.addEventListener('submit', async (e) => {
+        console.log('\u{1F680} Signup form submit event triggered!');
+        e.preventDefault();
+        
+        const fullName = document.getElementById('signupFullName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+        console.log('\u{1F4DD} Signup data:', { fullName, email, password: password ? '***' : 'empty', agreeTerms });
+        
+        // Basic validation
+        if (!fullName || !email || !password || !confirmPassword) {
+          console.log('\u274C Please fill in all fields');
+          alert('Please fill in all fields');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          console.log('\u274C Passwords do not match');
+          alert('Passwords do not match');
+          return;
+        }
+        
+        if (!agreeTerms) {
+          console.log('\u274C Please agree to terms');
+          alert('Please agree to the Terms & Conditions');
+          return;
+        }
+        
+        console.log('\u2705 Signup validation passed');
+        
+        try {
+          console.log('\u{1F528} Attempting signup with Appwrite SDK:', { fullName, email, password: '***' });
+          
+          // Initialize Appwrite SDK
+          const client = new Client()
+            .setEndpoint('https://fra.cloud.appwrite.io/v1')
+            .setProject('6900b1ed001604d8befb');
+          
+          const account = new Account(client);
+          
+          // Create account with Appwrite SDK
+          const user = await account.create(
+            ID.unique(),
+            email,
+            password,
+            fullName
+          );
+          
+          console.log('\u2705 Account created:', user);
+          alert('Account created successfully! You can now sign in.');
+          
+          // Switch back to login form
+          signupForm.style.display = 'none';
+          loginForm.style.display = 'block';
+          
+          // Pre-fill email in login form
+          document.getElementById('email').value = email;
+          
+        } catch (error) {
+          console.error('\u274C Signup error:', error);
+          
+          let errorMessage = 'Signup failed. Please try again.';
+          
+          if (error.code === 400) {
+            errorMessage = 'Email already exists or invalid data';
+          } else if (error.code === 429) {
+            errorMessage = 'Too many signup attempts. Please try again later';
+          } else if (error.message) {
+            errorMessage = 'Signup failed: ' + error.message;
+          }
+          
+          alert(errorMessage);
+        }
+      });
+    }
+    
+    // Setup password toggles
+    function setupPasswordToggle(toggleId, inputId) {
+      const toggle = document.getElementById(toggleId);
+      const input = document.getElementById(inputId);
+      
+      if (toggle && input) {
+        toggle.addEventListener('click', () => {
+          const type = input.type === 'password' ? 'text' : 'password';
+          input.type = type;
+          toggle.querySelector('.eye-icon').textContent = type === 'password' ? '\u{1F441}\uFE0F' : '\u{1F441}\uFE0F\u200D\u{1F5E8}\uFE0F';
+        });
+      }
+    }
+
+    setupPasswordToggle('togglePassword', 'password');
+    setupPasswordToggle('toggleSignupPassword', 'signupPassword');
+    setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
+  });
+<\/script> `])), renderComponent($$result, "Layout", $$Layout, { "data-astro-cid-sgpqyurt": true }, { "default": async ($$result2) => renderTemplate`  ${maybeRenderHead()}<div class="discount-banner" data-astro-cid-sgpqyurt> <div class="sparkle-effect" data-astro-cid-sgpqyurt>✨</div> <span data-astro-cid-sgpqyurt>🎉 Launch Discount: Get Up to 60% Off! 🎉</span> <div class="sparkle-effect" data-astro-cid-sgpqyurt>✨</div> </div> <header class="site-header" data-astro-cid-sgpqyurt> <div class="container" data-astro-cid-sgpqyurt> <a class="brand" href="/" data-astro-cid-sgpqyurt> <span class="brand-icon" data-astro-cid-sgpqyurt>📚</span>
 Litterateur
 </a> <nav class="nav" data-astro-cid-sgpqyurt> <a href="/menu" data-astro-cid-sgpqyurt>Menu</a> <a href="/rewards" data-astro-cid-sgpqyurt>Rewards</a> <a class="cta" href="/login" data-astro-cid-sgpqyurt>Sign In</a> </nav> </div> </header> <main data-astro-cid-sgpqyurt> <section class="auth-section" data-astro-cid-sgpqyurt> <div class="container" data-astro-cid-sgpqyurt> <div class="auth-container" data-astro-cid-sgpqyurt> <div class="auth-image" data-astro-cid-sgpqyurt> <div class="image-content" data-astro-cid-sgpqyurt> <div class="floating-elements" data-astro-cid-sgpqyurt> <div class="float-item coffee" data-astro-cid-sgpqyurt>☕</div> <div class="float-item book" data-astro-cid-sgpqyurt>📖</div> <div class="float-item food" data-astro-cid-sgpqyurt>🍽️</div> </div> <div class="image-text" data-astro-cid-sgpqyurt> <h2 data-astro-cid-sgpqyurt>Literary Dining Experience</h2> <p data-astro-cid-sgpqyurt>Where every meal tells a story</p> </div> </div> </div> <div class="auth-form-container" data-astro-cid-sgpqyurt> <div class="auth-header" data-astro-cid-sgpqyurt> <div class="auth-badge" data-astro-cid-sgpqyurt> <span data-astro-cid-sgpqyurt>🎉 Welcome Back!</span> </div> <h1 data-astro-cid-sgpqyurt>Sign In to Litterateur</h1> <p data-astro-cid-sgpqyurt>Unlock exclusive rewards and personalized offers</p> </div> <!-- Login Form --> <form class="auth-form" id="loginForm" data-astro-cid-sgpqyurt> <div class="form-group" data-astro-cid-sgpqyurt> <label for="email" data-astro-cid-sgpqyurt>Email Address *</label> <div class="input-wrapper" data-astro-cid-sgpqyurt> <input type="email" id="email" name="email" placeholder="john@example.com" required data-astro-cid-sgpqyurt> <span class="input-icon" data-astro-cid-sgpqyurt>📧</span> </div> <span class="error-message" id="emailError" data-astro-cid-sgpqyurt>Please enter a valid email</span> </div> <div class="form-group" data-astro-cid-sgpqyurt> <label for="password" data-astro-cid-sgpqyurt>Password *</label> <div class="input-wrapper" data-astro-cid-sgpqyurt> <input type="password" id="password" name="password" placeholder="Enter your password" required data-astro-cid-sgpqyurt> <button type="button" class="toggle-password" id="togglePassword" data-astro-cid-sgpqyurt> <span class="eye-icon" data-astro-cid-sgpqyurt>👁️</span> </button> </div> <span class="error-message" id="passwordError" data-astro-cid-sgpqyurt>Password must be at least 6 characters</span> </div> <div class="form-group checkbox-group" data-astro-cid-sgpqyurt> <label class="checkbox-label" data-astro-cid-sgpqyurt> <input type="checkbox" id="rememberMe" name="rememberMe" data-astro-cid-sgpqyurt> <span class="checkmark" data-astro-cid-sgpqyurt></span>
 Remember Me

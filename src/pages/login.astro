@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import { account, databases, config } from '../lib/appwrite.js'
-import { ID, Query } from 'appwrite'
+import { Client, Account, ID } from 'appwrite'
 ---
 
 <Layout>
@@ -254,56 +253,17 @@ import { ID, Query } from 'appwrite'
         console.log('⏳ Loading state activated');
         
         try {
-          console.log('🔨 Attempting login with:', { email, password: '***' });
+          console.log('🔨 Attempting login with Appwrite SDK:', { email, password: '***' });
           
-          // Simple Appwrite client for login
-          class SimpleAppwriteClient {
-            constructor() {
-              this.endpoint = 'https://fra.cloud.appwrite.io/v1';
-              this.projectId = '6900b1ed001604d8befb';
-              this.headers = {
-                'X-Appwrite-Project': this.projectId,
-                'Content-Type': 'application/json'
-              };
-            }
-
-            async post(endpoint, data) {
-              console.log('📡 Making request to:', `${this.endpoint}${endpoint}`);
-              console.log('📦 Request data:', { ...data, password: '***' });
-              
-              const response = await fetch(`${this.endpoint}${endpoint}`, {
-                method: 'POST',
-                headers: this.headers,
-                body: JSON.stringify(data),
-                credentials: 'include'
-              });
-              
-              console.log('📊 Response status:', response.status);
-              
-              const responseText = await response.text();
-              console.log('📄 Response text:', responseText);
-              
-              if (!response.ok) {
-                let error;
-                try {
-                  error = JSON.parse(responseText);
-                } catch (e) {
-                  error = { message: responseText, code: response.status };
-                }
-                throw error;
-              }
-              
-              return JSON.parse(responseText);
-            }
-          }
-
-          const client = new SimpleAppwriteClient();
+          // Initialize Appwrite SDK
+          const client = new Client()
+            .setEndpoint('https://fra.cloud.appwrite.io/v1')
+            .setProject('6900b1ed001604d8befb');
           
-          // Attempt to login with Appwrite
-          const session = await client.post('/account/sessions/email', {
-            email,
-            password
-          });
+          const account = new Account(client);
+          
+          // Attempt to login with Appwrite SDK
+          const session = await account.createEmailPasswordSession(email, password);
           
           console.log('✅ Login successful:', session);
           alert('Login successful! Redirecting to dashboard...');
@@ -377,58 +337,22 @@ import { ID, Query } from 'appwrite'
         console.log('✅ Signup validation passed');
         
         try {
-          console.log('🔨 Attempting signup with:', { fullName, email, password: '***' });
+          console.log('🔨 Attempting signup with Appwrite SDK:', { fullName, email, password: '***' });
           
-          // Simple Appwrite client for signup
-          class SimpleAppwriteClient {
-            constructor() {
-              this.endpoint = 'https://fra.cloud.appwrite.io/v1';
-              this.projectId = '6900b1ed001604d8befb';
-              this.headers = {
-                'X-Appwrite-Project': this.projectId,
-                'Content-Type': 'application/json'
-              };
-            }
-
-            async post(endpoint, data) {
-              console.log('📡 Making request to:', `${this.endpoint}${endpoint}`);
-              console.log('📦 Request data:', { ...data, password: '***' });
-              
-              const response = await fetch(`${this.endpoint}${endpoint}`, {
-                method: 'POST',
-                headers: this.headers,
-                body: JSON.stringify(data),
-                credentials: 'include'
-              });
-              
-              console.log('📊 Response status:', response.status);
-              
-              const responseText = await response.text();
-              console.log('📄 Response text:', responseText);
-              
-              if (!response.ok) {
-                let error;
-                try {
-                  error = JSON.parse(responseText);
-                } catch (e) {
-                  error = { message: responseText, code: response.status };
-                }
-                throw error;
-              }
-              
-              return JSON.parse(responseText);
-            }
-          }
-
-          const client = new SimpleAppwriteClient();
+          // Initialize Appwrite SDK
+          const client = new Client()
+            .setEndpoint('https://fra.cloud.appwrite.io/v1')
+            .setProject('6900b1ed001604d8befb');
           
-          // Create account with Appwrite
-          const user = await client.post('/account', {
-            userId: 'unique()',
+          const account = new Account(client);
+          
+          // Create account with Appwrite SDK
+          const user = await account.create(
+            ID.unique(),
             email,
             password,
-            name: fullName
-          });
+            fullName
+          );
           
           console.log('✅ Account created:', user);
           alert('Account created successfully! You can now sign in.');
