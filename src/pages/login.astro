@@ -181,30 +181,19 @@ import { ID, Query } from 'appwrite'
 </Layout>
 
 <script type="module">
-  // Import authentication utilities
-  import { auth, navigation, showToast } from '/utils/auth.js';
-
+  // Simple standalone login functionality
+  console.log('🚀 Login script loaded!');
+  
   // Check if user is already logged in
   document.addEventListener('DOMContentLoaded', async () => {
-    // Test Appwrite connection
-    try {
-      console.log('Testing Appwrite connection...');
-      const response = await auth.getCurrentUser();
-      console.log('Appwrite connected successfully:', response);
-      if (response) {
-        // User is logged in - redirect to dashboard
-        console.log('User is logged in, redirecting to dashboard');
-        showToast('Already logged in! Redirecting...', 'info');
-        setTimeout(() => {
-          navigation.safeNavigate('/dashboard');
-        }, 1000);
-        return;
-      }
-    } catch (error) {
-      console.log('Appwrite connection test failed:', error);
-      console.log('Error details:', error.message, error.code, error.type);
-      // User is not logged in, stay on login page
-      console.log('User not logged in');
+    console.log('📄 DOM Content Loaded');
+    
+    // Test basic functionality
+    const testBtn = document.querySelector('button[onclick*="Test JavaScript"]');
+    if (testBtn) {
+      console.log('✅ Test button found');
+    } else {
+      console.log('❌ Test button not found');
     }
   });
 
@@ -214,16 +203,147 @@ import { ID, Query } from 'appwrite'
   const toggleToSignup = document.getElementById('toggleToSignup');
   const toggleToLogin = document.getElementById('toggleToLogin');
 
-  toggleToSignup.addEventListener('click', (e) => {
-    e.preventDefault();
-    loginForm.style.display = 'none';
-    signupForm.style.display = 'block';
-  });
+  // Wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 Setting up form handlers...');
+    
+    // Form switching handlers
+    if (toggleToSignup) {
+      toggleToSignup.addEventListener('click', (e) => {
+        console.log('🔄 Switching to signup');
+        e.preventDefault();
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+      });
+    }
 
-  toggleToLogin.addEventListener('click', (e) => {
-    e.preventDefault();
-    signupForm.style.display = 'none';
-    loginForm.style.display = 'block';
+    if (toggleToLogin) {
+      toggleToLogin.addEventListener('click', (e) => {
+        console.log('🔄 Switching to login');
+        e.preventDefault();
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+      });
+    }
+
+    // Login form submission
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        console.log('🚀 Form submit event triggered!');
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const submitBtn = document.getElementById('loginSubmit');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoader = submitBtn.querySelector('.btn-loader');
+        
+        console.log('📝 Form data:', { email, password: password ? '***' : 'empty' });
+        
+        // Basic validation
+        if (!email || !password) {
+          console.log('❌ Please fill in all fields');
+          alert('Please fill in all fields');
+          return;
+        }
+        
+        console.log('✅ Form validation passed');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline';
+        
+        console.log('⏳ Loading state activated');
+        
+        try {
+          console.log('🔨 Attempting login with:', { email, password: '***' });
+          
+          // Simple Appwrite client for login
+          class SimpleAppwriteClient {
+            constructor() {
+              this.endpoint = 'https://fra.cloud.appwrite.io/v1';
+              this.projectId = '6900b1ed001604d8befb';
+              this.headers = {
+                'X-Appwrite-Project': this.projectId,
+                'Content-Type': 'application/json'
+              };
+            }
+
+            async post(endpoint, data) {
+              console.log('📡 Making request to:', `${this.endpoint}${endpoint}`);
+              console.log('📦 Request data:', { ...data, password: '***' });
+              
+              const response = await fetch(`${this.endpoint}${endpoint}`, {
+                method: 'POST',
+                headers: this.headers,
+                body: JSON.stringify(data),
+                credentials: 'include'
+              });
+              
+              console.log('📊 Response status:', response.status);
+              console.log('📊 Response headers:', Object.fromEntries(response.headers.entries()));
+              
+              const responseText = await response.text();
+              console.log('📄 Response text:', responseText);
+              
+              if (!response.ok) {
+                let error;
+                try {
+                  error = JSON.parse(responseText);
+                } catch (e) {
+                  error = { message: responseText, code: response.status };
+                }
+                throw error;
+              }
+              
+              return JSON.parse(responseText);
+            }
+          }
+
+          const client = new SimpleAppwriteClient();
+          
+          // Attempt to login with Appwrite
+          const session = await client.post('/account/sessions/email', {
+            email,
+            password
+          });
+          
+          console.log('✅ Login successful:', session);
+          alert('Login successful! Redirecting to dashboard...');
+          
+          // Store session info
+          localStorage.setItem('userSession', JSON.stringify(session));
+          localStorage.setItem('userEmail', email);
+          
+          // Redirect to dashboard after successful login
+          setTimeout(() => {
+            console.log('🔄 Redirecting to dashboard...');
+            window.location.href = '/dashboard';
+          }, 1500);
+          
+        } catch (error) {
+          console.error('❌ Login error:', error);
+          
+          let errorMessage = 'Login failed. Please try again.';
+          
+          if (error.code === 401 || error.message?.includes('invalid_credentials')) {
+            errorMessage = 'Invalid email or password';
+          } else if (error.code === 429) {
+            errorMessage = 'Too many login attempts. Please try again later';
+          } else if (error.message) {
+            errorMessage = 'Login failed: ' + error.message;
+          }
+          
+          alert(errorMessage);
+        } finally {
+          // Reset loading state
+          submitBtn.disabled = false;
+          btnText.style.display = 'inline';
+          btnLoader.style.display = 'none';
+        }
+      });
+    }
   });
 
   // Password visibility toggle
@@ -231,16 +351,21 @@ import { ID, Query } from 'appwrite'
     const toggle = document.getElementById(toggleId);
     const input = document.getElementById(inputId);
     
-    toggle.addEventListener('click', () => {
-      const type = input.type === 'password' ? 'text' : 'password';
-      input.type = type;
-      toggle.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
-    });
+    if (toggle && input) {
+      toggle.addEventListener('click', () => {
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        toggle.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+      });
+    }
   }
 
-  setupPasswordToggle('togglePassword', 'password');
-  setupPasswordToggle('toggleSignupPassword', 'signupPassword');
-  setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
+  // Setup password toggles when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    setupPasswordToggle('togglePassword', 'password');
+    setupPasswordToggle('toggleSignupPassword', 'signupPassword');
+    setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
+  });
 
   // Toast notification function
   function showToast(message, type = 'success', duration = 3000) {
