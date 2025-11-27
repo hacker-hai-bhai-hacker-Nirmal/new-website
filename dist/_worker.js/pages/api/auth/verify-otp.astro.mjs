@@ -35,7 +35,7 @@ async function POST({ request }) {
     }
 
     // Check if user exists in Appwrite, create if doesn't exist
-    const { Client, Account, Databases } = await import('../../../chunks/sdk_oS0JbZ-m.mjs');
+    const { Client, Account, Databases } = await import('../../../chunks/sdk_C21j7Tqt.mjs');
     
     const client = new Client()
       .setEndpoint('https://fra.cloud.appwrite.io/v1')

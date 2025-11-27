@@ -24,11 +24,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-function __classPrivateFieldGet(receiver, state, kind, f) {
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-}
-
 /**
  * Exception thrown by the  package
  */
@@ -2571,46 +2566,6 @@ var RealtimeCode;
     RealtimeCode[RealtimeCode["UNKNOWN_ERROR"] = -1] = "UNKNOWN_ERROR";
 })(RealtimeCode || (RealtimeCode = {}));
 
-var _a, _ID_hexTimestamp;
-/**
- * Helper class to generate ID strings for resources.
- */
-class ID {
-    /**
-     * Uses the provided ID as the ID for the resource.
-     *
-     * @param {string} id
-     * @returns {string}
-     */
-    static custom(id) {
-        return id;
-    }
-    /**
-     * Have Appwrite generate a unique ID for you.
-     *
-     * @param {number} padding. Default is 7.
-     * @returns {string}
-     */
-    static unique(padding = 7) {
-        // Generate a unique ID with padding to have a longer ID
-        const baseId = __classPrivateFieldGet(ID, _a, "m", _ID_hexTimestamp).call(ID);
-        let randomPadding = '';
-        for (let i = 0; i < padding; i++) {
-            const randomHexDigit = Math.floor(Math.random() * 16).toString(16);
-            randomPadding += randomHexDigit;
-        }
-        return baseId + randomPadding;
-    }
-}
-_a = ID, _ID_hexTimestamp = function _ID_hexTimestamp() {
-    const now = new Date();
-    const sec = Math.floor(now.getTime() / 1000);
-    const msec = now.getMilliseconds();
-    // Convert to hexadecimal
-    const hexTimestamp = sec.toString(16) + msec.toString(16).padStart(5, '0');
-    return hexTimestamp;
-};
-
 var Condition;
 (function (Condition) {
     Condition["Equal"] = "equal";
@@ -2970,4 +2925,4 @@ var ExecutionStatus;
     ExecutionStatus["Scheduled"] = "scheduled";
 })(ExecutionStatus || (ExecutionStatus = {}));
 
-export { Account, AppwriteException, AuthenticationFactor, AuthenticatorType, Browser, Client, Condition, CreditCard, Databases, ExecutionMethod, ExecutionStatus, ExecutionTrigger, Flag, ID, ImageFormat, ImageGravity, OAuthProvider };
+export { Account, AppwriteException, AuthenticationFactor, AuthenticatorType, Browser, Client, Condition, CreditCard, Databases, ExecutionMethod, ExecutionStatus, ExecutionTrigger, Flag, ImageFormat, ImageGravity, OAuthProvider };
