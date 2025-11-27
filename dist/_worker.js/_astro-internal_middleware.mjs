@@ -1,8 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { d as defineMiddleware, s as sequence } from './chunks/astro_D7NO5LnA.mjs';
+import { h as defineMiddleware, s as sequence } from './chunks/astro_C1ciDD7V.mjs';
 import './chunks/es-module-lexer_Bic5RHXJ.mjs';
-import './chunks/piccolore_BYG8EtZb.mjs';
-import './chunks/cookie_B7Oa2Wn_.mjs';
 
 // Astro Middleware for Route Protection
 

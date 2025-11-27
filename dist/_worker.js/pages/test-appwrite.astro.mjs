@@ -1,8 +1,8 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro_D7NO5LnA.mjs';
-export { e as renderers } from '../chunks/astro_D7NO5LnA.mjs';
-import '../chunks/piccolore_BYG8EtZb.mjs';
-import { $ as $$Layout } from '../chunks/Layout_MWRqmE_e.mjs';
+import { c as createComponent, i as renderComponent, e as renderTemplate, m as maybeRenderHead } from '../chunks/astro_C1ciDD7V.mjs';
+export { f as renderers } from '../chunks/astro_C1ciDD7V.mjs';
+import '../chunks/kleur_DHimoS-P.mjs';
+import { $ as $$Layout } from '../chunks/Layout_CZaCZank.mjs';
 
 var __freeze = Object.freeze;
 var __defProp = Object.defineProperty;

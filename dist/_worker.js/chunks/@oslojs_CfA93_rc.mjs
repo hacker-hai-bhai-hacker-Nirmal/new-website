@@ -216,4 +216,4 @@ const base64DecodeMap = {
     "/": 63
 };
 
-export { encodeHexUpperCase as a, decodeHex as b, decodeBase64 as d, encodeBase64 as e };
+export { encodeBase64 as a, decodeHex as b, decodeBase64 as d, encodeHexUpperCase as e };
