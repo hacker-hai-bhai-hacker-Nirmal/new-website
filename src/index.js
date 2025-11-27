@@ -33,15 +33,24 @@ async function handleEvent(event, env, ctx) {
   const url = new URL(event.request.url);
   const { pathname, searchParams } = url;
 
+  // Comprehensive logging
+  console.log(`🚀 Request: ${event.request.method} ${pathname}`);
+  console.log(`📄 User-Agent: ${event.request.headers.get('user-agent')}`);
+  console.log(`🔗 Referer: ${event.request.headers.get('referer')}`);
+
   // Handle API routes
   if (pathname.startsWith('/api/')) {
+    console.log(`🔧 API Route: ${pathname}`);
     return handleApiRequest(event.request, pathname, searchParams);
   }
 
   // Serve static assets
   try {
+    console.log(`📦 Serving static asset: ${pathname}`);
+    
     // If it's a directory, serve index.html (no-cache for HTML)
     if (pathname.endsWith('/')) {
+      console.log(`📄 Serving index.html for directory: ${pathname}`);
       return await serveAsset(event, {
         mapRequestToAsset: req => new Request(`${new URL(req.url).origin}index.html`, req),
         cacheControl: { bypassCache: true },
@@ -49,6 +58,7 @@ async function handleEvent(event, env, ctx) {
     }
 
     // Otherwise, try to serve the requested asset
+    console.log(`📄 Serving direct asset: ${pathname}`);
     return await serveAsset(event, {
       mapRequestToAsset: req => {
         // First try to get the exact asset
@@ -57,24 +67,36 @@ async function handleEvent(event, env, ctx) {
       cacheControl: { bypassCache: true },
     });
   } catch (e) {
+    console.log(`❌ Asset not found: ${pathname} - ${e.message}`);
+    
     // If asset not found, try to serve as SPA route (no-cache)
     try {
+      console.log(`🔄 Trying SPA fallback for: ${pathname}`);
       return await serveAsset(event, {
         mapRequestToAsset: req => new Request(`${new URL(req.url).origin}index.html`, req),
         cacheControl: { bypassCache: true },
       });
     } catch (e) {
+      console.log(`❌ SPA fallback failed: ${pathname} - ${e.message}`);
       // If still not found, return 404
-      return new Response('Not Found', { status: 404 });
+      return new Response(`Not Found: ${pathname}`, { status: 404 });
     }
   }
 }
 
-// Helper to add cache headers (no-store for HTML)
+// Helper to add cache headers and fix Content-Type for JavaScript
 async function serveAsset(event, options) {
   const res = await getAssetFromKV(event, options);
   const ct = res.headers.get('content-type') || '';
   const headers = new Headers(res.headers);
+  const url = new URL(event.request.url);
+  const pathname = url.pathname;
+
+  // Fix Content-Type for JavaScript files
+  if (pathname.endsWith('.js') || pathname.endsWith('.mjs')) {
+    headers.set('Content-Type', 'application/javascript; charset=utf-8');
+    console.log(`Fixed Content-Type for JavaScript: ${pathname}`);
+  }
 
   if (ct.includes('text/html')) {
     headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
@@ -84,6 +106,10 @@ async function serveAsset(event, options) {
     // short cache for static assets to reflect changes quickly
     headers.set('Cache-Control', 'public, max-age=300, immutable');
   }
+
+  // Add debugging headers
+  headers.set('X-Debug-Pathname', pathname);
+  headers.set('X-Debug-Content-Type', headers.get('Content-Type'));
 
   return new Response(res.body, {
     status: res.status,
