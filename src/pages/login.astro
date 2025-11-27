@@ -341,6 +341,123 @@ import { ID, Query } from 'appwrite'
       });
     }
     
+    // Signup form submission
+    if (signupForm) {
+      signupForm.addEventListener('submit', async (e) => {
+        console.log('🚀 Signup form submit event triggered!');
+        e.preventDefault();
+        
+        const fullName = document.getElementById('signupFullName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+        console.log('📝 Signup data:', { fullName, email, password: password ? '***' : 'empty', agreeTerms });
+        
+        // Basic validation
+        if (!fullName || !email || !password || !confirmPassword) {
+          console.log('❌ Please fill in all fields');
+          alert('Please fill in all fields');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          console.log('❌ Passwords do not match');
+          alert('Passwords do not match');
+          return;
+        }
+        
+        if (!agreeTerms) {
+          console.log('❌ Please agree to terms');
+          alert('Please agree to the Terms & Conditions');
+          return;
+        }
+        
+        console.log('✅ Signup validation passed');
+        
+        try {
+          console.log('🔨 Attempting signup with:', { fullName, email, password: '***' });
+          
+          // Simple Appwrite client for signup
+          class SimpleAppwriteClient {
+            constructor() {
+              this.endpoint = 'https://fra.cloud.appwrite.io/v1';
+              this.projectId = '6900b1ed001604d8befb';
+              this.headers = {
+                'X-Appwrite-Project': this.projectId,
+                'Content-Type': 'application/json'
+              };
+            }
+
+            async post(endpoint, data) {
+              console.log('📡 Making request to:', `${this.endpoint}${endpoint}`);
+              console.log('📦 Request data:', { ...data, password: '***' });
+              
+              const response = await fetch(`${this.endpoint}${endpoint}`, {
+                method: 'POST',
+                headers: this.headers,
+                body: JSON.stringify(data),
+                credentials: 'include'
+              });
+              
+              console.log('📊 Response status:', response.status);
+              
+              const responseText = await response.text();
+              console.log('📄 Response text:', responseText);
+              
+              if (!response.ok) {
+                let error;
+                try {
+                  error = JSON.parse(responseText);
+                } catch (e) {
+                  error = { message: responseText, code: response.status };
+                }
+                throw error;
+              }
+              
+              return JSON.parse(responseText);
+            }
+          }
+
+          const client = new SimpleAppwriteClient();
+          
+          // Create account with Appwrite
+          const user = await client.post('/account', {
+            userId: 'unique()',
+            email,
+            password,
+            name: fullName
+          });
+          
+          console.log('✅ Account created:', user);
+          alert('Account created successfully! You can now sign in.');
+          
+          // Switch back to login form
+          signupForm.style.display = 'none';
+          loginForm.style.display = 'block';
+          
+          // Pre-fill email in login form
+          document.getElementById('email').value = email;
+          
+        } catch (error) {
+          console.error('❌ Signup error:', error);
+          
+          let errorMessage = 'Signup failed. Please try again.';
+          
+          if (error.code === 400) {
+            errorMessage = 'Email already exists or invalid data';
+          } else if (error.code === 429) {
+            errorMessage = 'Too many signup attempts. Please try again later';
+          } else if (error.message) {
+            errorMessage = 'Signup failed: ' + error.message;
+          }
+          
+          alert(errorMessage);
+        }
+      });
+    }
+    
     // Setup password toggles
     function setupPasswordToggle(toggleId, inputId) {
       const toggle = document.getElementById(toggleId);
