@@ -154,7 +154,7 @@ class OTPService {
         return false;
       }
 
-      const [encodedHeader, encodedPayload, signature] = token;
+      const [encodedHeader, encodedPayload, signature] = parts;
       
       // Verify signature
       const expectedSignature = crypto
