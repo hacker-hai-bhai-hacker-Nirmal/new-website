@@ -47,11 +47,11 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       });
     }
     
-  } catch (error) {
+  } catch (error: any) {
     return Response.json({
       success: false,
       message: "Error testing Brevo API",
-      error: error.message,
+      error: error?.message || String(error),
       timestamp: new Date().toISOString()
     });
   }
@@ -70,10 +70,10 @@ export async function GET({ locals }: { locals: any }) {
       apiKeyLength: brevoApiKey ? brevoApiKey.length : 0,
       timestamp: new Date().toISOString()
     });
-  } catch (error) {
+  } catch (error: any) {
     return Response.json({
       success: false,
-      error: error.message,
+      error: error?.message || String(error),
       timestamp: new Date().toISOString()
     });
   }

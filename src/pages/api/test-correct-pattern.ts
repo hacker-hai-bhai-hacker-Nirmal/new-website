@@ -13,13 +13,12 @@ export async function GET({ locals }: { locals: any }) {
     };
     
     if (runtimeEnv) {
-      const vars = {
-        brevo_MCP_key: runtimeEnv.brevo_MCP_key,
-        JWT_SECRET: runtimeEnv.JWT_SECRET,
-        APPWRITE_PROJECT_ID: runtimeEnv.APPWRITE_PROJECT_ID,
-        APPWRITE_ENDPOINT: runtimeEnv.APPWRITE_ENDPOINT,
-        APPWRITE_DATABASE_ID: runtimeEnv.APPWRITE_DATABASE_ID,
-      };
+      const vars: Record<string, any> = {};
+      const variableNames = ['brevo_MCP_key', 'JWT_SECRET', 'APPWRITE_PROJECT_ID', 'APPWRITE_ENDPOINT', 'APPWRITE_DATABASE_ID'] as const;
+      
+      for (const key of variableNames) {
+        vars[key] = runtimeEnv[key];
+      }
       
       results.vars = vars;
       results.available = Object.keys(vars).filter(key => vars[key] !== undefined).length > 0;
@@ -31,10 +30,10 @@ export async function GET({ locals }: { locals: any }) {
       results,
       timestamp: new Date().toISOString()
     });
-  } catch (error) {
+  } catch (error: any) {
     return Response.json({
       success: false,
-      error: error.message,
+      error: error?.message || String(error),
       timestamp: new Date().toISOString()
     });
   }
