@@ -1,6 +1,6 @@
 // src/lib/brevoService.js
 // Brevo (Sendinblue) Email Service Integration
-// Last updated: 2025-11-28 - MCP Integration
+// Last updated: 2025-11-28 - MCP Integration + Environment Variables
 
 // Use environment variable from Cloudflare
 const BREVO_API_KEY = import.meta.env.brevo_MCP_key;
