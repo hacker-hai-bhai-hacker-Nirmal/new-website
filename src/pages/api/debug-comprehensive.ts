@@ -2,6 +2,68 @@
 // GET /api/debug-comprehensive
 // This will help us identify exactly what's wrong with the deployment
 
+interface DebugInfo {
+  timestamp: string;
+  environment: {
+    hasLocals: boolean;
+    hasEnv: boolean;
+    envKeys: string[];
+    envVars: {
+      JWT_SECRET: { exists: boolean; length: number; type: string };
+      brevo_MCP_key: { exists: boolean; length: number; type: string };
+      APPWRITE_PROJECT_ID: { exists: boolean; value: string; type: string };
+      APPWRITE_ENDPOINT: { exists: boolean; value: string; type: string };
+      APPWRITE_DATABASE_ID: { exists: boolean; value: string; type: string };
+    };
+    allEnvVars: any;
+  };
+  runtime: {
+    nodeVersion: string;
+    platform: string;
+    astroAdapter: string;
+    requestMethod: string;
+    timestamp: number;
+  };
+  imports: {
+    crypto: boolean;
+    buffer: boolean;
+    process: boolean;
+    otpService?: {
+      available: boolean;
+      canInstantiate?: boolean;
+      error?: string;
+    };
+  };
+  jwtTest?: {
+    success: boolean;
+    otpGenerated: boolean;
+    tokenGenerated: boolean;
+    tokenLength: number;
+  };
+}
+
+interface PostTestInfo {
+  timestamp: string;
+  requestReceived: boolean;
+  bodyParsed: boolean;
+  bodyKeys: string[];
+  environmentAccessible: boolean;
+  jwtTest: {
+    generation?: {
+      success: boolean;
+      hasOtp: boolean;
+      hasToken: boolean;
+      tokenLength: number;
+      error?: string;
+    };
+    verification?: {
+      success: any;
+      message: any;
+    };
+    error?: string;
+  } | null;
+}
+
 export async function GET({ locals }: { locals: any }): Promise<Response> {
   try {
     // Environment Analysis
@@ -70,7 +132,7 @@ export async function GET({ locals }: { locals: any }): Promise<Response> {
 
     // Test JWT Service Import
     try {
-      const { OTPService } = await import('../../../lib/otpService.js');
+      const { OTPService } = await import('../../../lib/otpService');
       debugInfo.imports.otpService = {
         available: true,
         canInstantiate: true
@@ -141,7 +203,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
 
     // Test JWT OTP end-to-end
     try {
-      const { OTPService } = await import('../../../lib/otpService.js');
+      const { OTPService } = await import('../../../lib/otpService');
       const otpService = new OTPService(env);
       
       const otpResult = await otpService.generateOTP({
