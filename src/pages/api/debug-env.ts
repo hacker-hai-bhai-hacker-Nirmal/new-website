@@ -3,96 +3,40 @@ import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ locals, request }: { locals: any; request: Request }) => {
   try {
-    console.log('🔍 Testing ALL Cloudflare Pages environment access patterns...');
-    
-    // Pattern 1: Direct locals.env (Pages Functions)
-    const directLocals = (locals as any)?.env;
-    console.log('1. Direct locals.env keys:', directLocals ? Object.keys(directLocals) : 'null');
-    
-    // Pattern 2: Astro.env (Astro's environment API)
-    const astroEnv = (globalThis as any).Astro?.env;
-    console.log('2. Astro.env keys:', astroEnv ? Object.keys(astroEnv) : 'null');
-    
-    // Pattern 3: import.meta.env (Vite standard)
-    const importEnv = import.meta.env;
-    console.log('3. import.meta.env keys:', Object.keys(importEnv));
-    
-    // Pattern 4: process.env (Node.js fallback)
-    const processEnv = typeof process !== 'undefined' ? process.env : {};
-    console.log('4. process.env keys:', Object.keys(processEnv));
-    
-    // Pattern 5: Cloudflare Pages specific - request.cf.env
-    const requestEnv = (request as any)?.cf?.env;
-    console.log('5. request.cf.env keys:', requestEnv ? Object.keys(requestEnv) : 'null');
-    
-    // Pattern 6: globalThis.env (Global access)
-    const globalEnv = (globalThis as any)?.env;
-    console.log('6. globalThis.env keys:', globalEnv ? Object.keys(globalEnv) : 'null');
-    
-    // Test each pattern for our specific variables
+    // Test only the most likely patterns for Cloudflare Pages
     const patterns = {
-      directLocals: {
-        JWT_SECRET: directLocals?.JWT_SECRET,
-        brevo_MCP_key: directLocals?.brevo_MCP_key,
-        available: !!directLocals
-      },
-      astroEnv: {
-        JWT_SECRET: astroEnv?.JWT_SECRET,
-        brevo_MCP_key: astroEnv?.brevo_MCP_key,
-        available: !!astroEnv
-      },
-      importEnv: {
-        JWT_SECRET: importEnv?.JWT_SECRET,
-        brevo_MCP_key: importEnv?.brevo_MCP_key,
-        available: !!importEnv
-      },
-      processEnv: {
-        JWT_SECRET: processEnv?.JWT_SECRET,
-        brevo_MCP_key: processEnv?.brevo_MCP_key,
-        available: !!processEnv
-      },
-      requestEnv: {
-        JWT_SECRET: requestEnv?.JWT_SECRET,
-        brevo_MCP_key: requestEnv?.brevo_MCP_key,
-        available: !!requestEnv
-      },
-      globalEnv: {
-        JWT_SECRET: globalEnv?.JWT_SECRET,
-        brevo_MCP_key: globalEnv?.brevo_MCP_key,
-        available: !!globalEnv
-      }
+      locals: (locals as any)?.env,
+      import: import.meta.env,
+      request: (request as any)?.cf?.env
     };
     
-    // Find which pattern actually has our variables
-    const workingPattern = Object.entries(patterns).find(([name, pattern]) => 
-      pattern.JWT_SECRET && pattern.brevo_MCP_key
-    );
+    // Find which pattern has our variables
+    let workingPattern = 'NONE';
+    let selectedEnv = patterns.import;
     
-    const selectedEnv = workingPattern ? 
-      (workingPattern[0] === 'directLocals' ? directLocals :
-       workingPattern[0] === 'astroEnv' ? astroEnv :
-       workingPattern[0] === 'importEnv' ? importEnv :
-       workingPattern[0] === 'processEnv' ? processEnv :
-       workingPattern[0] === 'requestEnv' ? requestEnv : globalEnv) :
-      importEnv; // fallback
+    for (const [name, env] of Object.entries(patterns)) {
+      if (env?.JWT_SECRET || env?.brevo_MCP_key) {
+        workingPattern = name;
+        selectedEnv = env;
+        break;
+      }
+    }
 
     const envVars = {
       brevo_MCP_key: selectedEnv?.brevo_MCP_key ? `Found (length: ${selectedEnv.brevo_MCP_key.length})` : 'NOT FOUND',
       JWT_SECRET: selectedEnv?.JWT_SECRET ? 'SET' : 'NOT_SET',
       APPWRITE_PROJECT_ID: selectedEnv?.APPWRITE_PROJECT_ID ? 'SET' : 'NOT_SET',
       APPWRITE_ENDPOINT: selectedEnv?.APPWRITE_ENDPOINT ? 'SET' : 'NOT_SET',
-      APPWRITE_DATABASE_ID: selectedEnv?.APPWRITE_DATABASE_ID ? 'SET' : 'NOT_SET',
-      allEnvVars: Object.keys(selectedEnv || {}).filter(key => key.toLowerCase().includes('brevo') || key.toLowerCase().includes('jwt') || key.toLowerCase().includes('appwrite'))
+      APPWRITE_DATABASE_ID: selectedEnv?.APPWRITE_DATABASE_ID ? 'SET' : 'NOT_SET'
     };
 
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: 'Comprehensive Pages environment variable analysis',
-        workingPattern: workingPattern ? workingPattern[0] : 'NONE',
-        patterns,
+        message: 'Minimal environment variable test',
+        workingPattern,
         envVars,
-        recommendation: workingPattern ? `Use ${workingPattern[0]} pattern` : 'No pattern found - check Pages configuration',
+        recommendation: workingPattern !== 'NONE' ? `Use ${workingPattern} pattern` : 'No pattern found',
         timestamp: new Date().toISOString()
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
