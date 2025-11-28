@@ -1,7 +1,7 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { renderers } from './renderers.mjs';
 import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_B0azDYOa.mjs';
-import { manifest } from './manifest_D6MNP0A-.mjs';
+import { manifest } from './manifest_906ItmQB.mjs';
 
 const serverIslandMap = new Map();;
 
@@ -13,31 +13,37 @@ const _page4 = () => import('./pages/api/auth/me.astro.mjs');
 const _page5 = () => import('./pages/api/auth/refresh.astro.mjs');
 const _page6 = () => import('./pages/api/auth/register.astro.mjs');
 const _page7 = () => import('./pages/api/auth/send-otp.astro.mjs');
-const _page8 = () => import('./pages/api/auth/verify-otp.astro.mjs');
-const _page9 = () => import('./pages/api/auth.astro.mjs');
-const _page10 = () => import('./pages/api/check-env.astro.mjs');
-const _page11 = () => import('./pages/api/debug-env.astro.mjs');
-const _page12 = () => import('./pages/api/debug-mcp.astro.mjs');
-const _page13 = () => import('./pages/api/debug-otp.astro.mjs');
-const _page14 = () => import('./pages/api/send-otp-worker.astro.mjs');
-const _page15 = () => import('./pages/api/test-brevo.astro.mjs');
-const _page16 = () => import('./pages/api/test-direct-mcp.astro.mjs');
-const _page17 = () => import('./pages/api/test-mcp-brevo.astro.mjs');
-const _page18 = () => import('./pages/api/users/profile.astro.mjs');
-const _page19 = () => import('./pages/checkout.astro.mjs');
-const _page20 = () => import('./pages/dashboard.astro.mjs');
-const _page21 = () => import('./pages/delivery.astro.mjs');
-const _page22 = () => import('./pages/kitchen.astro.mjs');
-const _page23 = () => import('./pages/login.astro.mjs');
-const _page24 = () => import('./pages/login-test.astro.mjs');
-const _page25 = () => import('./pages/menu.astro.mjs');
-const _page26 = () => import('./pages/otp-login.astro.mjs');
-const _page27 = () => import('./pages/rewards.astro.mjs');
-const _page28 = () => import('./pages/test-appwrite.astro.mjs');
-const _page29 = () => import('./pages/test-env-email.astro.mjs');
-const _page30 = () => import('./pages/test-simple.astro.mjs');
-const _page31 = () => import('./pages/verify-otp.astro.mjs');
-const _page32 = () => import('./pages/index.astro.mjs');
+const _page8 = () => import('./pages/api/auth/test-jwt.astro.mjs');
+const _page9 = () => import('./pages/api/auth/verify-otp.astro.mjs');
+const _page10 = () => import('./pages/api/auth.astro.mjs');
+const _page11 = () => import('./pages/api/check-env.astro.mjs');
+const _page12 = () => import('./pages/api/debug-comprehensive.astro.mjs');
+const _page13 = () => import('./pages/api/debug-env.astro.mjs');
+const _page14 = () => import('./pages/api/debug-mcp.astro.mjs');
+const _page15 = () => import('./pages/api/debug-otp.astro.mjs');
+const _page16 = () => import('./pages/api/send-otp-worker.astro.mjs');
+const _page17 = () => import('./pages/api/test-brevo.astro.mjs');
+const _page18 = () => import('./pages/api/test-direct-mcp.astro.mjs');
+const _page19 = () => import('./pages/api/test-mcp-brevo.astro.mjs');
+const _page20 = () => import('./pages/api/test-minimal.astro.mjs');
+const _page21 = () => import('./pages/api/test-simple.astro.mjs');
+const _page22 = () => import('./pages/api/users/profile.astro.mjs');
+const _page23 = () => import('./pages/api-test.astro.mjs');
+const _page24 = () => import('./pages/checkout.astro.mjs');
+const _page25 = () => import('./pages/dashboard.astro.mjs');
+const _page26 = () => import('./pages/delivery.astro.mjs');
+const _page27 = () => import('./pages/deployment-test.astro.mjs');
+const _page28 = () => import('./pages/kitchen.astro.mjs');
+const _page29 = () => import('./pages/login.astro.mjs');
+const _page30 = () => import('./pages/login-test.astro.mjs');
+const _page31 = () => import('./pages/menu.astro.mjs');
+const _page32 = () => import('./pages/otp-login.astro.mjs');
+const _page33 = () => import('./pages/rewards.astro.mjs');
+const _page34 = () => import('./pages/test-appwrite.astro.mjs');
+const _page35 = () => import('./pages/test-env-email.astro.mjs');
+const _page36 = () => import('./pages/test-simple.astro.mjs');
+const _page37 = () => import('./pages/verify-otp.astro.mjs');
+const _page38 = () => import('./pages/index.astro.mjs');
 const pageMap = new Map([
     ["node_modules/@astrojs/cloudflare/dist/entrypoints/image-endpoint.js", _page0],
     ["src/pages/admin.astro", _page1],
@@ -47,31 +53,37 @@ const pageMap = new Map([
     ["src/pages/api/auth/refresh.ts", _page5],
     ["src/pages/api/auth/register.ts", _page6],
     ["src/pages/api/auth/send-otp.ts", _page7],
-    ["src/pages/api/auth/verify-otp.ts", _page8],
-    ["src/pages/api/auth.js", _page9],
-    ["src/pages/api/check-env.ts", _page10],
-    ["src/pages/api/debug-env.ts", _page11],
-    ["src/pages/api/debug-mcp.ts", _page12],
-    ["src/pages/api/debug-otp.ts", _page13],
-    ["src/pages/api/send-otp-worker.ts", _page14],
-    ["src/pages/api/test-brevo.ts", _page15],
-    ["src/pages/api/test-direct-mcp.ts", _page16],
-    ["src/pages/api/test-mcp-brevo.ts", _page17],
-    ["src/pages/api/users/profile.ts", _page18],
-    ["src/pages/checkout.astro", _page19],
-    ["src/pages/dashboard.astro", _page20],
-    ["src/pages/delivery.astro", _page21],
-    ["src/pages/kitchen.astro", _page22],
-    ["src/pages/login.astro", _page23],
-    ["src/pages/login-test.astro", _page24],
-    ["src/pages/menu.astro", _page25],
-    ["src/pages/otp-login.astro", _page26],
-    ["src/pages/rewards.astro", _page27],
-    ["src/pages/test-appwrite.astro", _page28],
-    ["src/pages/test-env-email.astro", _page29],
-    ["src/pages/test-simple.astro", _page30],
-    ["src/pages/verify-otp.astro", _page31],
-    ["src/pages/index.astro", _page32]
+    ["src/pages/api/auth/test-jwt.ts", _page8],
+    ["src/pages/api/auth/verify-otp.ts", _page9],
+    ["src/pages/api/auth.js", _page10],
+    ["src/pages/api/check-env.ts", _page11],
+    ["src/pages/api/debug-comprehensive.ts", _page12],
+    ["src/pages/api/debug-env.ts", _page13],
+    ["src/pages/api/debug-mcp.ts", _page14],
+    ["src/pages/api/debug-otp.ts", _page15],
+    ["src/pages/api/send-otp-worker.ts", _page16],
+    ["src/pages/api/test-brevo.ts", _page17],
+    ["src/pages/api/test-direct-mcp.ts", _page18],
+    ["src/pages/api/test-mcp-brevo.ts", _page19],
+    ["src/pages/api/test-minimal.ts", _page20],
+    ["src/pages/api/test-simple.ts", _page21],
+    ["src/pages/api/users/profile.ts", _page22],
+    ["src/pages/api-test.astro", _page23],
+    ["src/pages/checkout.astro", _page24],
+    ["src/pages/dashboard.astro", _page25],
+    ["src/pages/delivery.astro", _page26],
+    ["src/pages/deployment-test.astro", _page27],
+    ["src/pages/kitchen.astro", _page28],
+    ["src/pages/login.astro", _page29],
+    ["src/pages/login-test.astro", _page30],
+    ["src/pages/menu.astro", _page31],
+    ["src/pages/otp-login.astro", _page32],
+    ["src/pages/rewards.astro", _page33],
+    ["src/pages/test-appwrite.astro", _page34],
+    ["src/pages/test-env-email.astro", _page35],
+    ["src/pages/test-simple.astro", _page36],
+    ["src/pages/verify-otp.astro", _page37],
+    ["src/pages/index.astro", _page38]
 ]);
 
 const _manifest = Object.assign(manifest, {

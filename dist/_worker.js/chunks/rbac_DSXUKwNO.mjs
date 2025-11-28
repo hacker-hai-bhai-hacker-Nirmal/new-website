@@ -1,6 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { d as defineMiddleware } from './index_BWlpe_dD.mjs';
-import { s as sessionManager } from './sessionManager_C6n_ySBK.mjs';
+import { s as sessionManager } from './sessionManager_Bzw4u138.mjs';
 
 const authMiddleware = defineMiddleware(async (context, next) => {
   const authHeader = context.request.headers.get("Authorization");

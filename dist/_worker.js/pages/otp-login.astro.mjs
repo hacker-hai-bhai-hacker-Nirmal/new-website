@@ -1,6 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { e as createComponent, f as createAstro, k as renderComponent, l as renderScript, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_DaomeaOp.mjs';
-import { $ as $$Layout } from '../chunks/Layout_CM4pYrUl.mjs';
+import { $ as $$Layout } from '../chunks/Layout_D7NlRXD9.mjs';
 import { c as client, a as account } from '../chunks/appwrite_CaeG9vcz.mjs';
 import '../chunks/sdk_BPbYzYsq.mjs';
 /* empty css                                     */

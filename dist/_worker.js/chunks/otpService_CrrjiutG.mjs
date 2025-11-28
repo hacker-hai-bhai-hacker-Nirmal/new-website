@@ -1,12 +1,14 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import crypto from 'crypto';
 
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
 class OTPService {
   jwtSecret;
   otpExpiryMinutes = 10;
-  constructor() {
-    this.jwtSecret = process.env.JWT_SECRET || "s60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=";
-    if (!process.env.JWT_SECRET) {
+  constructor(env) {
+    const environment = env || Object.assign(__vite_import_meta_env__, { JWT_SECRET: "s60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=" });
+    this.jwtSecret = environment.JWT_SECRET || "s60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=";
+    if (!environment.JWT_SECRET) {
       console.warn("WARNING: JWT_SECRET not set in environment. Using fallback for testing.");
     }
   }
@@ -95,7 +97,7 @@ class OTPService {
       if (parts.length !== 3) {
         return false;
       }
-      const [encodedHeader, encodedPayload, signature] = token;
+      const [encodedHeader, encodedPayload, signature] = parts;
       const expectedSignature = crypto.createHmac("sha256", this.jwtSecret).update(`${encodedHeader}.${encodedPayload}`).digest("base64url");
       if (signature !== expectedSignature) {
         return false;
@@ -132,6 +134,6 @@ class OTPService {
     return { otp, otpToken };
   }
 }
-const otpService = new OTPService();
+new OTPService();
 
-export { otpService as o };
+export { OTPService };

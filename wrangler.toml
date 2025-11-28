@@ -10,3 +10,6 @@ vars = { ENVIRONMENT = "production" }
 
 [env.preview]
 vars = { ENVIRONMENT = "preview" }
+
+# Cloudflare Pages specific configuration
+pages_build_output_dir = "dist"

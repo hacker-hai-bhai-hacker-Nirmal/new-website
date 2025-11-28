@@ -1,24 +1,25 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { A as AppwriteService, s as sessionManager } from '../../../chunks/sessionManager_C6n_ySBK.mjs';
-import { o as otpService } from '../../../chunks/otpService_C3WRlkYI.mjs';
+import { OTPService } from '../../../chunks/otpService_CrrjiutG.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-async function POST({ request }) {
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
+async function POST({ request, locals }) {
   try {
     const body = await request.json();
-    const { email, otp, otpToken, userId } = body;
-    if (!email && !userId || !otp || !otpToken) {
+    const env = locals?.env || Object.assign(__vite_import_meta_env__, { OS: process.env.OS });
+    const { email, otp, otpToken } = body;
+    if (!email || !otp || !otpToken) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: "Email (or userId), OTP, and OTP token are required"
+          error: "Email, OTP, and OTP token are required"
         }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-    const otpVerification = await otpService.verifyOTP({
-      email: email || "",
-      // Will be validated in JWT token
+    const otpServiceInstance = new OTPService(env);
+    const otpVerification = await otpServiceInstance.verifyOTP({
+      email,
       otp,
       otpToken
     });
@@ -31,88 +32,15 @@ async function POST({ request }) {
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-    const appwrite = new AppwriteService();
-    let user;
-    if (email) {
-      user = await appwrite.getUserByEmail(email);
-    } else if (userId) {
-      user = await appwrite.getUser(userId);
-    }
-    if (!user) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "User not found"
-        }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    const role = await appwrite.getRole(user.roleId);
-    if (!role) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "User role not found"
-        }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    await appwrite.updateUser(user.userId, {
-      status: "active",
-      updatedAt: /* @__PURE__ */ new Date()
+    console.log("OTP verification successful:", {
+      email,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
     });
-    const clientIP = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
-    const userAgent = request.headers.get("user-agent") || "unknown";
-    const sessionResult = await sessionManager.createSession(
-      user.userId,
-      clientIP,
-      userAgent
-    );
-    if (!sessionResult.accessToken) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Failed to create session"
-        }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    try {
-      if (typeof appwrite.logAuditEvent === "function") {
-        await appwrite.logAuditEvent({
-          userId: user.userId,
-          action: "OTP_VERIFICATION_SUCCESS",
-          resource: "auth",
-          details: {
-            email: user.email,
-            timestamp: (/* @__PURE__ */ new Date()).toISOString()
-          }
-        });
-      } else {
-        console.log("OTP verification successful:", {
-          userId: user.userId,
-          email: user.email,
-          timestamp: (/* @__PURE__ */ new Date()).toISOString()
-        });
-      }
-    } catch (logError) {
-      console.warn("Failed to log audit event:", logError);
-    }
     return new Response(
       JSON.stringify({
         success: true,
-        accessToken: sessionResult.accessToken,
-        refreshToken: sessionResult.refreshToken,
-        expiresIn: sessionResult.expiresIn,
-        user: {
-          userId: user.userId,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: role.roleName,
-          permissions: role.permissions
-        },
-        message: "OTP verified successfully! You are now logged in."
+        email,
+        message: "OTP verified successfully!"
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );

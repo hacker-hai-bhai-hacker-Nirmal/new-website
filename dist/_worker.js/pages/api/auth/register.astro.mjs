@@ -1,11 +1,12 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { A as AppwriteService } from '../../../chunks/sessionManager_C6n_ySBK.mjs';
-import { o as otpService } from '../../../chunks/otpService_C3WRlkYI.mjs';
+import { OTPService } from '../../../chunks/otpService_CrrjiutG.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-async function POST({ request }) {
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
+async function POST({ request, locals }) {
   try {
     const body = await request.json();
+    const env = locals?.env || Object.assign(__vite_import_meta_env__, { OS: process.env.OS });
     const { email, firstName, lastName, role } = body;
     if (!email || !firstName || !lastName || !role) {
       return new Response(
@@ -45,28 +46,8 @@ async function POST({ request }) {
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-    const appwrite = new AppwriteService();
-    const existingUser = await appwrite.getUserByEmail(email);
-    if (existingUser) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "User with this email already exists"
-        }),
-        { status: 409, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    const roleInfo = await appwrite.getRoleByName(role);
-    if (!roleInfo) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Role not found"
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    const otpResult = await otpService.generateOTP({
+    const otpServiceInstance = new OTPService(env);
+    const otpResult = await otpServiceInstance.generateOTP({
       email,
       firstName,
       lastName,
@@ -81,21 +62,6 @@ async function POST({ request }) {
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
-    const userId = await appwrite.createUser({
-      email,
-      phone: body.phone || void 0,
-      firstName,
-      lastName,
-      status: "pending_verification",
-      roleId: roleInfo.roleId,
-      restaurantId: body.restaurantId || void 0,
-      twoFactorEnabled: false,
-      preferences: {
-        language: "en",
-        notificationsEnabled: true,
-        theme: "light"
-      }
-    });
     try {
       const emailResponse = await fetch("https://litterateur-otp-worker.nirmalkb21.workers.dev", {
         method: "POST",
@@ -118,14 +84,13 @@ async function POST({ request }) {
     return new Response(
       JSON.stringify({
         success: true,
-        userId,
         email,
         otpToken: otpResult.otpToken,
         // JWT containing encrypted OTP
         otp: otpResult.otp,
         // Include for development/testing
         expiresIn: otpResult.expiresIn,
-        message: `Registration successful! OTP sent to ${email}. Valid for ${10} minutes.`
+        message: `Registration successful! OTP sent to ${email}. Valid for 10 minutes.`
       }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );

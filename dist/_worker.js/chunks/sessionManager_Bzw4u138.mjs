@@ -2,16 +2,18 @@ globalThis.process ??= {}; globalThis.process.env ??= {};
 import crypto from 'crypto';
 import { C as Client, A as Account, D as Databases, I as ID, Q as Query } from './sdk_BPbYzYsq.mjs';
 
+const __vite_import_meta_env__$1 = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
 class AppwriteService {
   client;
   account;
   databases;
   databaseId;
-  constructor() {
-    this.client = new Client().setEndpoint("https://fra.cloud.appwrite.io/v1").setProject("6900b1ed001604d8befb");
+  constructor(env) {
+    const environment = env || Object.assign(__vite_import_meta_env__$1, { APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", APPWRITE_ENDPOINT: "https://fra.cloud.appwrite.io/v1", APPWRITE_DATABASE_ID: "main-db", OS: process.env.OS });
+    this.client = new Client().setEndpoint(environment.APPWRITE_ENDPOINT || "https://fra.cloud.appwrite.io/v1").setProject(environment.APPWRITE_PROJECT_ID || "6900b1ed001604d8befb");
     this.account = new Account(this.client);
     this.databases = new Databases(this.client);
-    this.databaseId = "main-db";
+    this.databaseId = environment.APPWRITE_DATABASE_ID || "main-db";
   }
   // User Management Methods
   async createUser(userData) {
@@ -280,14 +282,16 @@ class AppwriteService {
 }
 new AppwriteService();
 
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
 const ACCESS_TOKEN_EXPIRY = 15 * 60;
 const REFRESH_TOKEN_EXPIRY = 7 * 24 * 60 * 60;
 class SessionManager {
   appwrite;
   jwtSecret;
-  constructor() {
-    this.appwrite = new AppwriteService();
-    this.jwtSecret = process.env.JWT_SECRET || "your-secret-key-change-in-production";
+  constructor(env) {
+    const environment = env || Object.assign(__vite_import_meta_env__, { JWT_SECRET: "s60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=" });
+    this.appwrite = new AppwriteService(environment);
+    this.jwtSecret = environment.JWT_SECRET || "your-secret-key-change-in-production";
     if (this.jwtSecret === "your-secret-key-change-in-production") {
       console.warn("⚠️  Using default JWT secret. Please set JWT_SECRET in production!");
     }

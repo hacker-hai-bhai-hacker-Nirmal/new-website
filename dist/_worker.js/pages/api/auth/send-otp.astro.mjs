@@ -4,16 +4,18 @@ import { I as ID } from '../../../chunks/sdk_BPbYzYsq.mjs';
 import { s as sendOtpEmail } from '../../../chunks/brevoService_C7HhBd8A.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-const POST = async ({ request }) => {
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
+const POST = async ({ request, locals }) => {
   try {
     const { email } = await request.json();
+    const env = locals?.env || Object.assign(__vite_import_meta_env__, { OS: process.env.OS });
     if (!email) {
       return new Response(
         JSON.stringify({ success: false, error: "Email is required" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-    const brevoApiKey = undefined                             ;
+    const brevoApiKey = env.brevo_MCP_key;
     if (!brevoApiKey) {
       console.error("❌ brevo_MCP_key environment variable not found in Cloudflare");
       return new Response(

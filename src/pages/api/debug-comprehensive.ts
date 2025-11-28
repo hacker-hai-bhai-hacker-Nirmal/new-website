@@ -132,7 +132,7 @@ export async function GET({ locals }: { locals: any }): Promise<Response> {
 
     // Test JWT Service Import
     try {
-      const { OTPService } = await import('../../../lib/otpService');
+      const { OTPService } = await import('../../lib/otpService');
       debugInfo.imports.otpService = {
         available: true,
         canInstantiate: true
@@ -203,7 +203,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
 
     // Test JWT OTP end-to-end
     try {
-      const { OTPService } = await import('../../../lib/otpService');
+      const { OTPService } = await import('../../lib/otpService');
       const otpService = new OTPService(env);
       
       const otpResult = await otpService.generateOTP({
