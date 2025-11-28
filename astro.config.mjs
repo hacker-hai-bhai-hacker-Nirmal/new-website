@@ -4,11 +4,18 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    // Enable platform proxy for better environment variable access
+    platformProxy: {
+      enabled: true,
+    },
+  }),
   output: 'server',
   vite: {
     define: {
       global: 'globalThis',
     },
+    // Ensure environment variables are properly handled
+    envPrefix: 'VITE_',
   },
 });
