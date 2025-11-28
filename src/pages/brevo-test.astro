@@ -257,14 +257,14 @@ import Layout from '../layouts/Layout.astro'
       if (responseData.debug) {
         addLog('BACKEND', '🔍 Environment variable analysis:', 'info');
         
-        // Check for test_variable
+        // Check for test variable
         const testVariableValue = responseData.debug.testVariableValue;
         const testVariableType = responseData.debug.testVariableType;
         const testVariableAvailable = responseData.debug.testVariableAvailable;
         
-        addLog('BACKEND', `🧪 test_variable available: ${testVariableAvailable}`, testVariableAvailable ? 'success' : 'error');
-        addLog('BACKEND', `🧪 test_variable type: ${testVariableType}`, 'info');
-        addLog('BACKEND', `🧪 test_variable value: "${testVariableValue}"`, 'info');
+        addLog('BACKEND', `🧪 test variable available: ${testVariableAvailable}`, testVariableAvailable ? 'success' : 'error');
+        addLog('BACKEND', `🧪 test variable type: ${testVariableType}`, 'info');
+        addLog('BACKEND', `🧪 test variable value: "${testVariableValue}"`, 'info');
         
         // Check for brevo_MCP_key
         const brevoKeyValue = responseData.debug.importMetaBrevoValue;
@@ -281,13 +281,13 @@ import Layout from '../layouts/Layout.astro'
         
         // Test results summary
         if (testVariableAvailable && testVariableValue) {
-          addLog('BACKEND', '✅ test_variable SUCCESS - Environment variables ARE accessible!', 'success');
+          addLog('BACKEND', '✅ test variable SUCCESS - Environment variables ARE accessible!', 'success');
           testStatus.className = 'test-status success';
-          testStatus.textContent = `✅ Environment variables working! test_variable = "${testVariableValue}"`;
+          testStatus.textContent = `✅ Environment variables working! test variable = "${testVariableValue}"`;
         } else {
-          addLog('BACKEND', '❌ test_variable FAILED - Environment variables NOT accessible', 'error');
+          addLog('BACKEND', '❌ test variable FAILED - Environment variables NOT accessible', 'error');
           testStatus.className = 'test-status error';
-          testStatus.textContent = `❌ Environment variables not working - test_variable = "${testVariableValue}"`;
+          testStatus.textContent = `❌ Environment variables not working - test variable = "${testVariableValue}"`;
         }
         
         // If brevo key is working, try to send email
