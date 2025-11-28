@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JWT OTP System Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #007acc; color: white; border: none; border-radius: 3px; }
+        button:hover { background: #005a9e; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        .result { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 3px; white-space: pre-wrap; }
+        .error { background: #ffe6e6; color: #d00; }
+        .success { background: #e6ffe6; color: #0a0; }
+        .info { background: #e6f3ff; color: #006; }
+    </style>
+</head>
+<body>
+    <h1>🔐 JWT-Based OTP System Test</h1>
+    <p><strong>No database required - pure JWT verification!</strong></p>
+    
+    <div class="section">
+        <h2>Step 1: Test Registration</h2>
+        <input type="email" id="testEmail" placeholder="Test email" value="test@example.com">
+        <input type="text" id="firstName" placeholder="First name" value="Test">
+        <input type="text" id="lastName" placeholder="Last name" value="User">
+        <button onclick="testRegistration()">📧 Test Registration</button>
+        <div id="registrationResult" class="result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Step 2: Test OTP Verification</h2>
+        <input type="email" id="verifyEmail" placeholder="Email" value="test@example.com">
+        <input type="text" id="otp" placeholder="OTP (from registration)" value="">
+        <input type="text" id="otpToken" placeholder="OTP Token (from registration)" value="">
+        <button onclick="testOTPVerification()">🔐 Verify OTP</button>
+        <div id="verificationResult" class="result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Step 3: JWT Secret Test</h2>
+        <button onclick="testJWTSecret()">🔑 Test JWT Secret</button>
+        <div id="jwtResult" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/auth';
+        let lastOTPResult = null;
+
+        async function testRegistration() {
+            const result = document.getElementById('registrationResult');
+            result.innerHTML = 'Testing JWT-based registration...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('testEmail').value,
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value,
+                        role: 'customer'
+                    })
+                });
+
+                const data = await response.json();
+                lastOTPResult = data;
+                
+                if (response.ok) {
+                    result.className = 'result success';
+                    result.innerHTML = `
+✅ JWT-Based Registration Success!
+
+📧 Email: ${data.email}
+👤 User ID: ${data.userId}
+🔐 OTP Token: ${data.otpToken ? 'Generated (JWT)' : 'N/A'}
+🔢 OTP Code: ${data.otp || 'N/A'}
+⏰ Expires In: ${data.expiresIn ? data.expiresIn + ' seconds' : 'N/A'}
+
+💡 Next Steps:
+1. Copy the OTP code from above
+2. Copy the OTP token from above  
+3. Use both in the verification step below
+
+📋 Response Details:
+${JSON.stringify(data, null, 2)}
+                    `;
+                    
+                    // Auto-fill verification fields
+                    document.getElementById('verifyEmail').value = data.email;
+                    document.getElementById('otp').value = data.otp || '';
+                    document.getElementById('otpToken').value = data.otpToken || '';
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `
+❌ Registration Failed!
+
+🔍 Error: ${data.error}
+📊 Status: ${response.status}
+
+🐛 Debug Info:
+${JSON.stringify(data, null, 2)}
+                    `;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `❌ Network Error:\n${error.message}`;
+            }
+        }
+
+        async function testOTPVerification() {
+            const result = document.getElementById('verificationResult');
+            result.innerHTML = 'Testing JWT-based OTP verification...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('verifyEmail').value,
+                        otp: document.getElementById('otp').value,
+                        otpToken: document.getElementById('otpToken').value
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.className = 'result success';
+                    result.innerHTML = `
+✅ JWT-Based OTP Verification Success!
+
+🎉 User: ${data.user ? data.user.email : 'N/A'}
+👤 Name: ${data.user ? data.user.firstName + ' ' + data.user.lastName : 'N/A'}
+🔑 Role: ${data.user ? data.user.role : 'N/A'}
+🔐 Access Token: ${data.accessToken ? 'Generated ✅' : 'N/A'}
+🔄 Refresh Token: ${data.refreshToken ? 'Generated ✅' : 'N/A'}
+⏰ Token Expires: ${data.expiresIn ? data.expiresIn + ' seconds' : 'N/A'}
+
+🎯 Permissions: ${data.user ? data.user.permissions.join(', ') : 'N/A'}
+
+📋 Full Response:
+${JSON.stringify(data, null, 2)}
+                    `;
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `
+❌ OTP Verification Failed!
+
+🔍 Error: ${data.error}
+📊 Status: ${response.status}
+
+🐛 Debug Info:
+${JSON.stringify(data, null, 2)}
+                    `;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `❌ Network Error:\n${error.message}`;
+            }
+        }
+
+        async function testJWTSecret() {
+            const result = document.getElementById('jwtResult');
+            result.innerHTML = 'Testing JWT Secret configuration...';
+            
+            try {
+                // Test registration to check if JWT_SECRET is configured
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'jwttest@example.com',
+                        firstName: 'JWT',
+                        lastName: 'Test',
+                        role: 'customer'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.error && data.error.includes('JWT_SECRET')) {
+                    result.className = 'result error';
+                    result.innerHTML = `
+❌ JWT_SECRET Not Configured!
+
+🔧 Required Action:
+1. Go to Cloudflare Pages Dashboard
+2. Select your project
+3. Settings → Environment variables
+4. Add: JWT_SECRET = s60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=
+5. Save and redeploy
+
+📊 Current Error: ${data.error}
+                    `;
+                } else if (response.ok) {
+                    result.className = 'result success';
+                    result.innerHTML = `
+✅ JWT_SECRET Working!
+
+🔐 JWT Secret: Properly configured
+🔑 Token Generation: Working
+📧 OTP System: Functional
+
+🎉 Your JWT-based OTP system is ready!
+                    `;
+                } else {
+                    result.className = 'result info';
+                    result.innerHTML = `
+ℹ️ JWT Test Result
+
+📊 Status: ${response.status}
+🔍 Error: ${data.error || 'No error - JWT_SECRET likely working'}
+
+💡 If you see database errors, that's expected - we're testing JWT only!
+                    `;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `❌ JWT Test Failed:\n${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
