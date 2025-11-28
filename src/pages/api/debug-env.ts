@@ -1,6 +1,5 @@
 // src/pages/api/debug-env.ts
 import type { APIRoute } from 'astro';
-import { OTPService } from '../../../lib/otpService';
 
 export const GET: APIRoute = async ({ locals }: { locals: any }) => {
   try {
