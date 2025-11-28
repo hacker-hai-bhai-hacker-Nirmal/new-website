@@ -1,4 +1,4 @@
-// src/pages/api/debug-env.ts
+// src/pages/api/debug-env.ts - Updated to trigger new deployment for environment variables
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ locals }: { locals: any }) => {
