@@ -1,0 +1,311 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="Brevo API Test | Litterateur">
+  <div class="brevo-test-container">
+    <div class="test-header">
+      <h1>🚀 Brevo API Test - Simple & Direct</h1>
+      <p>Click the button to send a test email and see detailed logs at every layer</p>
+    </div>
+
+    <div class="test-section">
+      <button id="sendTestEmail" class="test-button">
+        📧 Send Test Email to nirmalbajiya@gmail.com
+      </button>
+      
+      <div id="testStatus" class="test-status">
+        Ready to test...
+      </div>
+    </div>
+
+    <div class="logs-section">
+      <h2>🔍 Detailed Layer-by-Layer Logs</h2>
+      <div id="logsContainer" class="logs-container">
+        <div class="log-entry log-info">
+          <span class="log-time">[Ready]</span>
+          <span class="log-layer">INIT</span>
+          <span class="log-message">Test page loaded, waiting for user action...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .brevo-test-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .test-header h1 {
+      color: #2ecc71;
+      margin-bottom: 10px;
+    }
+
+    .test-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .test-button {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .test-button:hover {
+      background: #27ae60;
+    }
+
+    .test-button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+    }
+
+    .test-status {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .test-status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .test-status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .test-status.testing {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .logs-section {
+      margin-top: 40px;
+    }
+
+    .logs-section h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .logs-container {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 20px;
+      max-height: 500px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      padding: 5px;
+      border-radius: 3px;
+    }
+
+    .log-time {
+      color: #888;
+      margin-right: 10px;
+    }
+
+    .log-layer {
+      font-weight: bold;
+      margin-right: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    .log-message {
+      color: #fff;
+    }
+
+    .log-info .log-layer {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .log-success .log-layer {
+      background: #28a745;
+      color: white;
+    }
+
+    .log-warning .log-layer {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .log-error .log-layer {
+      background: #dc3545;
+      color: white;
+    }
+
+    .log-frontend .log-layer {
+      background: #6f42c1;
+      color: white;
+    }
+
+    .log-network .log-layer {
+      background: #fd7e14;
+      color: white;
+    }
+
+    .log-backend .log-layer {
+      background: #20c997;
+      color: white;
+    }
+
+    .log-api .log-layer {
+      background: #e83e8c;
+      color: white;
+    }
+  </style>
+</Layout>
+
+<script>
+  let logContainer;
+  let testButton;
+  let testStatus;
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    logContainer = document.getElementById('logsContainer');
+    testButton = document.getElementById('sendTestEmail');
+    testStatus = document.getElementById('testStatus');
+
+    testButton.addEventListener('click', sendTestEmail);
+    addLog('INIT', 'Test page initialized, button ready', 'info');
+  });
+
+  function addLog(layer, message, type = 'info') {
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry log-${type}`;
+    logEntry.innerHTML = `
+      <span class="log-time">[${timestamp}]</span>
+      <span class="log-layer">${layer}</span>
+      <span class="log-message">${message}</span>
+    `;
+    
+    logContainer.appendChild(logEntry);
+    logContainer.scrollTop = logContainer.scrollHeight;
+    
+    console.log(`[${layer}] ${message}`);
+  }
+
+  async function sendTestEmail() {
+    try {
+      // Disable button and update status
+      testButton.disabled = true;
+      testButton.textContent = '⏳ Sending...';
+      testStatus.className = 'test-status testing';
+      testStatus.textContent = 'Testing in progress...';
+
+      addLog('FRONTEND', '🚀 Starting Brevo API test', 'info');
+      addLog('FRONTEND', '📧 Target email: nirmalbajiya@gmail.com', 'info');
+
+      // Step 1: Prepare request
+      addLog('FRONTEND', '🔧 Preparing API request', 'frontend');
+      const requestBody = JSON.stringify({
+        email: 'nirmalbajiya@gmail.com'
+      });
+      addLog('FRONTEND', `📝 Request body: ${requestBody}`, 'frontend');
+
+      // Step 2: Make API call
+      addLog('NETWORK', '🌐 Sending POST request to /api/send-otp-pages', 'network');
+      const startTime = Date.now();
+      
+      const response = await fetch('/api/send-otp-pages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: requestBody
+      });
+
+      const endTime = Date.now();
+      const responseTime = endTime - startTime;
+      
+      addLog('NETWORK', `📡 Response received: ${response.status} ${response.statusText} (${responseTime}ms)`, 'network');
+      addLog('NETWORK', `📋 Response headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`, 'network');
+
+      // Step 3: Parse response
+      const responseText = await response.text();
+      addLog('NETWORK', `📦 Raw response body: ${responseText}`, 'network');
+      
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+        addLog('NETWORK', '✅ Response JSON parsed successfully', 'success');
+      } catch (e) {
+        addLog('NETWORK', `❌ JSON parse failed: ${e.message}`, 'error');
+        throw new Error('Invalid JSON response from server');
+      }
+
+      // Step 4: Analyze backend response
+      if (response.ok && responseData.success) {
+        addLog('BACKEND', '✅ Backend reports success!', 'success');
+        addLog('BACKEND', `📧 Email sent with Message ID: ${responseData.messageId}`, 'backend');
+        addLog('BACKEND', `🔑 Environment access method: ${responseData.debug?.accessMethod}`, 'backend');
+        addLog('BACKEND', `🔑 API key length: ${responseData.debug?.keyLength} characters`, 'backend');
+        
+        testStatus.className = 'test-status success';
+        testStatus.textContent = `✅ Success! Email sent (Message ID: ${responseData.messageId})`;
+        
+        addLog('API', '🎉 Brevo API call successful!', 'success');
+        addLog('API', `📧 Check nirmalbajiya@gmail.com for test email`, 'success');
+        
+      } else {
+        addLog('BACKEND', '❌ Backend reports failure', 'error');
+        addLog('BACKEND', `💥 Error: ${responseData.error || 'Unknown error'}`, 'error');
+        
+        if (responseData.debug) {
+          addLog('BACKEND', '🔍 Debug information available:', 'warning');
+          addLog('BACKEND', `🔑 Access method: ${responseData.debug.accessMethod}`, 'backend');
+          addLog('BACKEND', `🔑 Available locals keys: [${responseData.debug.environmentDebug?.localsEnvKeys?.join(', ') || 'none'}]`, 'backend');
+          addLog('BACKEND', `🔑 Available import keys: [${responseData.debug.environmentDebug?.importMetaKeys?.join(', ') || 'none'}]`, 'backend');
+        }
+        
+        testStatus.className = 'test-status error';
+        testStatus.textContent = `❌ Failed: ${responseData.error || 'Unknown error'}`;
+        
+        addLog('API', '💥 Brevo API call failed', 'error');
+      }
+
+    } catch (error) {
+      addLog('FRONTEND', `💥 Frontend error: ${error.message}`, 'error');
+      addLog('FRONTEND', `📋 Full error: ${error.stack}`, 'error');
+      
+      testStatus.className = 'test-status error';
+      testStatus.textContent = `❌ Frontend Error: ${error.message}`;
+      
+    } finally {
+      // Re-enable button
+      testButton.disabled = false;
+      testButton.textContent = '📧 Send Test Email to nirmalbajiya@gmail.com';
+      
+      addLog('FRONTEND', '🏁 Test completed, button ready for next test', 'info');
+    }
+  }
+</script>
