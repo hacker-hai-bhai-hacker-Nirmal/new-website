@@ -48,10 +48,10 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       console.log('✅ Found brevo_MCP_key via locals.env');
     }
     
-    // Method 2: import.meta.env (Astro/Cloudflare Pages)
+    // Method 2: import.meta.env (Astro/Cloudflare Pages) - Try brevo_MCP_key
     if (!brevoApiKey && import.meta.env.brevo_MCP_key) {
       brevoApiKey = import.meta.env.brevo_MCP_key;
-      accessMethod = 'import.meta.env';
+      accessMethod = 'import.meta.env.brevo_MCP_key';
       console.log('✅ Found brevo_MCP_key via import.meta.env');
     }
     
@@ -69,7 +69,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       console.log('✅ Found brevo_MCP_key via globalThis.env');
     }
 
-    // Debug: Show all available environment variables
+    // Debug: Show all available environment variables AND their actual values
     const debugInfo = {
       accessMethod,
       localsEnvKeys: locals?.env ? Object.keys(locals.env) : [],
@@ -79,7 +79,11 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       localsHasBrevo: !!locals?.env?.brevo_MCP_key,
       importMetaHasBrevo: !!import.meta.env.brevo_MCP_key,
       processHasBrevo: !!(process.env as any)?.brevo_MCP_key,
-      globalThisHasBrevo: !!(globalThis as any)?.env?.brevo_MCP_key
+      globalThisHasBrevo: !!(globalThis as any)?.env?.brevo_MCP_key,
+      // Add actual values for debugging
+      importMetaBrevoValue: import.meta.env.brevo_MCP_key,
+      importMetaBrevoType: typeof import.meta.env.brevo_MCP_key,
+      importMetaBrevoLength: import.meta.env.brevo_MCP_key ? import.meta.env.brevo_MCP_key.length : 0
     };
 
     if (!brevoApiKey) {
