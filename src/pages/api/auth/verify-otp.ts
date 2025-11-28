@@ -1,9 +1,7 @@
-// src/pages/api/auth/verify-otp.ts
-// Enhanced OTP verification with JWT-based stateless verification
-// No database required - uses JWT token containing encrypted OTP
+// OTP Verification API Endpoint - JWT Only
+// POST /api/auth/verify-otp
+// Pure JWT-based OTP verification (no database required)
 
-import { AppwriteService } from '../../../lib/appwriteService.js';
-import { sessionManager } from '../../../lib/sessionManager.js';
 import { otpService } from '../../../lib/otpService.js';
 
 interface VerifyOTPRequest {
@@ -15,19 +13,9 @@ interface VerifyOTPRequest {
 
 interface VerifyOTPResponse {
   success: boolean;
-  accessToken?: string;
-  refreshToken?: string;
-  expiresIn?: number;
-  user?: {
-    userId: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-    permissions: string[];
-  };
-  error?: string;
+  email?: string;
   message?: string;
+  error?: string;
 }
 
 export async function POST({ request, locals }: { request: Request; locals: any }): Promise<Response> {
@@ -37,23 +25,23 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     // Get environment variables from locals (Cloudflare Pages)
     const env = locals?.env || import.meta.env;
     
-    // Support both email-based and userId-based verification
-    const { email, otp, otpToken, userId } = body;
+    // Validate required fields
+    const { email, otp, otpToken } = body;
     
-    if ((!email && !userId) || !otp || !otpToken) {
+    if (!email || !otp || !otpToken) {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Email (or userId), OTP, and OTP token are required' 
+          error: 'Email, OTP, and OTP token are required' 
         }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // First verify the OTP using JWT token (no database needed)
+    // Verify the OTP using JWT token (no database needed)
     const otpServiceInstance = new otpService(env);
     const otpVerification = await otpServiceInstance.verifyOTP({
-      email: email || '', // Will be validated in JWT token
+      email,
       otp,
       otpToken
     });
@@ -68,109 +56,18 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       );
     }
 
-    const appwrite = new AppwriteService(env);
-    let user;
-
-    // Find user by email or userId
-    if (email) {
-      user = await appwrite.getUserByEmail(email);
-    } else if (userId) {
-      user = await appwrite.getUser(userId);
-    }
-
-    if (!user) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'User not found' 
-        }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Get user role and permissions
-    const role = await appwrite.getRole(user.roleId);
-    if (!role) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'User role not found' 
-        }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Update user status to active
-    await appwrite.updateUser(user.userId, {
-      status: 'active',
-      updatedAt: new Date()
+    // Log successful verification
+    console.log('OTP verification successful:', {
+      email,
+      timestamp: new Date().toISOString()
     });
 
-    // Create session tokens
-    const clientIP = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
-                     'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
-    
-    const sessionManagerInstance = new sessionManager(env);
-    const sessionResult = await sessionManagerInstance.createSession(
-      user.userId,
-      clientIP,
-      userAgent
-    );
-
-    if (!sessionResult.accessToken) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Failed to create session' 
-        }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Log successful verification (using console.log if logAuditEvent doesn't exist)
-    try {
-      // Try to use audit logging if available
-      if (typeof (appwrite as any).logAuditEvent === 'function') {
-        await (appwrite as any).logAuditEvent({
-          userId: user.userId,
-          action: 'OTP_VERIFICATION_SUCCESS',
-          resource: 'auth',
-          details: {
-            email: user.email,
-            timestamp: new Date().toISOString()
-          }
-        });
-      } else {
-        // Fallback to console logging
-        console.log('OTP verification successful:', {
-          userId: user.userId,
-          email: user.email,
-          timestamp: new Date().toISOString()
-        });
-      }
-    } catch (logError) {
-      console.warn('Failed to log audit event:', logError);
-      // Continue even if logging fails
-    }
-
-    // Return success response with tokens
+    // Return success response
     return new Response(
       JSON.stringify({
         success: true,
-        accessToken: sessionResult.accessToken,
-        refreshToken: sessionResult.refreshToken,
-        expiresIn: sessionResult.expiresIn,
-        user: {
-          userId: user.userId,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: role.roleName,
-          permissions: role.permissions
-        },
-        message: 'OTP verified successfully! You are now logged in.'
+        email,
+        message: 'OTP verified successfully!'
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );

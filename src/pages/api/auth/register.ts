@@ -1,10 +1,7 @@
-// User Registration API Endpoint
+// User Registration API Endpoint - JWT OTP Only
 // POST /api/auth/register
-// Registers new users with role-based access control
-// Uses JWT-based OTP (no database required)
+// Pure JWT-based OTP registration (no database required)
 
-import { AppwriteService } from '../../../lib/appwriteService.js';
-import { sessionManager } from '../../../lib/sessionManager.js';
 import { otpService } from '../../../lib/otpService.js';
 
 interface RegisterRequest {
@@ -18,7 +15,6 @@ interface RegisterRequest {
 
 interface RegisterResponse {
   success: boolean;
-  userId?: string;
   email?: string;
   otpToken?: string; // JWT containing OTP
   otp?: string; // Plain OTP for development
@@ -82,32 +78,6 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       );
     }
 
-    const appwrite = new AppwriteService(env);
-
-    // Check if user already exists
-    const existingUser = await appwrite.getUserByEmail(email);
-    if (existingUser) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'User with this email already exists' 
-        }),
-        { status: 409, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Get role information
-    const roleInfo = await appwrite.getRoleByName(role);
-    if (!roleInfo) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Role not found' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
     // Generate JWT-based OTP (no database required)
     const otpServiceInstance = new otpService(env);
     const otpResult = await otpServiceInstance.generateOTP({
@@ -127,24 +97,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       );
     }
 
-    // Create user record with pending verification status
-    const userId = await appwrite.createUser({
-      email,
-      phone: body.phone || undefined,
-      firstName,
-      lastName,
-      status: 'pending_verification',
-      roleId: roleInfo.roleId,
-      restaurantId: body.restaurantId || undefined,
-      twoFactorEnabled: false,
-      preferences: {
-        language: 'en',
-        notificationsEnabled: true,
-        theme: 'light'
-      }
-    });
-
-    // Send OTP email via existing Brevo service
+    // Send OTP email via Brevo service (if available)
     try {
       const emailResponse = await fetch('https://litterateur-otp-worker.nirmalkb21.workers.dev', {
         method: 'POST',
@@ -171,12 +124,11 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     return new Response(
       JSON.stringify({
         success: true,
-        userId,
         email,
         otpToken: otpResult.otpToken, // JWT containing encrypted OTP
         otp: otpResult.otp, // Include for development/testing
         expiresIn: otpResult.expiresIn,
-        message: `Registration successful! OTP sent to ${email}. Valid for ${10} minutes.`
+        message: `Registration successful! OTP sent to ${email}. Valid for 10 minutes.`
       }),
       { status: 201, headers: { 'Content-Type': 'application/json' } }
     );
