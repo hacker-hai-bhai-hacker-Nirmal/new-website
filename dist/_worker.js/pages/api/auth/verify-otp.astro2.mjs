@@ -1,51 +1,159 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { a as account } from '../../../chunks/appwrite_BQwyboXP.mjs';
+import { A as AppwriteService, s as sessionManager } from '../../../chunks/sessionManager_B2jOmk6k.mjs';
+import { o as otpService } from '../../../chunks/otpService_Ix66avmq.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-const POST = async ({ request }) => {
+async function POST({ request }) {
   try {
-    const { userId, otp } = await request.json();
-    if (!userId || !otp) {
+    const body = await request.json();
+    const { email, otp, otpToken, userId } = body;
+    if (!email && !userId || !otp || !otpToken) {
       return new Response(
-        JSON.stringify({ success: false, error: "User ID and OTP are required" }),
+        JSON.stringify({
+          success: false,
+          error: "Email (or userId), OTP, and OTP token are required"
+        }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-    const session = await account.createSession(
-      userId,
-      otp
-    );
-    const user = await account.get();
+    const otpVerification = await otpService.verifyOTP({
+      email: email || "",
+      // Will be validated in JWT token
+      otp,
+      otpToken
+    });
+    if (!otpVerification.success) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: otpVerification.error || "Invalid or expired OTP"
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    const appwrite = new AppwriteService();
+    let user;
+    if (email) {
+      user = await appwrite.getUserByEmail(email);
+    } else if (userId) {
+      user = await appwrite.getUser(userId);
+    }
+    if (!user) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "User not found"
+        }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    const role = await appwrite.getRole(user.roleId);
+    if (!role) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "User role not found"
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    await appwrite.updateUser(user.userId, {
+      status: "active",
+      updatedAt: /* @__PURE__ */ new Date()
+    });
+    const sessionResult = await sessionManager.createSession({
+      userId: user.userId,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: role.roleName,
+      permissions: role.permissions,
+      restaurantId: user.restaurantId
+    });
+    if (!sessionResult.accessToken) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Failed to create session"
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    try {
+      if (typeof appwrite.logAuditEvent === "function") {
+        await appwrite.logAuditEvent({
+          userId: user.userId,
+          action: "OTP_VERIFICATION_SUCCESS",
+          resource: "auth",
+          details: {
+            email: user.email,
+            timestamp: (/* @__PURE__ */ new Date()).toISOString()
+          }
+        });
+      } else {
+        console.log("OTP verification successful:", {
+          userId: user.userId,
+          email: user.email,
+          timestamp: (/* @__PURE__ */ new Date()).toISOString()
+        });
+      }
+    } catch (logError) {
+      console.warn("Failed to log audit event:", logError);
+    }
     return new Response(
       JSON.stringify({
         success: true,
-        sessionId: session.$id,
-        userId: session.userId,
-        user,
-        message: "OTP verified successfully"
+        accessToken: sessionResult.accessToken,
+        refreshToken: sessionResult.refreshToken,
+        expiresIn: sessionResult.expiresIn,
+        user: {
+          userId: user.userId,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: role.roleName,
+          permissions: role.permissions
+        },
+        message: "OTP verified successfully! You are now logged in."
       }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Error verifying OTP:", error);
+    console.error("OTP verification error:", error);
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || "Invalid or expired OTP"
+        error: "OTP verification failed. Please try again."
       }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
-};
+}
+async function GET() {
+  return new Response(
+    JSON.stringify({ error: "Method not allowed" }),
+    { status: 405, headers: { "Content-Type": "application/json" } }
+  );
+}
+async function PUT() {
+  return new Response(
+    JSON.stringify({ error: "Method not allowed" }),
+    { status: 405, headers: { "Content-Type": "application/json" } }
+  );
+}
+async function DELETE() {
+  return new Response(
+    JSON.stringify({ error: "Method not allowed" }),
+    { status: 405, headers: { "Content-Type": "application/json" } }
+  );
+}
 
 const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  POST
+  DELETE,
+  GET,
+  POST,
+  PUT
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;

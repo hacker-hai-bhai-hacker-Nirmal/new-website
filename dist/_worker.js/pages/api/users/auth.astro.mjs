@@ -5,7 +5,7 @@ export { renderers } from '../../../renderers.mjs';
 async function GET({ request }) {
   try {
     // Initialize Appwrite on server
-    const { Client, Account } = await import('../../../chunks/sdk_oS0JbZ-m.mjs');
+    const { Client, Account } = await import('../../../chunks/sdk_BM-XKegH.mjs');
     
     const client = new Client()
       .setEndpoint('https://fra.cloud.appwrite.io/v1')

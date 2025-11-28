@@ -1,10 +1,11 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { f as fileExtension, j as joinPaths, s as slash, p as prependForwardSlash, r as removeTrailingForwardSlash, a as appendForwardSlash, b as isInternalPath, c as collapseDuplicateTrailingSlashes, h as hasFileExtension } from './path_CH3auf61.mjs';
 import { m as matchPattern } from './remote_CrdlObHx.mjs';
-import { r as requestIs404Or500, i as isRequestServerIsland, n as notFound, a as redirectToFallback, b as redirectToDefaultLocale, c as requestHasLocale, e as normalizeTheLocale, d as defineMiddleware, S as SERVER_ISLAND_COMPONENT, f as SERVER_ISLAND_ROUTE, g as createEndpoint, R as RouteCache, s as sequence, h as findRouteToRewrite, m as matchRoute, j as RenderContext, P as PERSIST_SYMBOL, k as getSetCookiesFromResponse } from './index_BQWiRsef.mjs';
+import { r as requestIs404Or500, i as isRequestServerIsland, n as notFound, a as redirectToFallback, b as redirectToDefaultLocale, c as requestHasLocale, d as normalizeTheLocale, S as SERVER_ISLAND_COMPONENT, e as SERVER_ISLAND_ROUTE, f as createEndpoint, R as RouteCache, s as sequence, g as findRouteToRewrite, m as matchRoute, h as RenderContext, P as PERSIST_SYMBOL, j as getSetCookiesFromResponse } from './sequence_EGp0wSb3.mjs';
 import { a1 as ROUTE_TYPE_HEADER, w as REROUTE_DIRECTIVE_HEADER, D as DEFAULT_404_COMPONENT, A as AstroError, Y as ActionNotFoundError, a5 as s, a9 as clientAddressSymbol, am as LocalsNotAnObject, an as REROUTABLE_STATUS_CODES, ad as responseSentSymbol } from './astro/server_DaomeaOp.mjs';
 import { N as NOOP_MIDDLEWARE_FN } from './noop-middleware_OobTKCtS.mjs';
 import { D as DEFAULT_404_ROUTE, e as default404Instance, f as ensure404Route } from './astro-designed-error-pages_BO0bGs8i.mjs';
+import { d as defineMiddleware } from './index_BWlpe_dD.mjs';
 import 'cloudflare:workers';
 
 function createI18nMiddleware(i18n, base, trailingSlash, format) {

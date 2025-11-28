@@ -30,6 +30,406 @@ function __classPrivateFieldGet(receiver, state, kind, f) {
 }
 
 /**
+ * Helper class to generate query strings.
+ */
+class Query {
+    /**
+     * Constructor for Query class.
+     *
+     * @param {string} method
+     * @param {AttributesTypes} attribute
+     * @param {QueryTypes} values
+     */
+    constructor(method, attribute, values) {
+        this.method = method;
+        this.attribute = attribute;
+        if (values !== undefined) {
+            if (Array.isArray(values)) {
+                this.values = values;
+            }
+            else {
+                this.values = [values];
+            }
+        }
+    }
+    /**
+     * Convert the query object to a JSON string.
+     *
+     * @returns {string}
+     */
+    toString() {
+        return JSON.stringify({
+            method: this.method,
+            attribute: this.attribute,
+            values: this.values,
+        });
+    }
+}
+/**
+ * Filter resources where attribute is equal to value.
+ *
+ * @param {string} attribute
+ * @param {QueryTypes} value
+ * @returns {string}
+ */
+Query.equal = (attribute, value) => new Query("equal", attribute, value).toString();
+/**
+ * Filter resources where attribute is not equal to value.
+ *
+ * @param {string} attribute
+ * @param {QueryTypes} value
+ * @returns {string}
+ */
+Query.notEqual = (attribute, value) => new Query("notEqual", attribute, value).toString();
+/**
+ * Filter resources where attribute is less than value.
+ *
+ * @param {string} attribute
+ * @param {QueryTypes} value
+ * @returns {string}
+ */
+Query.lessThan = (attribute, value) => new Query("lessThan", attribute, value).toString();
+/**
+ * Filter resources where attribute is less than or equal to value.
+ *
+ * @param {string} attribute
+ * @param {QueryTypes} value
+ * @returns {string}
+ */
+Query.lessThanEqual = (attribute, value) => new Query("lessThanEqual", attribute, value).toString();
+/**
+ * Filter resources where attribute is greater than value.
+ *
+ * @param {string} attribute
+ * @param {QueryTypes} value
+ * @returns {string}
+ */
+Query.greaterThan = (attribute, value) => new Query("greaterThan", attribute, value).toString();
+/**
+ * Filter resources where attribute is greater than or equal to value.
+ *
+ * @param {string} attribute
+ * @param {QueryTypes} value
+ * @returns {string}
+ */
+Query.greaterThanEqual = (attribute, value) => new Query("greaterThanEqual", attribute, value).toString();
+/**
+ * Filter resources where attribute is null.
+ *
+ * @param {string} attribute
+ * @returns {string}
+ */
+Query.isNull = (attribute) => new Query("isNull", attribute).toString();
+/**
+ * Filter resources where attribute is not null.
+ *
+ * @param {string} attribute
+ * @returns {string}
+ */
+Query.isNotNull = (attribute) => new Query("isNotNull", attribute).toString();
+/**
+ * Filter resources where attribute is between start and end (inclusive).
+ *
+ * @param {string} attribute
+ * @param {string | number} start
+ * @param {string | number} end
+ * @returns {string}
+ */
+Query.between = (attribute, start, end) => new Query("between", attribute, [start, end]).toString();
+/**
+ * Filter resources where attribute starts with value.
+ *
+ * @param {string} attribute
+ * @param {string} value
+ * @returns {string}
+ */
+Query.startsWith = (attribute, value) => new Query("startsWith", attribute, value).toString();
+/**
+ * Filter resources where attribute ends with value.
+ *
+ * @param {string} attribute
+ * @param {string} value
+ * @returns {string}
+ */
+Query.endsWith = (attribute, value) => new Query("endsWith", attribute, value).toString();
+/**
+ * Specify which attributes should be returned by the API call.
+ *
+ * @param {string[]} attributes
+ * @returns {string}
+ */
+Query.select = (attributes) => new Query("select", undefined, attributes).toString();
+/**
+ * Filter resources by searching attribute for value.
+ * A fulltext index on attribute is required for this query to work.
+ *
+ * @param {string} attribute
+ * @param {string} value
+ * @returns {string}
+ */
+Query.search = (attribute, value) => new Query("search", attribute, value).toString();
+/**
+ * Sort results by attribute descending.
+ *
+ * @param {string} attribute
+ * @returns {string}
+ */
+Query.orderDesc = (attribute) => new Query("orderDesc", attribute).toString();
+/**
+ * Sort results by attribute ascending.
+ *
+ * @param {string} attribute
+ * @returns {string}
+ */
+Query.orderAsc = (attribute) => new Query("orderAsc", attribute).toString();
+/**
+ * Sort results randomly.
+ *
+ * @returns {string}
+ */
+Query.orderRandom = () => new Query("orderRandom").toString();
+/**
+ * Return results after documentId.
+ *
+ * @param {string} documentId
+ * @returns {string}
+ */
+Query.cursorAfter = (documentId) => new Query("cursorAfter", undefined, documentId).toString();
+/**
+ * Return results before documentId.
+ *
+ * @param {string} documentId
+ * @returns {string}
+ */
+Query.cursorBefore = (documentId) => new Query("cursorBefore", undefined, documentId).toString();
+/**
+ * Return only limit results.
+ *
+ * @param {number} limit
+ * @returns {string}
+ */
+Query.limit = (limit) => new Query("limit", undefined, limit).toString();
+/**
+ * Filter resources by skipping the first offset results.
+ *
+ * @param {number} offset
+ * @returns {string}
+ */
+Query.offset = (offset) => new Query("offset", undefined, offset).toString();
+/**
+ * Filter resources where attribute contains the specified value.
+ *
+ * @param {string} attribute
+ * @param {string | string[]} value
+ * @returns {string}
+ */
+Query.contains = (attribute, value) => new Query("contains", attribute, value).toString();
+/**
+ * Filter resources where attribute does not contain the specified value.
+ *
+ * @param {string} attribute
+ * @param {string | any[]} value
+ * @returns {string}
+ */
+Query.notContains = (attribute, value) => new Query("notContains", attribute, value).toString();
+/**
+ * Filter resources by searching attribute for value (inverse of search).
+ * A fulltext index on attribute is required for this query to work.
+ *
+ * @param {string} attribute
+ * @param {string} value
+ * @returns {string}
+ */
+Query.notSearch = (attribute, value) => new Query("notSearch", attribute, value).toString();
+/**
+ * Filter resources where attribute is not between start and end (exclusive).
+ *
+ * @param {string} attribute
+ * @param {string | number} start
+ * @param {string | number} end
+ * @returns {string}
+ */
+Query.notBetween = (attribute, start, end) => new Query("notBetween", attribute, [start, end]).toString();
+/**
+ * Filter resources where attribute does not start with value.
+ *
+ * @param {string} attribute
+ * @param {string} value
+ * @returns {string}
+ */
+Query.notStartsWith = (attribute, value) => new Query("notStartsWith", attribute, value).toString();
+/**
+ * Filter resources where attribute does not end with value.
+ *
+ * @param {string} attribute
+ * @param {string} value
+ * @returns {string}
+ */
+Query.notEndsWith = (attribute, value) => new Query("notEndsWith", attribute, value).toString();
+/**
+ * Filter resources where document was created before date.
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+Query.createdBefore = (value) => Query.lessThan("$createdAt", value);
+/**
+ * Filter resources where document was created after date.
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+Query.createdAfter = (value) => Query.greaterThan("$createdAt", value);
+/**
+ * Filter resources where document was created between dates.
+ *
+ * @param {string} start
+ * @param {string} end
+ * @returns {string}
+ */
+Query.createdBetween = (start, end) => Query.between("$createdAt", start, end);
+/**
+ * Filter resources where document was updated before date.
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+Query.updatedBefore = (value) => Query.lessThan("$updatedAt", value);
+/**
+ * Filter resources where document was updated after date.
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+Query.updatedAfter = (value) => Query.greaterThan("$updatedAt", value);
+/**
+ * Filter resources where document was updated between dates.
+ *
+ * @param {string} start
+ * @param {string} end
+ * @returns {string}
+ */
+Query.updatedBetween = (start, end) => Query.between("$updatedAt", start, end);
+/**
+ * Combine multiple queries using logical OR operator.
+ *
+ * @param {string[]} queries
+ * @returns {string}
+ */
+Query.or = (queries) => new Query("or", undefined, queries.map((query) => JSON.parse(query))).toString();
+/**
+ * Combine multiple queries using logical AND operator.
+ *
+ * @param {string[]} queries
+ * @returns {string}
+ */
+Query.and = (queries) => new Query("and", undefined, queries.map((query) => JSON.parse(query))).toString();
+/**
+ * Filter resources where attribute is at a specific distance from the given coordinates.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @param {number} distance
+ * @param {boolean} meters
+ * @returns {string}
+ */
+Query.distanceEqual = (attribute, values, distance, meters = true) => new Query("distanceEqual", attribute, [[values, distance, meters]]).toString();
+/**
+ * Filter resources where attribute is not at a specific distance from the given coordinates.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @param {number} distance
+ * @param {boolean} meters
+ * @returns {string}
+ */
+Query.distanceNotEqual = (attribute, values, distance, meters = true) => new Query("distanceNotEqual", attribute, [[values, distance, meters]]).toString();
+/**
+ * Filter resources where attribute is at a distance greater than the specified value from the given coordinates.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @param {number} distance
+ * @param {boolean} meters
+ * @returns {string}
+ */
+Query.distanceGreaterThan = (attribute, values, distance, meters = true) => new Query("distanceGreaterThan", attribute, [[values, distance, meters]]).toString();
+/**
+ * Filter resources where attribute is at a distance less than the specified value from the given coordinates.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @param {number} distance
+ * @param {boolean} meters
+ * @returns {string}
+ */
+Query.distanceLessThan = (attribute, values, distance, meters = true) => new Query("distanceLessThan", attribute, [[values, distance, meters]]).toString();
+/**
+ * Filter resources where attribute intersects with the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.intersects = (attribute, values) => new Query("intersects", attribute, [values]).toString();
+/**
+ * Filter resources where attribute does not intersect with the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.notIntersects = (attribute, values) => new Query("notIntersects", attribute, [values]).toString();
+/**
+ * Filter resources where attribute crosses the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.crosses = (attribute, values) => new Query("crosses", attribute, [values]).toString();
+/**
+ * Filter resources where attribute does not cross the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.notCrosses = (attribute, values) => new Query("notCrosses", attribute, [values]).toString();
+/**
+ * Filter resources where attribute overlaps with the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.overlaps = (attribute, values) => new Query("overlaps", attribute, [values]).toString();
+/**
+ * Filter resources where attribute does not overlap with the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.notOverlaps = (attribute, values) => new Query("notOverlaps", attribute, [values]).toString();
+/**
+ * Filter resources where attribute touches the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.touches = (attribute, values) => new Query("touches", attribute, [values]).toString();
+/**
+ * Filter resources where attribute does not touch the given geometry.
+ *
+ * @param {string} attribute
+ * @param {any[]} values
+ * @returns {string}
+ */
+Query.notTouches = (attribute, values) => new Query("notTouches", attribute, [values]).toString();
+
+/**
  * Exception thrown by the  package
  */
 class AppwriteException extends Error {
@@ -2970,4 +3370,4 @@ var ExecutionStatus;
     ExecutionStatus["Scheduled"] = "scheduled";
 })(ExecutionStatus || (ExecutionStatus = {}));
 
-export { Account, AppwriteException, AuthenticationFactor, AuthenticatorType, Browser, Client, Condition, CreditCard, Databases, ExecutionMethod, ExecutionStatus, ExecutionTrigger, Flag, ID, ImageFormat, ImageGravity, OAuthProvider };
+export { Account, AppwriteException, AuthenticationFactor, AuthenticatorType, Browser, Client, Condition, CreditCard, Databases, ExecutionMethod, ExecutionStatus, ExecutionTrigger, Flag, ID, ImageFormat, ImageGravity, OAuthProvider, Query };

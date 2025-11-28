@@ -1,6 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { a as account } from '../../../chunks/appwrite_BQwyboXP.mjs';
-import { ID } from '../../../chunks/sdk_oS0JbZ-m.mjs';
+import { a as account } from '../../../chunks/appwrite_B9eUfPp8.mjs';
+import { ID } from '../../../chunks/sdk_BM-XKegH.mjs';
 import { s as sendOtpEmail } from '../../../chunks/brevoService_C7HhBd8A.mjs';
 export { renderers } from '../../../renderers.mjs';
 

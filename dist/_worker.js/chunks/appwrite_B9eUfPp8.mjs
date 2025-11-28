@@ -1,5 +1,5 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { Client, Databases, Account } from './sdk_oS0JbZ-m.mjs';
+import { Client, Databases, Account } from './sdk_BM-XKegH.mjs';
 
 // Appwrite Configuration
 const config = {

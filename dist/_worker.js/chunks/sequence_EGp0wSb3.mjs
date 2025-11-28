@@ -1,7 +1,8 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { p as decryptString, q as createSlotValueFromString, v as isAstroComponentFactory, k as renderComponent, r as renderTemplate, w as REROUTE_DIRECTIVE_HEADER, A as AstroError, x as i18nNoLocaleFoundInPath, y as ResponseSentError, z as originPathnameSymbol, B as RewriteWithBodyUsed, G as GetStaticPathsRequired, C as InvalidGetStaticPathsReturn, H as InvalidGetStaticPathsEntry, J as GetStaticPathsExpectedParams, K as GetStaticPathsInvalidRouteParam, P as PageNumberParamNotFound, D as DEFAULT_404_COMPONENT, O as NoMatchingStaticPathFound, Q as PrerenderDynamicEndpointPathCollide, S as ReservedSlotName, T as renderSlotToString, V as renderJSX, W as chunkToString, X as isRenderInstruction, Y as ActionNotFoundError, Z as MiddlewareNoDataOrNextCalled, _ as MiddlewareNotAResponse, $ as SessionStorageInitError, a0 as SessionStorageSaveError, a1 as ROUTE_TYPE_HEADER, a2 as ForbiddenRewrite, a3 as ASTRO_VERSION, a4 as CspNotEnabled, a5 as s, a6 as LocalsReassigned, a7 as generateCspDigest, a8 as PrerenderClientAddressNotAvailable, a9 as clientAddressSymbol, aa as ClientAddressNotAvailable, ab as StaticClientAddressNotAvailable, ac as AstroResponseHeadersReassigned, ad as responseSentSymbol$1, ae as renderPage, af as REWRITE_DIRECTIVE_HEADER_KEY, ag as REWRITE_DIRECTIVE_HEADER_VALUE, ah as renderEndpoint } from './astro/server_DaomeaOp.mjs';
-import { g as getActionQueryString, d as deserializeActionResult, D as DEFAULT_404_ROUTE, A as ActionError, s as serializeActionResult, a as ACTION_RPC_ROUTE_PATTERN, b as ACTION_QUERY_PARAMS, u as unflatten$1, c as stringify$2 } from './astro-designed-error-pages_BO0bGs8i.mjs';
+import { d as defineMiddleware } from './index_BWlpe_dD.mjs';
 import { a as appendForwardSlash, j as joinPaths, r as removeTrailingForwardSlash, p as prependForwardSlash, t as trimSlashes } from './path_CH3auf61.mjs';
+import { g as getActionQueryString, d as deserializeActionResult, D as DEFAULT_404_ROUTE, A as ActionError, s as serializeActionResult, a as ACTION_RPC_ROUTE_PATTERN, b as ACTION_QUERY_PARAMS, u as unflatten$1, c as stringify$2 } from './astro-designed-error-pages_BO0bGs8i.mjs';
 
 const ACTION_API_CONTEXT_SYMBOL = Symbol.for("astro.actionAPIContext");
 const formContentTypes = ["application/x-www-form-urlencoded", "multipart/form-data"];
@@ -3560,8 +3561,4 @@ function sequence(...handlers) {
   });
 }
 
-function defineMiddleware(fn) {
-  return fn;
-}
-
-export { PERSIST_SYMBOL as P, RouteCache as R, SERVER_ISLAND_COMPONENT as S, redirectToFallback as a, redirectToDefaultLocale as b, requestHasLocale as c, defineMiddleware as d, normalizeTheLocale as e, SERVER_ISLAND_ROUTE as f, createEndpoint as g, findRouteToRewrite as h, isRequestServerIsland as i, RenderContext as j, getSetCookiesFromResponse as k, matchRoute as m, notFound as n, requestIs404Or500 as r, sequence as s };
+export { PERSIST_SYMBOL as P, RouteCache as R, SERVER_ISLAND_COMPONENT as S, redirectToFallback as a, redirectToDefaultLocale as b, requestHasLocale as c, normalizeTheLocale as d, SERVER_ISLAND_ROUTE as e, createEndpoint as f, findRouteToRewrite as g, RenderContext as h, isRequestServerIsland as i, getSetCookiesFromResponse as j, matchRoute as m, notFound as n, requestIs404Or500 as r, sequence as s };
