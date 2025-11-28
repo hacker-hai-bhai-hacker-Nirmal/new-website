@@ -87,11 +87,11 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       importMetaBrevoValue: import.meta.env.brevo_MCP_key,
       importMetaBrevoType: typeof import.meta.env.brevo_MCP_key,
       importMetaBrevoLength: import.meta.env.brevo_MCP_key ? import.meta.env.brevo_MCP_key.length : 0,
-      // Add test_variable debugging
-      testVariableValue: import.meta.env.test_variable,
-      testVariableType: typeof import.meta.env.test_variable,
-      testVariableAvailable: !!import.meta.env.test_variable,
-      testVariableLength: import.meta.env.test_variable ? import.meta.env.test_variable.length : 0
+      // Add test variable debugging
+      testVariableValue: (import.meta.env as any)['test variable'],
+      testVariableType: typeof (import.meta.env as any)['test variable'],
+      testVariableAvailable: !!(import.meta.env as any)['test variable'],
+      testVariableLength: (import.meta.env as any)['test variable'] ? (import.meta.env as any)['test variable'].length : 0
     };
 
     if (!brevoApiKey) {
