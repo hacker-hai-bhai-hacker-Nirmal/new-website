@@ -93,14 +93,17 @@ export class AppwriteService {
   private databases: Databases;
   private databaseId: string;
 
-  constructor() {
+  constructor(env?: any) {
+    // Use provided env or fallback to import.meta.env
+    const environment = env || import.meta.env;
+    
     this.client = new Client()
-      .setEndpoint(import.meta.env.APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1')
-      .setProject(import.meta.env.APPWRITE_PROJECT_ID || '6900b1ed001604d8befb');
+      .setEndpoint(environment.APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1')
+      .setProject(environment.APPWRITE_PROJECT_ID || '6900b1ed001604d8befb');
     
     this.account = new Account(this.client);
     this.databases = new Databases(this.client);
-    this.databaseId = import.meta.env.APPWRITE_DATABASE_ID || 'main-db';
+    this.databaseId = environment.APPWRITE_DATABASE_ID || 'main-db';
   }
 
   // User Management Methods

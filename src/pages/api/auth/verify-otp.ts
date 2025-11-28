@@ -30,9 +30,12 @@ interface VerifyOTPResponse {
   message?: string;
 }
 
-export async function POST({ request }: { request: Request }): Promise<Response> {
+export async function POST({ request, locals }: { request: Request; locals: any }): Promise<Response> {
   try {
     const body: VerifyOTPRequest = await request.json();
+    
+    // Get environment variables from locals (Cloudflare Pages)
+    const env = locals?.env || import.meta.env;
     
     // Support both email-based and userId-based verification
     const { email, otp, otpToken, userId } = body;
@@ -48,7 +51,8 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     }
 
     // First verify the OTP using JWT token (no database needed)
-    const otpVerification = await otpService.verifyOTP({
+    const otpServiceInstance = new otpService(env);
+    const otpVerification = await otpServiceInstance.verifyOTP({
       email: email || '', // Will be validated in JWT token
       otp,
       otpToken
@@ -64,7 +68,7 @@ export async function POST({ request }: { request: Request }): Promise<Response>
       );
     }
 
-    const appwrite = new AppwriteService();
+    const appwrite = new AppwriteService(env);
     let user;
 
     // Find user by email or userId
@@ -108,7 +112,8 @@ export async function POST({ request }: { request: Request }): Promise<Response>
                      'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
     
-    const sessionResult = await sessionManager.createSession(
+    const sessionManagerInstance = new sessionManager(env);
+    const sessionResult = await sessionManagerInstance.createSession(
       user.userId,
       clientIP,
       userAgent

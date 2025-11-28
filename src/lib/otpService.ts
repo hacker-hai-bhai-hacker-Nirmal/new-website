@@ -36,9 +36,12 @@ class OTPService {
   private readonly jwtSecret: string;
   private readonly otpExpiryMinutes: number = 10;
 
-  constructor() {
-    this.jwtSecret = import.meta.env.JWT_SECRET || 's60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=';
-    if (!import.meta.env.JWT_SECRET) {
+  constructor(env?: any) {
+    // Use provided env or fallback to import.meta.env
+    const environment = env || import.meta.env;
+    
+    this.jwtSecret = environment.JWT_SECRET || 's60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=';
+    if (!environment.JWT_SECRET) {
       console.warn('WARNING: JWT_SECRET not set in environment. Using fallback for testing.');
     }
   }

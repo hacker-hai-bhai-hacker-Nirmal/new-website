@@ -27,9 +27,12 @@ interface RegisterResponse {
   message?: string;
 }
 
-export async function POST({ request }: { request: Request }): Promise<Response> {
+export async function POST({ request, locals }: { request: Request; locals: any }): Promise<Response> {
   try {
     const body: RegisterRequest = await request.json();
+    
+    // Get environment variables from locals (Cloudflare Pages)
+    const env = locals?.env || import.meta.env;
     
     // Validate required fields
     const { email, firstName, lastName, role } = body;
@@ -79,7 +82,7 @@ export async function POST({ request }: { request: Request }): Promise<Response>
       );
     }
 
-    const appwrite = new AppwriteService();
+    const appwrite = new AppwriteService(env);
 
     // Check if user already exists
     const existingUser = await appwrite.getUserByEmail(email);
@@ -106,7 +109,8 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     }
 
     // Generate JWT-based OTP (no database required)
-    const otpResult = await otpService.generateOTP({
+    const otpServiceInstance = new otpService(env);
+    const otpResult = await otpServiceInstance.generateOTP({
       email,
       firstName,
       lastName,

@@ -39,9 +39,12 @@ export class SessionManager {
   private appwrite: AppwriteService;
   private jwtSecret: string;
 
-  constructor() {
-    this.appwrite = new AppwriteService();
-    this.jwtSecret = import.meta.env.JWT_SECRET || 'your-secret-key-change-in-production';
+  constructor(env?: any) {
+    // Use provided env or fallback to import.meta.env
+    const environment = env || import.meta.env;
+    
+    this.appwrite = new AppwriteService(environment);
+    this.jwtSecret = environment.JWT_SECRET || 'your-secret-key-change-in-production';
     
     if (this.jwtSecret === 'your-secret-key-change-in-production') {
       console.warn('⚠️  Using default JWT secret. Please set JWT_SECRET in production!');
