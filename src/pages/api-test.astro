@@ -14,9 +14,15 @@ import Layout from '../layouts/Layout.astro'
         <label for="apiEndpoint">API Endpoint</label>
         <select id="apiEndpoint">
           <option value="/api/debug-env">GET - Debug Environment Variables</option>
+          <option value="/api/debug-comprehensive">GET - Comprehensive Debug Analysis</option>
+          <option value="/api/discover-env-vars">GET - Discover Environment Variables</option>
+          <option value="/api/test-vite-env">GET - Test VITE_ Prefix Analysis</option>
+          <option value="/api/test-brevo-api">GET/POST - Test Brevo API</option>
+          <option value="/api/send-otp-pages">GET/POST - Send OTP (Pages Method)</option>
+          <option value="/api/send-otp-worker">POST - Send OTP (Workers Method)</option>
           <option value="/api/auth/register">POST - Register User</option>
           <option value="/api/auth/verify-otp">POST - Verify OTP</option>
-          <option value="/api/auth/send-otp">POST - Send OTP</option>
+          <option value="/api/auth/send-otp">POST - Send OTP (Original)</option>
           <option value="/api/check-env">GET - Check Environment</option>
           <option value="custom">Custom Endpoint</option>
         </select>
@@ -341,9 +347,21 @@ import Layout from '../layouts/Layout.astro'
               break;
             case '/api/debug-env':
             case '/api/check-env':
+            case '/api/debug-comprehensive':
+            case '/api/discover-env-vars':
+            case '/api/test-vite-env':
               requestBody.value = '';
               method.value = 'GET';
               if (bodyGroup) bodyGroup.style.display = 'none';
+              break;
+            case '/api/test-brevo-api':
+            case '/api/send-otp-pages':
+            case '/api/send-otp-worker':
+              requestBody.value = JSON.stringify({
+                email: 'nirmalbajiya@gmail.com'
+              }, null, 2);
+              method.value = 'POST';
+              if (bodyGroup) bodyGroup.style.display = 'block';
               break;
             default:
               if (bodyGroup) bodyGroup.style.display = 'block';
