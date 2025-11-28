@@ -16,6 +16,19 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Check if Brevo API key is available
+    const brevoApiKey = import.meta.env.BREVO_API_KEY;
+    if (!brevoApiKey) {
+      console.error('❌ BREVO_API_KEY environment variable not found');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Email service configuration error' 
+        }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Create an email token (Appwrite's OTP flow)
     const response = await account.createEmailToken(
       ID.unique(), // User ID (will be created if not exists)
@@ -33,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Send OTP email using Brevo
-    const emailResult: EmailResult = await sendOtpEmail(email, otp, 'User');
+    const emailResult: EmailResult = await sendOtpEmail(email, otp, 'User', brevoApiKey);
 
     if (!emailResult.success) {
       console.error('Brevo email failed:', emailResult.error);
