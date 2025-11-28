@@ -45,6 +45,8 @@ export const GET: APIRoute = async ({ locals }: { locals: any }) => {
       }
     };
 
+    console.log('Comprehensive test created successfully');
+
     return new Response(
       JSON.stringify({ 
         success: true,
