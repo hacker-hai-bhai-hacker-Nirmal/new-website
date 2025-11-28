@@ -5,12 +5,12 @@ import { ID } from 'appwrite';
 import { sendOtpEmail } from '../../../lib/brevoService';
 import type { EmailResult } from '../../../types/brevo';
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals }: { request: Request; locals: any }) => {
   try {
     const { email } = await request.json();
     
     // Get environment variables from locals (Cloudflare Pages)
-    const env = locals?.env || import.meta.env;
+    const env = (locals as any)?.env || import.meta.env;
     
     if (!email) {
       return new Response(

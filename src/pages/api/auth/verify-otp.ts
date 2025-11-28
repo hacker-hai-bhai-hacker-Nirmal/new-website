@@ -23,7 +23,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     const body: VerifyOTPRequest = await request.json();
     
     // Get environment variables from locals (Cloudflare Pages)
-    const env = locals?.env || import.meta.env;
+    const env = (locals as any)?.env || import.meta.env;
     
     // Validate required fields
     const { email, otp, otpToken } = body;

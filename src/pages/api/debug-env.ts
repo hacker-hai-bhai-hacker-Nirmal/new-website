@@ -1,11 +1,11 @@
 // src/pages/api/debug-env.ts
 import type { APIRoute } from 'astro';
-import { OTPService } from '../../../lib/otpService.js';
+import { OTPService } from '../../../lib/otpService';
 
-export const GET: APIRoute = async ({ locals }) => {
+export const GET: APIRoute = async ({ locals }: { locals: any }) => {
   try {
     // Debug environment variables - use Astro.env in Cloudflare Pages
-    const env = locals?.env || import.meta.env;
+    const env = (locals as any)?.env || import.meta.env;
     
     const envVars = {
       brevo_MCP_key: env.brevo_MCP_key ? `Found (length: ${env.brevo_MCP_key.length})` : 'NOT FOUND',
@@ -37,10 +37,10 @@ export const GET: APIRoute = async ({ locals }) => {
   }
 };
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals }: { request: Request; locals: any }) => {
   try {
     const body = await request.json();
-    const env = locals?.env || import.meta.env;
+    const env = (locals as any)?.env || import.meta.env;
     
     console.log('JWT Test Started');
     
