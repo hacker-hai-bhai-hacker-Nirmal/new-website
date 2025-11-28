@@ -11,10 +11,12 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     console.log('🔍 Body type:', typeof rawBody);
     
     let email;
+    let testMode = false;
     try {
       const parsed = JSON.parse(rawBody);
       console.log('🔍 Parsed body:', parsed);
       email = parsed.email;
+      testMode = parsed.testMode === true;
     } catch (e) {
       console.error('❌ JSON parse error:', e);
       return new Response(
@@ -29,6 +31,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     }
     
     console.log('🔍 Extracted email:', email);
+    console.log('🔍 Test mode:', testMode);
     
     if (!email) {
       return new Response(
@@ -83,11 +86,30 @@ export async function POST({ request, locals }: { request: Request; locals: any 
       // Add actual values for debugging
       importMetaBrevoValue: import.meta.env.brevo_MCP_key,
       importMetaBrevoType: typeof import.meta.env.brevo_MCP_key,
-      importMetaBrevoLength: import.meta.env.brevo_MCP_key ? import.meta.env.brevo_MCP_key.length : 0
+      importMetaBrevoLength: import.meta.env.brevo_MCP_key ? import.meta.env.brevo_MCP_key.length : 0,
+      // Add test_variable debugging
+      testVariableValue: import.meta.env.test_variable,
+      testVariableType: typeof import.meta.env.test_variable,
+      testVariableAvailable: !!import.meta.env.test_variable,
+      testVariableLength: import.meta.env.test_variable ? import.meta.env.test_variable.length : 0
     };
 
     if (!brevoApiKey) {
       console.error('❌ brevo_MCP_key not found in any environment');
+      
+      if (testMode) {
+        // In test mode, return debug info even if brevo key is missing
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Test mode: brevo_MCP_key not found, but returning debug info',
+            testMode: true,
+            debug: debugInfo
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+      
       return new Response(
         JSON.stringify({ 
           success: false, 

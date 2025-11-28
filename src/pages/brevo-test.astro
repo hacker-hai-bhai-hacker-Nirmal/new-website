@@ -11,7 +11,7 @@ import Layout from '../layouts/Layout.astro'
 
     <div class="test-section">
       <button id="sendTestEmail" class="test-button">
-        📧 Send Test Email to nirmalbajiya@gmail.com
+        🧪 Test Environment Variables
       </button>
       
       <div id="testStatus" class="test-status">
@@ -218,39 +218,29 @@ import Layout from '../layouts/Layout.astro'
     try {
       // Disable button and update status
       testButton.disabled = true;
-      testButton.textContent = '⏳ Sending...';
+      testButton.textContent = '⏳ Testing...';
       testStatus.className = 'test-status testing';
       testStatus.textContent = 'Testing in progress...';
 
-      addLog('FRONTEND', '🚀 Starting Brevo API test', 'info');
-      addLog('FRONTEND', '📧 Target email: nirmalbajiya@gmail.com', 'info');
+      addLog('FRONTEND', '🚀 Starting Environment Variable Test', 'info');
+      addLog('FRONTEND', '🔍 Testing access to test_variable and brevo_MCP_key', 'info');
 
-      // Step 1: Prepare request
-      addLog('FRONTEND', '🔧 Preparing API request', 'frontend');
-      const requestBody = JSON.stringify({
-        email: 'nirmalbajiya@gmail.com'
-      });
-      addLog('FRONTEND', `📝 Request body: ${requestBody}`, 'frontend');
-
-      // Step 2: Make API call
-      addLog('NETWORK', '🌐 Sending POST request to /api/send-otp-pages', 'network');
-      const startTime = Date.now();
+      // Step 1: Test environment variable access first
+      addLog('FRONTEND', '🔧 Testing environment variable access', 'frontend');
       
       const response = await fetch('/api/send-otp-pages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: requestBody
+        body: JSON.stringify({
+          email: 'nirmalbajiya@gmail.com',
+          testMode: true  // Add test mode flag
+        })
       });
 
-      const endTime = Date.now();
-      const responseTime = endTime - startTime;
+      addLog('NETWORK', `📡 Response received: ${response.status} ${response.statusText}`, 'network');
       
-      addLog('NETWORK', `📡 Response received: ${response.status} ${response.statusText} (${responseTime}ms)`, 'network');
-      addLog('NETWORK', `📋 Response headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`, 'network');
-
-      // Step 3: Parse response
       const responseText = await response.text();
       addLog('NETWORK', `📦 Raw response body: ${responseText}`, 'network');
       
@@ -263,34 +253,65 @@ import Layout from '../layouts/Layout.astro'
         throw new Error('Invalid JSON response from server');
       }
 
-      // Step 4: Analyze backend response
-      if (response.ok && responseData.success) {
-        addLog('BACKEND', '✅ Backend reports success!', 'success');
-        addLog('BACKEND', `📧 Email sent with Message ID: ${responseData.messageId}`, 'backend');
-        addLog('BACKEND', `🔑 Environment access method: ${responseData.debug?.accessMethod}`, 'backend');
-        addLog('BACKEND', `🔑 API key length: ${responseData.debug?.keyLength} characters`, 'backend');
+      // Step 2: Analyze environment variable access
+      if (responseData.debug) {
+        addLog('BACKEND', '🔍 Environment variable analysis:', 'info');
         
-        testStatus.className = 'test-status success';
-        testStatus.textContent = `✅ Success! Email sent (Message ID: ${responseData.messageId})`;
+        // Check for test_variable
+        const testVariableValue = responseData.debug.testVariableValue;
+        const testVariableType = responseData.debug.testVariableType;
+        const testVariableAvailable = responseData.debug.testVariableAvailable;
         
-        addLog('API', '🎉 Brevo API call successful!', 'success');
-        addLog('API', `📧 Check nirmalbajiya@gmail.com for test email`, 'success');
+        addLog('BACKEND', `🧪 test_variable available: ${testVariableAvailable}`, testVariableAvailable ? 'success' : 'error');
+        addLog('BACKEND', `🧪 test_variable type: ${testVariableType}`, 'info');
+        addLog('BACKEND', `🧪 test_variable value: "${testVariableValue}"`, 'info');
         
-      } else {
-        addLog('BACKEND', '❌ Backend reports failure', 'error');
-        addLog('BACKEND', `💥 Error: ${responseData.error || 'Unknown error'}`, 'error');
+        // Check for brevo_MCP_key
+        const brevoKeyValue = responseData.debug.importMetaBrevoValue;
+        const brevoKeyType = responseData.debug.importMetaBrevoType;
+        const brevoKeyAvailable = responseData.debug.importMetaHasBrevo;
         
-        if (responseData.debug) {
-          addLog('BACKEND', '🔍 Debug information available:', 'warning');
-          addLog('BACKEND', `🔑 Access method: ${responseData.debug.accessMethod}`, 'backend');
-          addLog('BACKEND', `🔑 Available locals keys: [${responseData.debug.environmentDebug?.localsEnvKeys?.join(', ') || 'none'}]`, 'backend');
-          addLog('BACKEND', `🔑 Available import keys: [${responseData.debug.environmentDebug?.importMetaKeys?.join(', ') || 'none'}]`, 'backend');
+        addLog('BACKEND', `🔑 brevo_MCP_key available: ${brevoKeyAvailable}`, brevoKeyAvailable ? 'success' : 'error');
+        addLog('BACKEND', `🔑 brevo_MCP_key type: ${brevoKeyType}`, 'info');
+        addLog('BACKEND', `🔑 brevo_MCP_key value: "${brevoKeyValue}"`, 'info');
+        
+        // Show all available keys
+        const allKeys = responseData.debug.importMetaKeys || [];
+        addLog('BACKEND', `📋 All available keys: [${allKeys.join(', ')}]`, 'info');
+        
+        // Test results summary
+        if (testVariableAvailable && testVariableValue) {
+          addLog('BACKEND', '✅ test_variable SUCCESS - Environment variables ARE accessible!', 'success');
+          testStatus.className = 'test-status success';
+          testStatus.textContent = `✅ Environment variables working! test_variable = "${testVariableValue}"`;
+        } else {
+          addLog('BACKEND', '❌ test_variable FAILED - Environment variables NOT accessible', 'error');
+          testStatus.className = 'test-status error';
+          testStatus.textContent = `❌ Environment variables not working - test_variable = "${testVariableValue}"`;
         }
         
-        testStatus.className = 'test-status error';
-        testStatus.textContent = `❌ Failed: ${responseData.error || 'Unknown error'}`;
+        // If brevo key is working, try to send email
+        if (brevoKeyAvailable && brevoKeyValue && brevoKeyType === 'string' && brevoKeyValue.length > 10) {
+          addLog('BACKEND', '🔑 brevo_MCP_key is accessible, attempting to send email...', 'info');
+          
+          if (responseData.success) {
+            addLog('BACKEND', '✅ Email sent successfully!', 'success');
+            addLog('BACKEND', `📧 Message ID: ${responseData.messageId}`, 'backend');
+            addLog('API', '🎉 Brevo API call successful!', 'success');
+            addLog('API', `📧 Check nirmalbajiya@gmail.com for test email`, 'success');
+          } else {
+            addLog('BACKEND', '❌ Email sending failed', 'error');
+            addLog('BACKEND', `💥 Error: ${responseData.error || 'Unknown error'}`, 'error');
+            addLog('API', '💥 Brevo API call failed', 'error');
+          }
+        } else {
+          addLog('BACKEND', '❌ brevo_MCP_key not accessible, skipping email test', 'error');
+        }
         
-        addLog('API', '💥 Brevo API call failed', 'error');
+      } else {
+        addLog('BACKEND', '❌ No debug information in response', 'error');
+        testStatus.className = 'test-status error';
+        testStatus.textContent = '❌ No debug information received';
       }
 
     } catch (error) {
@@ -303,7 +324,7 @@ import Layout from '../layouts/Layout.astro'
     } finally {
       // Re-enable button
       testButton.disabled = false;
-      testButton.textContent = '📧 Send Test Email to nirmalbajiya@gmail.com';
+      testButton.textContent = '🧪 Test Environment Variables';
       
       addLog('FRONTEND', '🏁 Test completed, button ready for next test', 'info');
     }
