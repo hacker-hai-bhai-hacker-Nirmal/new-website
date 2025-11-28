@@ -3,8 +3,27 @@ import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ locals }: { locals: any }) => {
   try {
-    // Debug environment variables - use Astro.env in Cloudflare Pages
-    const env = (locals as any)?.env || import.meta.env;
+    // Debug environment variables - test multiple access patterns for Cloudflare Pages
+    console.log('Testing environment access patterns...');
+    
+    // Pattern 1: locals.env
+    const localsEnv = (locals as any)?.env;
+    console.log('locals.env keys:', localsEnv ? Object.keys(localsEnv) : 'null');
+    
+    // Pattern 2: import.meta.env  
+    const importEnv = import.meta.env;
+    console.log('import.meta.env keys:', Object.keys(importEnv));
+    
+    // Pattern 3: process.env (if available)
+    const processEnv = typeof process !== 'undefined' ? process.env : {};
+    console.log('process.env keys:', Object.keys(processEnv));
+    
+    // Pattern 4: Astro.env (if available)
+    const astroEnv = (globalThis as any).Astro?.env || {};
+    console.log('Astro.env keys:', Object.keys(astroEnv));
+    
+    // Test all patterns
+    const env = localsEnv || importEnv || processEnv || astroEnv;
     
     const envVars = {
       brevo_MCP_key: env.brevo_MCP_key ? `Found (length: ${env.brevo_MCP_key.length})` : 'NOT FOUND',
@@ -13,6 +32,33 @@ export const GET: APIRoute = async ({ locals }: { locals: any }) => {
       APPWRITE_ENDPOINT: env.APPWRITE_ENDPOINT ? 'SET' : 'NOT_SET',
       APPWRITE_DATABASE_ID: env.APPWRITE_DATABASE_ID ? 'SET' : 'NOT_SET',
       allEnvVars: Object.keys(env).filter(key => key.toLowerCase().includes('brevo') || key.toLowerCase().includes('jwt') || key.toLowerCase().includes('appwrite'))
+    };
+
+    // Add access pattern analysis
+    const accessAnalysis = {
+      localsEnv: {
+        available: !!localsEnv,
+        keyCount: localsEnv ? Object.keys(localsEnv).length : 0,
+        keys: localsEnv ? Object.keys(localsEnv).slice(0, 10) : []
+      },
+      importEnv: {
+        available: !!importEnv,
+        keyCount: Object.keys(importEnv).length,
+        keys: Object.keys(importEnv).slice(0, 10)
+      },
+      processEnv: {
+        available: !!processEnv,
+        keyCount: Object.keys(processEnv).length,
+        keys: Object.keys(processEnv).slice(0, 10)
+      },
+      astroEnv: {
+        available: !!astroEnv,
+        keyCount: Object.keys(astroEnv).length,
+        keys: Object.keys(astroEnv).slice(0, 10)
+      },
+      selectedPattern: env === localsEnv ? 'locals.env' : 
+                     env === importEnv ? 'import.meta.env' : 
+                     env === processEnv ? 'process.env' : 'astro.env'
     };
 
     // Add comprehensive testing - simplified to avoid failures
@@ -50,8 +96,9 @@ export const GET: APIRoute = async ({ locals }: { locals: any }) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: 'Environment variable debug information',
+        message: 'Environment variable debug information with access pattern analysis',
         envVars,
+        accessAnalysis,
         comprehensiveTest,
         timestamp: new Date().toISOString()
       }),
