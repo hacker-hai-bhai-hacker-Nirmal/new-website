@@ -6,7 +6,7 @@ import Layout from '../layouts/Layout.astro'
   <div class="api-test-container">
     <div class="test-header">
       <h1>🧪 API Endpoint Testing</h1>
-      <p>Test all API endpoints to isolate Cloudflare access issues</p>
+      <p>Test all API endpoints to isolate Cloudflare access issues - Updated: <span id="updateTime"></span></p>
     </div>
 
     <div class="test-form">
@@ -489,5 +489,6 @@ ${JSON.stringify(result.data || result.error, null, 2)}
   // Auto-update test time
   setInterval(() => {
     document.getElementById('testTime').textContent = new Date().toLocaleString();
+    document.getElementById('updateTime').textContent = new Date().toLocaleString();
   }, 1000);
 </script>
