@@ -95,12 +95,12 @@ export class AppwriteService {
 
   constructor() {
     this.client = new Client()
-      .setEndpoint('https://fra.cloud.appwrite.io/v1')
-      .setProject('6900b1ed001604d8befb');
+      .setEndpoint(import.meta.env.APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1')
+      .setProject(import.meta.env.APPWRITE_PROJECT_ID || '6900b1ed001604d8befb');
     
     this.account = new Account(this.client);
     this.databases = new Databases(this.client);
-    this.databaseId = 'main-db';
+    this.databaseId = import.meta.env.APPWRITE_DATABASE_ID || 'main-db';
   }
 
   // User Management Methods
