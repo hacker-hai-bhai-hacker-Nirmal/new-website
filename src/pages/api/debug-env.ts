@@ -1,5 +1,6 @@
 // src/pages/api/debug-env.ts
 import type { APIRoute } from 'astro';
+import { OTPService } from '../../../lib/otpService.js';
 
 export const GET: APIRoute = async ({ locals }) => {
   try {
@@ -30,6 +31,75 @@ export const GET: APIRoute = async ({ locals }) => {
       JSON.stringify({ 
         success: false, 
         error: error.message || 'Debug failed' 
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+};
+
+export const POST: APIRoute = async ({ request, locals }) => {
+  try {
+    const body = await request.json();
+    const env = locals?.env || import.meta.env;
+    
+    console.log('JWT Test Started');
+    
+    // Test JWT OTP Service
+    const otpServiceInstance = new OTPService(env);
+    console.log('OTP Service Created');
+    
+    const otpResult = await otpServiceInstance.generateOTP({
+      email: body.email || 'test@example.com',
+      firstName: body.firstName || 'Test',
+      lastName: body.lastName || 'User',
+      purpose: 'registration'
+    });
+    
+    console.log('OTP Result:', otpResult);
+    
+    if (otpResult.success) {
+      console.log('OTP Generated Successfully');
+      
+      // Test verification
+      const verifyResult = await otpServiceInstance.verifyOTP({
+        email: body.email || 'test@example.com',
+        otp: otpResult.otp,
+        otpToken: otpResult.otpToken
+      });
+      
+      console.log('Verification Result:', verifyResult);
+      
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'JWT OTP Test Successful',
+          otp: otpResult.otp,
+          otpToken: otpResult.otpToken,
+          verification: verifyResult,
+          envTest: {
+            hasJWT: !!env.JWT_SECRET,
+            hasBrevo: !!env.brevo_MCP_key
+          }
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    } else {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: otpResult.error
+        }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+  } catch (error: any) {
+    console.error('JWT Test Error:', error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message,
+        stack: error.stack
       }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
