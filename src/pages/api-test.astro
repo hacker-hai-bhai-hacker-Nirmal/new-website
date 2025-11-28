@@ -1,0 +1,493 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="API Testing | Litterateur">
+  <div class="api-test-container">
+    <div class="test-header">
+      <h1>🧪 API Endpoint Testing</h1>
+      <p>Test all API endpoints to isolate Cloudflare access issues</p>
+    </div>
+
+    <div class="test-form">
+      <div class="form-group">
+        <label for="apiEndpoint">API Endpoint</label>
+        <select id="apiEndpoint">
+          <option value="/api/debug-env">GET - Debug Environment Variables</option>
+          <option value="/api/auth/register">POST - Register User</option>
+          <option value="/api/auth/verify-otp">POST - Verify OTP</option>
+          <option value="/api/auth/send-otp">POST - Send OTP</option>
+          <option value="/api/check-env">GET - Check Environment</option>
+          <option value="custom">Custom Endpoint</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="customEndpointGroup" style="display: none;">
+        <label for="customEndpoint">Custom Endpoint</label>
+        <input type="text" id="customEndpoint" placeholder="/api/your-endpoint">
+      </div>
+
+      <div class="form-group">
+        <label for="httpMethod">HTTP Method</label>
+        <select id="httpMethod">
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="DELETE">DELETE</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="requestBodyGroup">
+        <label for="requestBody">Request Body (JSON)</label>
+        <textarea id="requestBody" rows="6" placeholder='{"email": "test@example.com", "firstName": "Test", "lastName": "User"}'></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="headers">Additional Headers (JSON)</label>
+        <textarea id="headers" rows="3" placeholder='{"Content-Type": "application/json"}'></textarea>
+      </div>
+
+      <button type="button" id="testBtn" class="test-btn">🚀 Test API</button>
+      <button type="button" id="clearBtn" class="clear-btn">🗑️ Clear Results</button>
+    </div>
+
+    <div class="test-results">
+      <h2>📊 Test Results</h2>
+      <div id="results" class="results-container">
+        <p>Click "Test API" to see results...</p>
+      </div>
+    </div>
+
+    <div class="test-info">
+      <h3>ℹ️ Testing Information</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Current URL:</strong>
+          <span id="currentUrl"></span>
+        </div>
+        <div class="info-item">
+          <strong>Test Time:</strong>
+          <span id="testTime"></span>
+        </div>
+        <div class="info-item">
+          <strong>User Agent:</strong>
+          <span id="userAgent"></span>
+        </div>
+        <div class="info-item">
+          <strong>Environment:</strong>
+          <span id="environment"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .api-test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 10px;
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      font-size: 2.5em;
+    }
+
+    .test-header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .test-form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e1e5e9;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .test-btn, .clear-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: all 0.3s;
+    }
+
+    .test-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .test-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .clear-btn {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .clear-btn:hover {
+      background: #c0392b;
+    }
+
+    .test-results {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .results-container {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 5px;
+      border-left: 4px solid #667eea;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .test-info {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .info-item {
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 5px;
+      border-left: 4px solid #28a745;
+    }
+
+    .info-item strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .success {
+      border-left-color: #28a745;
+    }
+
+    .error {
+      border-left-color: #dc3545;
+    }
+
+    .warning {
+      border-left-color: #ffc107;
+    }
+
+    .info {
+      border-left-color: #17a2b8;
+    }
+
+    @media (max-width: 768px) {
+      .api-test-container {
+        padding: 10px;
+      }
+      
+      .test-form, .test-results, .test-info {
+        padding: 20px;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>
+
+<script>
+  // API Testing System
+  let testHistory = [];
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', () => {
+    updateTestInfo();
+    setupEventListeners();
+    loadTestHistory();
+  });
+
+  function updateTestInfo() {
+    document.getElementById('currentUrl').textContent = window.location.href;
+    document.getElementById('testTime').textContent = new Date().toLocaleString();
+    document.getElementById('userAgent').textContent = navigator.userAgent;
+    document.getElementById('environment').textContent = 'Cloudflare Pages';
+  }
+
+  function setupEventListeners() {
+    // Endpoint selection
+    document.getElementById('apiEndpoint').addEventListener('change', (e) => {
+      const customGroup = document.getElementById('customEndpointGroup');
+      const bodyGroup = document.getElementById('requestBodyGroup');
+      
+      if (e.target.value === 'custom') {
+        customGroup.style.display = 'block';
+      } else {
+        customGroup.style.display = 'none';
+      }
+
+      // Auto-fill request body based on endpoint
+      const requestBody = document.getElementById('requestBody');
+      const method = document.getElementById('httpMethod');
+      
+      switch(e.target.value) {
+        case '/api/auth/register':
+          requestBody.value = JSON.stringify({
+            email: 'test@example.com',
+            firstName: 'Test',
+            lastName: 'User',
+            purpose: 'registration'
+          }, null, 2);
+          method.value = 'POST';
+          bodyGroup.style.display = 'block';
+          break;
+        case '/api/auth/verify-otp':
+          requestBody.value = JSON.stringify({
+            email: 'test@example.com',
+            otp: '123456',
+            otpToken: 'test-token'
+          }, null, 2);
+          method.value = 'POST';
+          bodyGroup.style.display = 'block';
+          break;
+        case '/api/auth/send-otp':
+          requestBody.value = JSON.stringify({
+            email: 'test@example.com',
+            firstName: 'Test',
+            lastName: 'User'
+          }, null, 2);
+          method.value = 'POST';
+          bodyGroup.style.display = 'block';
+          break;
+        case '/api/debug-env':
+        case '/api/check-env':
+          requestBody.value = '';
+          method.value = 'GET';
+          bodyGroup.style.display = 'none';
+          break;
+        default:
+          bodyGroup.style.display = 'block';
+      }
+    });
+
+    // Test button
+    document.getElementById('testBtn').addEventListener('click', testAPI);
+
+    // Clear button
+    document.getElementById('clearBtn').addEventListener('click', clearResults);
+  }
+
+  async function testAPI() {
+    const endpointSelect = document.getElementById('apiEndpoint');
+    const customEndpoint = document.getElementById('customEndpoint');
+    const method = document.getElementById('httpMethod').value;
+    const requestBody = document.getElementById('requestBody').value;
+    const headersInput = document.getElementById('headers').value;
+    
+    const endpoint = endpointSelect.value === 'custom' ? customEndpoint.value : endpointSelect.value;
+    
+    if (!endpoint) {
+      showResult('error', 'Please enter an endpoint');
+      return;
+    }
+
+    // Parse headers
+    let headers = {};
+    try {
+      if (headersInput) {
+        headers = JSON.parse(headersInput);
+      }
+      if (!headers['Content-Type'] && method !== 'GET') {
+        headers['Content-Type'] = 'application/json';
+      }
+    } catch (e) {
+      showResult('error', 'Invalid headers JSON: ' + e.message);
+      return;
+    }
+
+    // Show loading state
+    const testBtn = document.getElementById('testBtn');
+    const originalText = testBtn.textContent;
+    testBtn.textContent = '⏳ Testing...';
+    testBtn.disabled = true;
+
+    const startTime = Date.now();
+
+    try {
+      const options = {
+        method: method,
+        headers: headers
+      };
+
+      if (method !== 'GET' && requestBody) {
+        try {
+          options.body = JSON.parse(requestBody);
+        } catch (e) {
+          options.body = requestBody;
+        }
+      }
+
+      console.log(`Testing ${method} ${endpoint}`, options);
+
+      const response = await fetch(endpoint, options);
+      const endTime = Date.now();
+      const responseTime = endTime - startTime;
+
+      let responseData;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        responseData = await response.text();
+      }
+
+      const result = {
+        timestamp: new Date().toISOString(),
+        endpoint: endpoint,
+        method: method,
+        status: response.status,
+        statusText: response.statusText,
+        responseTime: responseTime,
+        headers: Object.fromEntries(response.headers.entries()),
+        data: responseData,
+        success: response.ok
+      };
+
+      testHistory.push(result);
+      saveTestHistory();
+
+      displayResult(result);
+
+    } catch (error) {
+      const errorResult = {
+        timestamp: new Date().toISOString(),
+        endpoint: endpoint,
+        method: method,
+        error: error.message,
+        success: false
+      };
+
+      testHistory.push(errorResult);
+      saveTestHistory();
+
+      displayResult(errorResult);
+    } finally {
+      testBtn.textContent = originalText;
+      testBtn.disabled = false;
+    }
+  }
+
+  function displayResult(result) {
+    const resultsContainer = document.getElementById('results');
+    
+    let resultHtml = `
+<div class="result-item ${result.success ? 'success' : 'error'}">
+<strong>📅 ${result.timestamp}</strong>
+<strong>🔗 ${result.method} ${result.endpoint}</strong>
+`;
+
+    if (result.status) {
+      resultHtml += `<strong>📊 Status: ${result.status} ${result.statusText}</strong>`;
+      resultHtml += `<strong>⏱️ Response Time: ${result.responseTime}ms</strong>`;
+    }
+
+    if (result.error) {
+      resultHtml += `<strong>❌ Error: ${result.error}</strong>`;
+    }
+
+    resultHtml += `<strong>📄 Response:</strong>
+${JSON.stringify(result.data || result.error, null, 2)}
+</div>`;
+
+    resultsContainer.innerHTML = resultHtml + resultsContainer.innerHTML;
+  }
+
+  function clearResults() {
+    document.getElementById('results').innerHTML = '<p>Click "Test API" to see results...</p>';
+    testHistory = [];
+    saveTestHistory();
+  }
+
+  function saveTestHistory() {
+    try {
+      localStorage.setItem('apiTestHistory', JSON.stringify(testHistory.slice(-10)));
+    } catch (e) {
+      console.log('Could not save test history:', e);
+    }
+  }
+
+  function loadTestHistory() {
+    try {
+      const saved = localStorage.getItem('apiTestHistory');
+      if (saved) {
+        testHistory = JSON.parse(saved);
+        testHistory.forEach(result => displayResult(result));
+      }
+    } catch (e) {
+      console.log('Could not load test history:', e);
+    }
+  }
+
+  // Auto-update test time
+  setInterval(() => {
+    document.getElementById('testTime').textContent = new Date().toLocaleString();
+  }, 1000);
+</script>
