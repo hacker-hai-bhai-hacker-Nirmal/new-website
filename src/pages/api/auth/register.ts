@@ -2,7 +2,7 @@
 // POST /api/auth/register
 // Pure JWT-based OTP registration (no database required)
 
-import { otpService } from '../../../lib/otpService.js';
+import { OTPService } from '../../../lib/otpService.js';
 
 interface RegisterRequest {
   email: string;
@@ -79,7 +79,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     }
 
     // Generate JWT-based OTP (no database required)
-    const otpServiceInstance = new otpService(env);
+    const otpServiceInstance = new OTPService(env);
     const otpResult = await otpServiceInstance.generateOTP({
       email,
       firstName,

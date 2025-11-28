@@ -2,7 +2,7 @@
 // POST /api/auth/verify-otp
 // Pure JWT-based OTP verification (no database required)
 
-import { otpService } from '../../../lib/otpService.js';
+import { OTPService } from '../../../lib/otpService.js';
 
 interface VerifyOTPRequest {
   email: string;
@@ -39,7 +39,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     }
 
     // Verify the OTP using JWT token (no database needed)
-    const otpServiceInstance = new otpService(env);
+    const otpServiceInstance = new OTPService(env);
     const otpVerification = await otpServiceInstance.verifyOTP({
       email,
       otp,

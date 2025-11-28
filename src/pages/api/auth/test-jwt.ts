@@ -1,13 +1,13 @@
 // Simple JWT OTP Test Endpoint
 // POST /api/auth/test-jwt
-import { otpService } from '../../../lib/otpService.js';
+import { OTPService } from '../../../lib/otpService.js';
 
 export async function POST({ request }: { request: Request }): Promise<Response> {
   try {
     console.log('JWT OTP Test Started');
     
     // Test with fallback environment
-    const otpServiceInstance = new otpService();
+    const otpServiceInstance = new OTPService();
     console.log('OTP Service Created');
     
     const otpResult = await otpServiceInstance.generateOTP({
