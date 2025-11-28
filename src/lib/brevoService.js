@@ -1,7 +1,7 @@
 // src/lib/brevoService.js
 // Brevo (Sendinblue) Email Service Integration
 
-const BREVO_API_KEY = import.meta.env.BREVO_API_KEY;
+const BREVO_API_KEY = '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';
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 /**
@@ -17,14 +17,10 @@ const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
  * @param {string} toEmail - Recipient email address
  * @param {string} otp - One-time password
  * @param {string} userName - User's name (optional)
- * @param {string} apiKey - Brevo API key
  * @returns {Promise<EmailResult>} Response object
  */
-export const sendOtpEmail = async (toEmail, otp, userName = 'User', apiKey) => {
+export const sendOtpEmail = async (toEmail, otp, userName = 'User') => {
   try {
-    if (!apiKey) {
-      throw new Error('Brevo API key is required');
-    }
     const emailData = {
       sender: {
         name: 'Litterateur',
@@ -141,7 +137,7 @@ export const sendOtpEmail = async (toEmail, otp, userName = 'User', apiKey) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': BREVO_API_KEY
       },
       body: JSON.stringify(emailData)
     });
@@ -289,7 +285,7 @@ export const sendWelcomeEmail = async (toEmail, userName) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': BREVO_API_KEY
       },
       body: JSON.stringify(emailData)
     });
