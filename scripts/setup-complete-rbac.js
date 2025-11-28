@@ -1,7 +1,7 @@
 // Complete RBAC System Setup Script for Litterateur Restaurant Management System
 // This script sets up the entire role-based access control system
 
-import { AppwriteService } from '../src/lib/appwrite.js';
+import { AppwriteService } from '../src/lib/appwriteService.js';
 
 console.log('🚀 Starting Complete RBAC System Setup for Litterateur...\n');
 
