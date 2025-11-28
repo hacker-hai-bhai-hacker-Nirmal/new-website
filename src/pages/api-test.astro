@@ -409,12 +409,23 @@ import Layout from '../layouts/Layout.astro'
       if (headersInput?.value) {
         headers = JSON.parse(headersInput.value);
       }
-      if (!headers['Content-Type'] && methodSelect.value !== 'GET') {
+      // Always set Content-Type for POST/PUT requests
+      if (methodSelect.value !== 'GET' && !headers['Content-Type']) {
         headers['Content-Type'] = 'application/json';
       }
     } catch (e: any) {
       alert('Invalid headers JSON: ' + e.message);
       return;
+    }
+
+    // Validate request body for POST requests
+    if (methodSelect.value !== 'GET' && requestBody?.value) {
+      try {
+        JSON.parse(requestBody.value);
+      } catch (e: any) {
+        alert('Invalid request body JSON: ' + e.message + '\n\nPlease ensure your JSON is valid.');
+        return;
+      }
     }
 
     // Show loading state
@@ -434,9 +445,15 @@ import Layout from '../layouts/Layout.astro'
 
         if (methodSelect.value !== 'GET' && requestBody?.value) {
           try {
-            options.body = JSON.parse(requestBody.value);
-          } catch (e) {
+            // Validate JSON first
+            const parsedBody = JSON.parse(requestBody.value);
+            // Stringify it back to ensure proper JSON format
+            options.body = JSON.stringify(parsedBody);
+            console.log('Request body (JSON):', options.body);
+          } catch (e: any) {
+            // If it's not valid JSON, send as raw string
             options.body = requestBody.value;
+            console.log('Request body (raw string):', options.body);
           }
         }
 

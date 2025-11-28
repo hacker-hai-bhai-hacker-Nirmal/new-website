@@ -3,7 +3,32 @@
 
 export async function POST({ request, locals }: { request: Request; locals: any }) {
   try {
-    const { email } = await request.json();
+    console.log('🔍 Request headers:', Object.fromEntries(request.headers.entries()));
+    
+    // Read the raw body first for debugging
+    const rawBody = await request.text();
+    console.log('🔍 Raw request body:', rawBody);
+    console.log('🔍 Body type:', typeof rawBody);
+    
+    let email;
+    try {
+      const parsed = JSON.parse(rawBody);
+      console.log('🔍 Parsed body:', parsed);
+      email = parsed.email;
+    } catch (e) {
+      console.error('❌ JSON parse error:', e);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Invalid JSON in request body',
+          receivedBody: rawBody,
+          bodyType: typeof rawBody
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    console.log('🔍 Extracted email:', email);
     
     if (!email) {
       return new Response(
