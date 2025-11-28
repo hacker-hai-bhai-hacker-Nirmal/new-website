@@ -3370,4 +3370,4 @@ var ExecutionStatus;
     ExecutionStatus["Scheduled"] = "scheduled";
 })(ExecutionStatus || (ExecutionStatus = {}));
 
-export { Account, AppwriteException, AuthenticationFactor, AuthenticatorType, Browser, Client, Condition, CreditCard, Databases, ExecutionMethod, ExecutionStatus, ExecutionTrigger, Flag, ID, ImageFormat, ImageGravity, OAuthProvider, Query };
+export { Account as A, Client as C, Databases as D, ID as I, Query as Q };

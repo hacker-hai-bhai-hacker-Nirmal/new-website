@@ -1,142 +1,70 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
+import { a as account } from '../../../chunks/appwrite_CaeG9vcz.mjs';
+import { I as ID } from '../../../chunks/sdk_BPbYzYsq.mjs';
+import { s as sendOtpEmail } from '../../../chunks/brevoService_C7HhBd8A.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-// Send OTP to user's email - Enhanced for production
-async function POST({ request }) {
+const POST = async ({ request }) => {
   try {
     const { email } = await request.json();
-    
-    if (!email || !email.includes('@')) {
-      return new Response(JSON.stringify({ 
-        error: 'Valid email address required' 
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    if (!email) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Email is required" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
-
-    // Rate limiting check (simple implementation)
-    // In production, use Redis or database for rate limiting
-    const now = Date.now();
-    const rateLimitKey = `otp_${email.replace(/[^a-zA-Z0-9]/g, '_')}`;
-    
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // Store OTP data (in production, store in database with expiration)
-    const otpData = {
-      email: email,
-      otp: otp,
-      created: new Date().toISOString(),
-      expires: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
-      attempts: 0,
-      maxAttempts: 3
-    };
-
-    console.log('OTP Generated:', { ...otpData, otp: '***' }); // Log without actual OTP
-    
-    // TODO: Integrate with real email service
-    // For production, uncomment and configure your email service:
-    /*
-    // Example with Resend:
-    const { Resend } = await import('resend');
-    const resend = new Resend('your-resend-api-key');
-    
-    try {
-      await resend.emails.send({
-        from: 'noreply@litterateur.com',
-        to: email,
-        subject: 'Your Litterateur Login Code',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: #1B4332; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-              <h1 style="margin: 0; font-size: 24px;">📚 Litterateur</h1>
-              <p style="margin: 5px 0 0 0; opacity: 0.9;">Where Culinary Art Meets Literary Excellence</p>
-            </div>
-            <div style="background: white; padding: 30px; border: 1px solid #e0e0e0; border-radius: 0 0 10px 10px;">
-              <h2 style="color: #1B4332; margin: 0 0 20px 0;">Your Login Code</h2>
-              <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
-                <div style="font-size: 36px; font-weight: bold; color: #1B4332; letter-spacing: 5px; margin: 0;">
-                  ${otp}
-                </div>
-              </div>
-              <p style="color: #666; margin: 20px 0; line-height: 1.6;">
-                This code will expire in <strong>10 minutes</strong>. Please enter it in the login form to access your account.
-              </p>
-              <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0; color: #856404; font-size: 14px;">
-                  <strong>🔒 Security Notice:</strong> Never share this code with anyone. Our team will never ask for your login code.
-                </p>
-              </div>
-              <p style="color: #999; font-size: 12px; margin: 30px 0 0 0; text-align: center;">
-                If you didn't request this code, please ignore this email or contact support.
-              </p>
-            </div>
-          </div>
-        `
-      });
-      console.log('Email sent successfully to:', email);
-    } catch (emailError) {
-      console.error('Failed to send email:', emailError);
-      // Continue with OTP generation even if email fails
+    const brevoApiKey = undefined                             ;
+    if (!brevoApiKey) {
+      console.error("❌ brevo_MCP_key environment variable not found in Cloudflare");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Email service configuration error - please check brevo_MCP_key environment variable"
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
     }
-    */
-
-    // For demo/testing, include OTP in response
-    // REMOVE THIS IN PRODUCTION
-    const isDevelopment = true; // Set to false in production
-    const responseData = {
-      success: true,
-      message: 'OTP sent to your email',
-      expires: otpData.expires,
-      requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    };
-    
-    if (isDevelopment) {
-      responseData.otp = otp; // Only in development
-      responseData.developmentMode = true;
+    console.log("✅ brevo_MCP_key found in environment, length:", brevoApiKey.length);
+    const response = await account.createEmailToken(
+      ID.unique(),
+      // User ID (will be created if not exists)
+      email
+    );
+    let otp = "";
+    if (response.secret && response.secret.length === 6 && /^\d{6}$/.test(response.secret)) {
+      otp = response.secret;
+    } else {
+      otp = Math.floor(1e5 + Math.random() * 9e5).toString();
     }
-
-    return new Response(JSON.stringify(responseData), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-
+    const emailResult = await sendOtpEmail(email, otp, "User", brevoApiKey);
+    if (!emailResult.success) {
+      console.error("Brevo email failed:", emailResult.error);
+    }
+    return new Response(
+      JSON.stringify({
+        success: true,
+        userId: response.userId,
+        message: otp ? "OTP sent successfully (Development Mode)" : "OTP sent successfully. Please check your email.",
+        // Only return OTP in development mode for testing
+        ...otp && { otp, developmentMode: true },
+        emailSent: emailResult.success
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
-    console.error('Send OTP error:', error);
-    
-    return new Response(JSON.stringify({ 
-      error: error.message || 'Failed to send OTP' 
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
+    console.error("Error sending OTP:", error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message || "Failed to send OTP"
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
-}
-
-async function OPTIONS() {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  });
-}
+};
 
 const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  OPTIONS,
   POST
 }, Symbol.toStringTag, { value: 'Module' }));
 

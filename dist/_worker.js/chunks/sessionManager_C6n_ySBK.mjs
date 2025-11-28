@@ -1,6 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import crypto from 'crypto';
-import { Client, Account, Databases, ID, Query } from './sdk_BM-XKegH.mjs';
+import { C as Client, A as Account, D as Databases, I as ID, Q as Query } from './sdk_BPbYzYsq.mjs';
 
 class AppwriteService {
   client;

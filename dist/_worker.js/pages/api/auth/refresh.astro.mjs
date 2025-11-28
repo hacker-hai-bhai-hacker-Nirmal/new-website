@@ -1,5 +1,5 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { s as sessionManager } from '../../../chunks/sessionManager_B2jOmk6k.mjs';
+import { s as sessionManager } from '../../../chunks/sessionManager_C6n_ySBK.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 async function POST({ request }) {

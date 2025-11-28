@@ -1,6 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { A as AppwriteService } from '../../../chunks/sessionManager_B2jOmk6k.mjs';
-import { a as authMiddleware } from '../../../chunks/rbac_DfX9m7fP.mjs';
+import { A as AppwriteService } from '../../../chunks/sessionManager_C6n_ySBK.mjs';
+import { a as authMiddleware } from '../../../chunks/rbac_CyEecZmT.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 async function GET({ request, locals }) {

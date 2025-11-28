@@ -5,9 +5,9 @@ class OTPService {
   jwtSecret;
   otpExpiryMinutes = 10;
   constructor() {
-    this.jwtSecret = process.env.JWT_SECRET || "fallback-secret-change-in-production";
-    if (this.jwtSecret === "fallback-secret-change-in-production") {
-      console.warn("WARNING: Using fallback JWT secret. Please set JWT_SECRET environment variable.");
+    this.jwtSecret = process.env.JWT_SECRET || "s60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U=";
+    if (!process.env.JWT_SECRET) {
+      console.warn("WARNING: JWT_SECRET not set in environment. Using fallback for testing.");
     }
   }
   /**

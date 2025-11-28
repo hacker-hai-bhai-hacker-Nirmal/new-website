@@ -1,6 +1,6 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { s as sessionManager } from '../../../chunks/sessionManager_B2jOmk6k.mjs';
-import { a as authMiddleware } from '../../../chunks/rbac_DfX9m7fP.mjs';
+import { s as sessionManager } from '../../../chunks/sessionManager_C6n_ySBK.mjs';
+import { a as authMiddleware } from '../../../chunks/rbac_CyEecZmT.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 async function POST({ request, locals }) {

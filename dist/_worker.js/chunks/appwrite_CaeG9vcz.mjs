@@ -1,5 +1,5 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { Client, Databases, Account } from './sdk_BM-XKegH.mjs';
+import { C as Client, D as Databases, A as Account } from './sdk_BPbYzYsq.mjs';
 
 // Appwrite Configuration
 const config = {
@@ -223,8 +223,8 @@ if (typeof window !== "undefined") {
   initDatabase();
 }
 function getEnvVar(name) {
-  if (typeof import.meta !== "undefined" && Object.assign(__vite_import_meta_env__, { VITE_APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", VITE_APPWRITE_DATABASE_ID: "main-db" })) {
-    return Object.assign(__vite_import_meta_env__, { VITE_APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", VITE_APPWRITE_DATABASE_ID: "main-db" })[name];
+  if (typeof import.meta !== "undefined" && Object.assign(__vite_import_meta_env__, { VITE_APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", VITE_APPWRITE_DATABASE_ID: "main-db", APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", APPWRITE_DATABASE_ID: "main-db" })) {
+    return Object.assign(__vite_import_meta_env__, { VITE_APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", VITE_APPWRITE_DATABASE_ID: "main-db", APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", APPWRITE_DATABASE_ID: "main-db" })[name];
   }
   return void 0;
 }
