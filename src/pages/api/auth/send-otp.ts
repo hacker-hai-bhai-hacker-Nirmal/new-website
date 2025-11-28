@@ -5,9 +5,12 @@ import { ID } from 'appwrite';
 import { sendOtpEmail } from '../../../lib/brevoService';
 import type { EmailResult } from '../../../types/brevo';
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const { email } = await request.json();
+    
+    // Get environment variables from locals (Cloudflare Pages)
+    const env = locals?.env || import.meta.env;
     
     if (!email) {
       return new Response(
@@ -17,7 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Check if Brevo MCP API key is available from Cloudflare environment
-    const brevoApiKey = import.meta.env.brevo_MCP_key;
+    const brevoApiKey = env.brevo_MCP_key;
     if (!brevoApiKey) {
       console.error('❌ brevo_MCP_key environment variable not found in Cloudflare');
       return new Response(
