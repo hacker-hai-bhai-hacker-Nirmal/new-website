@@ -210,6 +210,7 @@ class OTPService {
   }
 }
 
-// Export singleton instance
+// Export both class and singleton instance
+export { OTPService };
 export const otpService = new OTPService();
 export default otpService;
