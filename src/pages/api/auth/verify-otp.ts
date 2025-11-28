@@ -103,15 +103,16 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     });
 
     // Create session tokens
-    const sessionResult = await sessionManager.createSession({
-      userId: user.userId,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      role: role.roleName,
-      permissions: role.permissions,
-      restaurantId: user.restaurantId
-    });
+    const clientIP = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown';
+    const userAgent = request.headers.get('user-agent') || 'unknown';
+    
+    const sessionResult = await sessionManager.createSession(
+      user.userId,
+      clientIP,
+      userAgent
+    );
 
     if (!sessionResult.accessToken) {
       return new Response(
