@@ -43,10 +43,15 @@ export const GET: APIRoute = async ({ locals }: { locals: any }) => {
       jwtTest: null as any
     };
 
-    // Test JWT Service
+    // Test JWT Service - with better error handling
     try {
+      console.log('Testing JWT Service import...');
       const otpService = new OTPService(env);
+      console.log('JWT Service instantiated successfully');
+      
       const testResult = otpService.generateTestOTP('test@example.com');
+      console.log('JWT Test Result:', testResult);
+      
       comprehensiveTest.jwtTest = {
         success: true,
         otpGenerated: !!testResult.otp,
@@ -57,7 +62,9 @@ export const GET: APIRoute = async ({ locals }: { locals: any }) => {
         available: true,
         canInstantiate: true
       };
+      console.log('JWT Test completed successfully');
     } catch (jwtError) {
+      console.error('JWT Test Error:', jwtError);
       comprehensiveTest.jwtTest = {
         success: false,
         error: (jwtError as Error).message
