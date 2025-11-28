@@ -255,7 +255,25 @@ import Layout from '../layouts/Layout.astro'
 
 <script>
   // API Testing System
-  let testHistory = [];
+  let testHistory: any[] = [];
+
+  // Define interfaces for type safety
+  interface TestResult {
+    timestamp: string;
+    endpoint: string;
+    method: string;
+    status?: number;
+    statusText?: string;
+    responseTime?: number;
+    headers?: Record<string, string>;
+    data?: any;
+    error?: string;
+    success: boolean;
+  }
+
+  interface Headers {
+    [key: string]: string;
+  }
 
   // Initialize page
   document.addEventListener('DOMContentLoaded', () => {
@@ -265,178 +283,201 @@ import Layout from '../layouts/Layout.astro'
   });
 
   function updateTestInfo() {
-    document.getElementById('currentUrl').textContent = window.location.href;
-    document.getElementById('testTime').textContent = new Date().toLocaleString();
-    document.getElementById('userAgent').textContent = navigator.userAgent;
-    document.getElementById('environment').textContent = 'Cloudflare Pages';
+    const currentUrl = document.getElementById('currentUrl');
+    const testTime = document.getElementById('testTime');
+    const environment = document.getElementById('environment');
+    
+    if (currentUrl) currentUrl.textContent = window.location.href;
+    if (testTime) testTime.textContent = new Date().toLocaleString();
+    if (environment) environment.textContent = 'Cloudflare Pages';
   }
 
   function setupEventListeners() {
     // Endpoint selection
-    document.getElementById('apiEndpoint').addEventListener('change', (e) => {
-      const customGroup = document.getElementById('customEndpointGroup');
-      const bodyGroup = document.getElementById('requestBodyGroup');
-      
-      if (e.target.value === 'custom') {
-        customGroup.style.display = 'block';
-      } else {
-        customGroup.style.display = 'none';
-      }
+    const endpointSelect = document.getElementById('apiEndpoint') as HTMLSelectElement;
+    const customGroup = document.getElementById('customEndpointGroup');
+    const bodyGroup = document.getElementById('requestBodyGroup');
+    const requestBody = document.getElementById('requestBody') as HTMLTextAreaElement;
+    const method = document.getElementById('httpMethod') as HTMLSelectElement;
+    
+    if (endpointSelect) {
+      endpointSelect.addEventListener('change', (e) => {
+        const target = e.target as HTMLSelectElement;
+        
+        if (customGroup) {
+          customGroup.style.display = target.value === 'custom' ? 'block' : 'none';
+        }
 
-      // Auto-fill request body based on endpoint
-      const requestBody = document.getElementById('requestBody');
-      const method = document.getElementById('httpMethod');
-      
-      switch(e.target.value) {
-        case '/api/auth/register':
-          requestBody.value = JSON.stringify({
-            email: 'test@example.com',
-            firstName: 'Test',
-            lastName: 'User',
-            purpose: 'registration'
-          }, null, 2);
-          method.value = 'POST';
-          bodyGroup.style.display = 'block';
-          break;
-        case '/api/auth/verify-otp':
-          requestBody.value = JSON.stringify({
-            email: 'test@example.com',
-            otp: '123456',
-            otpToken: 'test-token'
-          }, null, 2);
-          method.value = 'POST';
-          bodyGroup.style.display = 'block';
-          break;
-        case '/api/auth/send-otp':
-          requestBody.value = JSON.stringify({
-            email: 'test@example.com',
-            firstName: 'Test',
-            lastName: 'User'
-          }, null, 2);
-          method.value = 'POST';
-          bodyGroup.style.display = 'block';
-          break;
-        case '/api/debug-env':
-        case '/api/check-env':
-          requestBody.value = '';
-          method.value = 'GET';
-          bodyGroup.style.display = 'none';
-          break;
-        default:
-          bodyGroup.style.display = 'block';
-      }
-    });
+        // Auto-fill request body based on endpoint
+        if (requestBody && method) {
+          switch(target.value) {
+            case '/api/auth/register':
+              requestBody.value = JSON.stringify({
+                email: 'test@example.com',
+                firstName: 'Test',
+                lastName: 'User',
+                purpose: 'registration'
+              }, null, 2);
+              method.value = 'POST';
+              if (bodyGroup) bodyGroup.style.display = 'block';
+              break;
+            case '/api/auth/verify-otp':
+              requestBody.value = JSON.stringify({
+                email: 'test@example.com',
+                otp: '123456',
+                otpToken: 'test-token'
+              }, null, 2);
+              method.value = 'POST';
+              if (bodyGroup) bodyGroup.style.display = 'block';
+              break;
+            case '/api/auth/send-otp':
+              requestBody.value = JSON.stringify({
+                email: 'test@example.com',
+                firstName: 'Test',
+                lastName: 'User'
+              }, null, 2);
+              method.value = 'POST';
+              if (bodyGroup) bodyGroup.style.display = 'block';
+              break;
+            case '/api/debug-env':
+            case '/api/check-env':
+              requestBody.value = '';
+              method.value = 'GET';
+              if (bodyGroup) bodyGroup.style.display = 'none';
+              break;
+            default:
+              if (bodyGroup) bodyGroup.style.display = 'block';
+          }
+        }
+      });
+    }
 
     // Test button
-    document.getElementById('testBtn').addEventListener('click', testAPI);
+    const testBtn = document.getElementById('testBtn');
+    if (testBtn) {
+      testBtn.addEventListener('click', testAPI);
+    }
 
     // Clear button
-    document.getElementById('clearBtn').addEventListener('click', clearResults);
+    const clearBtn = document.getElementById('clearBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', clearResults);
+    }
   }
 
   async function testAPI() {
-    const endpointSelect = document.getElementById('apiEndpoint');
-    const customEndpoint = document.getElementById('customEndpoint');
-    const method = document.getElementById('httpMethod').value;
-    const requestBody = document.getElementById('requestBody').value;
-    const headersInput = document.getElementById('headers').value;
+    const endpointSelect = document.getElementById('apiEndpoint') as HTMLSelectElement;
+    const customEndpoint = document.getElementById('customEndpoint') as HTMLInputElement;
+    const methodSelect = document.getElementById('httpMethod') as HTMLSelectElement;
+    const requestBody = document.getElementById('requestBody') as HTMLTextAreaElement;
+    const headersInput = document.getElementById('headers') as HTMLTextAreaElement;
     
-    const endpoint = endpointSelect.value === 'custom' ? customEndpoint.value : endpointSelect.value;
+    if (!endpointSelect || !methodSelect) {
+      console.error('Required form elements not found');
+      return;
+    }
+
+    const endpoint = endpointSelect.value === 'custom' ? 
+      (customEndpoint?.value || '') : endpointSelect.value;
     
     if (!endpoint) {
-      showResult('error', 'Please enter an endpoint');
+      alert('Please enter an endpoint');
       return;
     }
 
     // Parse headers
-    let headers = {};
+    let headers: Headers = {};
     try {
-      if (headersInput) {
-        headers = JSON.parse(headersInput);
+      if (headersInput?.value) {
+        headers = JSON.parse(headersInput.value);
       }
-      if (!headers['Content-Type'] && method !== 'GET') {
+      if (!headers['Content-Type'] && methodSelect.value !== 'GET') {
         headers['Content-Type'] = 'application/json';
       }
-    } catch (e) {
-      showResult('error', 'Invalid headers JSON: ' + e.message);
+    } catch (e: any) {
+      alert('Invalid headers JSON: ' + e.message);
       return;
     }
 
     // Show loading state
-    const testBtn = document.getElementById('testBtn');
-    const originalText = testBtn.textContent;
-    testBtn.textContent = '⏳ Testing...';
-    testBtn.disabled = true;
+    const testBtn = document.getElementById('testBtn') as HTMLButtonElement;
+    if (testBtn) {
+      const originalText = testBtn.textContent;
+      testBtn.textContent = '⏳ Testing...';
+      testBtn.disabled = true;
 
-    const startTime = Date.now();
+      const startTime = Date.now();
 
-    try {
-      const options = {
-        method: method,
-        headers: headers
-      };
+      try {
+        const options: RequestInit = {
+          method: methodSelect.value,
+          headers: headers
+        };
 
-      if (method !== 'GET' && requestBody) {
-        try {
-          options.body = JSON.parse(requestBody);
-        } catch (e) {
-          options.body = requestBody;
+        if (methodSelect.value !== 'GET' && requestBody?.value) {
+          try {
+            options.body = JSON.parse(requestBody.value);
+          } catch (e) {
+            options.body = requestBody.value;
+          }
         }
+
+        console.log(`Testing ${methodSelect.value} ${endpoint}`, options);
+
+        const response = await fetch(endpoint, options);
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+
+        let responseData: any;
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          responseData = await response.json();
+        } else {
+          responseData = await response.text();
+        }
+
+        const result: TestResult = {
+          timestamp: new Date().toISOString(),
+          endpoint: endpoint,
+          method: methodSelect.value,
+          status: response.status,
+          statusText: response.statusText,
+          responseTime: responseTime,
+          headers: Object.fromEntries(response.headers.entries()),
+          data: responseData,
+          success: response.ok
+        };
+
+        testHistory.push(result);
+        saveTestHistory();
+
+        displayResult(result);
+
+      } catch (error: any) {
+        const errorResult: TestResult = {
+          timestamp: new Date().toISOString(),
+          endpoint: endpoint,
+          method: methodSelect.value,
+          error: error.message,
+          success: false
+        };
+
+        testHistory.push(errorResult);
+        saveTestHistory();
+
+        displayResult(errorResult);
+      } finally {
+        testBtn.textContent = originalText;
+        testBtn.disabled = false;
       }
-
-      console.log(`Testing ${method} ${endpoint}`, options);
-
-      const response = await fetch(endpoint, options);
-      const endTime = Date.now();
-      const responseTime = endTime - startTime;
-
-      let responseData;
-      const contentType = response.headers.get('content-type');
-      
-      if (contentType && contentType.includes('application/json')) {
-        responseData = await response.json();
-      } else {
-        responseData = await response.text();
-      }
-
-      const result = {
-        timestamp: new Date().toISOString(),
-        endpoint: endpoint,
-        method: method,
-        status: response.status,
-        statusText: response.statusText,
-        responseTime: responseTime,
-        headers: Object.fromEntries(response.headers.entries()),
-        data: responseData,
-        success: response.ok
-      };
-
-      testHistory.push(result);
-      saveTestHistory();
-
-      displayResult(result);
-
-    } catch (error) {
-      const errorResult = {
-        timestamp: new Date().toISOString(),
-        endpoint: endpoint,
-        method: method,
-        error: error.message,
-        success: false
-      };
-
-      testHistory.push(errorResult);
-      saveTestHistory();
-
-      displayResult(errorResult);
-    } finally {
-      testBtn.textContent = originalText;
-      testBtn.disabled = false;
     }
   }
 
-  function displayResult(result) {
+  function displayResult(result: TestResult) {
     const resultsContainer = document.getElementById('results');
+    
+    if (!resultsContainer) return;
     
     let resultHtml = `
 <div class="result-item ${result.success ? 'success' : 'error'}">
@@ -461,7 +502,10 @@ ${JSON.stringify(result.data || result.error, null, 2)}
   }
 
   function clearResults() {
-    document.getElementById('results').innerHTML = '<p>Click "Test API" to see results...</p>';
+    const resultsContainer = document.getElementById('results');
+    if (resultsContainer) {
+      resultsContainer.innerHTML = '<p>Click "Test API" to see results...</p>';
+    }
     testHistory = [];
     saveTestHistory();
   }
@@ -479,7 +523,7 @@ ${JSON.stringify(result.data || result.error, null, 2)}
       const saved = localStorage.getItem('apiTestHistory');
       if (saved) {
         testHistory = JSON.parse(saved);
-        testHistory.forEach(result => displayResult(result));
+        testHistory.forEach((result: TestResult) => displayResult(result));
       }
     } catch (e) {
       console.log('Could not load test history:', e);
@@ -488,7 +532,10 @@ ${JSON.stringify(result.data || result.error, null, 2)}
 
   // Auto-update test time
   setInterval(() => {
-    document.getElementById('testTime').textContent = new Date().toLocaleString();
-    document.getElementById('updateTime').textContent = new Date().toLocaleString();
+    const testTime = document.getElementById('testTime');
+    const updateTime = document.getElementById('updateTime');
+    
+    if (testTime) testTime.textContent = new Date().toLocaleString();
+    if (updateTime) updateTime.textContent = new Date().toLocaleString();
   }, 1000);
 </script>
