@@ -16,6 +16,21 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Check if Brevo MCP API key is available from Cloudflare environment
+    const brevoApiKey = import.meta.env.brevo_MCP_key;
+    if (!brevoApiKey) {
+      console.error('❌ brevo_MCP_key environment variable not found in Cloudflare');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Email service configuration error - please check brevo_MCP_key environment variable' 
+        }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('✅ brevo_MCP_key found in environment, length:', brevoApiKey.length);
+
     // Create an email token (Appwrite's OTP flow)
     const response = await account.createEmailToken(
       ID.unique(), // User ID (will be created if not exists)
@@ -32,8 +47,8 @@ export const POST: APIRoute = async ({ request }) => {
       otp = Math.floor(100000 + Math.random() * 900000).toString();
     }
 
-    // Send OTP email using Brevo
-    const emailResult: EmailResult = await sendOtpEmail(email, otp, 'User');
+    // Send OTP email using Brevo with MCP API key
+    const emailResult: EmailResult = await sendOtpEmail(email, otp, 'User', brevoApiKey);
 
     if (!emailResult.success) {
       console.error('Brevo email failed:', emailResult.error);

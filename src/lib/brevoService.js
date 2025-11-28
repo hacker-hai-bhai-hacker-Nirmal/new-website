@@ -1,7 +1,8 @@
 // src/lib/brevoService.js
 // Brevo (Sendinblue) Email Service Integration
 
-const BREVO_API_KEY = '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';
+// Use environment variable from Cloudflare
+const BREVO_API_KEY = import.meta.env.brevo_MCP_key;
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 /**
