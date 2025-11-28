@@ -5,11 +5,29 @@ compatibility_flags = ["nodejs_compat"]
 [build]
 command = "npm run build"
 
-[env.production]
-vars = { ENVIRONMENT = "production" }
+# Environment variables for Cloudflare Pages
+# These should be set as secrets in Cloudflare Pages dashboard
+# The variable names here MUST match what's used in the code
+[env.production.vars]
+BREVO_MCP_KEY = "set-in-cloudflare-dashboard"
+JWT_SECRET = "set-in-cloudflare-dashboard"
+APPWRITE_PROJECT_ID = "6900b1ed001604d8befb"
+APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1"
+APPWRITE_DATABASE_ID = "main-db"
 
-[env.preview]
-vars = { ENVIRONMENT = "preview" }
+[env.preview.vars]
+BREVO_MCP_KEY = "set-in-cloudflare-dashboard"
+JWT_SECRET = "set-in-cloudflare-dashboard"
+APPWRITE_PROJECT_ID = "6900b1ed001604d8befb"
+APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1"
+APPWRITE_DATABASE_ID = "main-db"
 
 # Cloudflare Pages specific configuration
 pages_build_output_dir = "dist"
+
+# IMPORTANT: For production deployment, set these variables in Cloudflare Pages dashboard:
+# 1. Go to: https://dash.cloudflare.com/pages/new-website/settings/production#variables
+# 2. Add these as "Secret" type variables:
+#    - BREVO_MCP_KEY (your actual Brevo API key)
+#    - JWT_SECRET (your actual JWT secret)
+# 3. The other variables can be "Plaintext" type
