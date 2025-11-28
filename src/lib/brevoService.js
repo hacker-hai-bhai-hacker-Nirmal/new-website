@@ -18,10 +18,19 @@ const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
  * @param {string} toEmail - Recipient email address
  * @param {string} otp - One-time password
  * @param {string} userName - User's name (optional)
+ * @param {string} apiKey - Brevo API key (optional, falls back to environment)
  * @returns {Promise<EmailResult>} Response object
  */
-export const sendOtpEmail = async (toEmail, otp, userName = 'User') => {
+export const sendOtpEmail = async (toEmail, otp, userName = 'User', apiKey = null) => {
   try {
+    // Use the provided API key or fall back to environment variable
+    const effectiveApiKey = apiKey || BREVO_API_KEY;
+    
+    if (!effectiveApiKey) {
+      throw new Error('Brevo API key is required but not provided');
+    }
+    
+    console.log('🔑 Using Brevo API key, length:', effectiveApiKey.length);
     const emailData = {
       sender: {
         name: 'Litterateur',
@@ -138,7 +147,7 @@ export const sendOtpEmail = async (toEmail, otp, userName = 'User') => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': BREVO_API_KEY
+        'api-key': effectiveApiKey
       },
       body: JSON.stringify(emailData)
     });
@@ -286,7 +295,7 @@ export const sendWelcomeEmail = async (toEmail, userName) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': BREVO_API_KEY
+        'api-key': effectiveApiKey
       },
       body: JSON.stringify(emailData)
     });
