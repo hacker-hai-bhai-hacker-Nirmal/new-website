@@ -74,7 +74,7 @@ function getEnvVar(name) {
 }
 
 // Appwrite Configuration
-export const config = {
+export const appwriteConfig = {
     projectId: getEnvVar('VITE_APPWRITE_PROJECT_ID') || '6900b1ed001604d8befb',
     databaseId: getEnvVar('VITE_APPWRITE_DATABASE_ID') || 'main-db',
     collections: {

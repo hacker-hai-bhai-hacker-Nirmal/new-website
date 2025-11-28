@@ -4,7 +4,7 @@ import { getCurrentSession } from '../lib/authService';
 
 // Check if user is already logged in
 const session = await getCurrentSession();
-if (session.success) {
+if (session && (session as any).success) {
   return Astro.redirect('/dashboard');
 }
 ---
@@ -90,10 +90,11 @@ if (session.success) {
   let userId = '';
 
   // Email form submission
-  document.getElementById('emailForm').addEventListener('submit', async (e) => {
+  document.getElementById('emailForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const email = document.getElementById('email').value.trim();
+    const emailInput = document.getElementById('email') as HTMLInputElement;
+    const email = emailInput?.value?.trim() || '';
     
     if (!email || !email.includes('@')) {
       showError('Please enter a valid email address');
@@ -103,12 +104,14 @@ if (session.success) {
     userEmail = email;
     
     // Show loading state
-    const sendBtn = document.getElementById('sendOtpBtn');
-    sendBtn.disabled = true;
-    sendBtn.textContent = 'Sending...';
+    const sendBtn = document.getElementById('sendOtpBtn') as HTMLButtonElement;
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending...';
+    }
 
     try {
-      const response = await fetch('/api/auth/send-otp', {
+      const response = await fetch('https://litterateur-otp-worker.nirmalkb21.workers.dev', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +119,7 @@ if (session.success) {
         body: JSON.stringify({ email })
       });
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       if (data.success) {
         userId = data.userId; // Store userId for verification
@@ -127,16 +130,19 @@ if (session.success) {
     } catch (error) {
       showError('Network error. Please try again.');
     } finally {
-      sendBtn.disabled = false;
-      sendBtn.textContent = 'Send Verification Code';
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send Verification Code';
+      }
     }
   });
 
   // OTP form submission
-  document.getElementById('otpForm').addEventListener('submit', async (e) => {
+  document.getElementById('otpForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const otp = document.getElementById('otp').value.trim();
+    const otpInput = document.getElementById('otp') as HTMLInputElement;
+    const otp = otpInput?.value?.trim() || '';
 
     if (!otp || otp.length !== 6) {
       showError('Please enter a valid 6-digit code');
@@ -144,9 +150,11 @@ if (session.success) {
     }
 
     // Show loading state
-    const verifyBtn = document.getElementById('verifyOtpBtn');
-    verifyBtn.disabled = true;
-    verifyBtn.textContent = 'Verifying...';
+    const verifyBtn = document.getElementById('verifyOtpBtn') as HTMLButtonElement;
+    if (verifyBtn) {
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying...';
+    }
 
     try {
       const response = await fetch('/api/auth/verify-otp', {
@@ -157,7 +165,7 @@ if (session.success) {
         body: JSON.stringify({ userId, otp })
       });
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       if (data.success) {
         // Store user session
@@ -179,19 +187,23 @@ if (session.success) {
     } catch (error) {
       showError('Network error. Please try again.');
     } finally {
-      verifyBtn.disabled = false;
-      verifyBtn.textContent = 'Verify & Sign In';
+      if (verifyBtn) {
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify & Sign In';
+      }
     }
   });
 
   // Resend OTP
-  document.getElementById('resendOtpBtn').addEventListener('click', async () => {
-    const resendBtn = document.getElementById('resendOtpBtn');
-    resendBtn.disabled = true;
-    resendBtn.textContent = 'Resending...';
+  document.getElementById('resendOtpBtn')?.addEventListener('click', async () => {
+    const resendBtn = document.getElementById('resendOtpBtn') as HTMLButtonElement;
+    if (resendBtn) {
+      resendBtn.disabled = true;
+      resendBtn.textContent = 'Resending...';
+    }
 
     try {
-      const response = await fetch('/api/auth/send-otp', {
+      const response = await fetch('https://litterateur-otp-worker.nirmalkb21.workers.dev', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -199,7 +211,7 @@ if (session.success) {
         body: JSON.stringify({ email: userEmail })
       });
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       if (data.success) {
         userId = data.userId; // Update userId with new one
@@ -210,15 +222,19 @@ if (session.success) {
     } catch (error) {
       showError('Network error. Please try again.');
     } finally {
-      resendBtn.disabled = false;
-      resendBtn.textContent = 'Resend Code';
+      if (resendBtn) {
+        resendBtn.disabled = false;
+        resendBtn.textContent = 'Resend Code';
+      }
     }
   });
 
   // Show OTP step
-  function showOtpStep(data) {
-    document.getElementById('emailStep').classList.remove('active');
-    document.getElementById('otpStep').classList.add('active');
+  function showOtpStep(data: any) {
+    const emailStep = document.getElementById('emailStep');
+    const otpStep = document.getElementById('otpStep');
+    if (emailStep) emailStep.classList.remove('active');
+    if (otpStep) otpStep.classList.add('active');
     
     // Show success message
     showSuccess('OTP sent to your email! Please check your inbox.');
@@ -226,60 +242,56 @@ if (session.success) {
 
   // Show success step
   function showSuccessStep() {
-    document.getElementById('otpStep').classList.remove('active');
-    document.getElementById('successStep').classList.add('active');
+    const otpStep = document.getElementById('otpStep');
+    const successStep = document.getElementById('successStep');
+    if (otpStep) otpStep.classList.remove('active');
+    if (successStep) successStep.classList.add('active');
   }
 
   // Show error message
-  function showError(message) {
-    // Remove existing error
-    const existingError = document.querySelector('.error-message');
-    if (existingError) existingError.remove();
-
-    // Create error element
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.textContent = message;
+  function showError(message: string) {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
     
-    // Insert after form
-    const activeStep = document.querySelector('.form-step.active');
-    activeStep.appendChild(errorDiv);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => errorDiv.remove(), 5000);
+    // Hide after 5 seconds
+    setTimeout(() => {
+      if (errorDiv) errorDiv.style.display = 'none';
+    }, 5000);
   }
 
   // Show success message
-  function showSuccess(message) {
-    // Remove existing success
-    const existingSuccess = document.querySelector('.success-message');
-    if (existingSuccess) existingSuccess.remove();
-
-    // Create success element
-    const successDiv = document.createElement('div');
-    successDiv.className = 'success-message';
-    successDiv.textContent = message;
+  function showSuccess(message: string) {
+    const successDiv = document.getElementById('successMessage');
+    if (successDiv) {
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+    }
     
-    // Insert after form
-    const activeStep = document.querySelector('.form-step.active');
-    activeStep.appendChild(successDiv);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => successDiv.remove(), 5000);
+    // Hide after 5 seconds
+    setTimeout(() => {
+      if (successDiv) successDiv.style.display = 'none';
+    }, 5000);
   }
 
   // Auto-focus OTP input when shown
   const observer = new MutationObserver(() => {
-    const otpInput = document.getElementById('otp');
-    if (otpInput && document.getElementById('otpStep').classList.contains('active')) {
+    const otpInput = document.getElementById('otp') as HTMLInputElement;
+    const otpStep = document.getElementById('otpStep');
+    if (otpInput && otpStep && otpStep.classList.contains('active')) {
       otpInput.focus();
     }
   });
 
-  observer.observe(document.getElementById('otpStep'), { 
-    attributes: true, 
-    attributeFilter: ['class'] 
-  });
+  const otpStepElement = document.getElementById('otpStep');
+  if (otpStepElement) {
+    observer.observe(otpStepElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+  }
 </script>
 
 <style>
