@@ -1,7 +1,7 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { renderers } from './renderers.mjs';
 import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_D6_9RzNp.mjs';
-import { manifest } from './manifest_Cv_iinPl.mjs';
+import { manifest } from './manifest_L4KjZe9a.mjs';
 
 const serverIslandMap = new Map();;
 
@@ -23,15 +23,16 @@ const _page14 = () => import('./pages/api-test.astro.mjs');
 const _page15 = () => import('./pages/brevo-test.astro.mjs');
 const _page16 = () => import('./pages/checkout.astro.mjs');
 const _page17 = () => import('./pages/dashboard.astro.mjs');
-const _page18 = () => import('./pages/delivery.astro.mjs');
-const _page19 = () => import('./pages/kitchen.astro.mjs');
-const _page20 = () => import('./pages/login.astro.mjs');
-const _page21 = () => import('./pages/login-test.astro.mjs');
-const _page22 = () => import('./pages/menu.astro.mjs');
-const _page23 = () => import('./pages/otp-login.astro.mjs');
-const _page24 = () => import('./pages/rewards.astro.mjs');
-const _page25 = () => import('./pages/verify-otp.astro.mjs');
-const _page26 = () => import('./pages/index.astro.mjs');
+const _page18 = () => import('./pages/debug.astro.mjs');
+const _page19 = () => import('./pages/delivery.astro.mjs');
+const _page20 = () => import('./pages/kitchen.astro.mjs');
+const _page21 = () => import('./pages/login.astro.mjs');
+const _page22 = () => import('./pages/login-test.astro.mjs');
+const _page23 = () => import('./pages/menu.astro.mjs');
+const _page24 = () => import('./pages/otp-login.astro.mjs');
+const _page25 = () => import('./pages/rewards.astro.mjs');
+const _page26 = () => import('./pages/verify-otp.astro.mjs');
+const _page27 = () => import('./pages/index.astro.mjs');
 const pageMap = new Map([
     ["node_modules/@astrojs/cloudflare/dist/entrypoints/image-endpoint.js", _page0],
     ["src/pages/admin.astro", _page1],
@@ -51,15 +52,16 @@ const pageMap = new Map([
     ["src/pages/brevo-test.astro", _page15],
     ["src/pages/checkout.astro", _page16],
     ["src/pages/dashboard.astro", _page17],
-    ["src/pages/delivery.astro", _page18],
-    ["src/pages/kitchen.astro", _page19],
-    ["src/pages/login.astro", _page20],
-    ["src/pages/login-test.astro", _page21],
-    ["src/pages/menu.astro", _page22],
-    ["src/pages/otp-login.astro", _page23],
-    ["src/pages/rewards.astro", _page24],
-    ["src/pages/verify-otp.astro", _page25],
-    ["src/pages/index.astro", _page26]
+    ["src/pages/debug.astro", _page18],
+    ["src/pages/delivery.astro", _page19],
+    ["src/pages/kitchen.astro", _page20],
+    ["src/pages/login.astro", _page21],
+    ["src/pages/login-test.astro", _page22],
+    ["src/pages/menu.astro", _page23],
+    ["src/pages/otp-login.astro", _page24],
+    ["src/pages/rewards.astro", _page25],
+    ["src/pages/verify-otp.astro", _page26],
+    ["src/pages/index.astro", _page27]
 ]);
 
 const _manifest = Object.assign(manifest, {
