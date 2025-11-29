@@ -1,12 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import { getCurrentSession } from '../lib/authService';
 
-// Check if user is already logged in
-const session = await getCurrentSession();
-if (session && (session as any).success) {
-  return Astro.redirect('/dashboard');
-}
+// TODO: Implement session check with new authentication system
+// const session = await getCurrentSession();
+// if (session && (session as any).success) {
+//   return Astro.redirect('/dashboard');
+// }
 ---
 
 <Layout title="Login with OTP | Litterateur">

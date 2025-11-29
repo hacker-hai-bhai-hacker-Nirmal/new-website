@@ -1,10 +1,10 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { d as defineMiddleware } from './chunks/index_BWlpe_dD.mjs';
-import './chunks/astro-designed-error-pages_BO0bGs8i.mjs';
-import './chunks/astro/server_DaomeaOp.mjs';
-import { s as sequence } from './chunks/sequence_EGp0wSb3.mjs';
+import { d as defineMiddleware } from './chunks/index_DHPUngCz.mjs';
+import './chunks/astro-designed-error-pages_Cwtd_jYS.mjs';
+import './chunks/astro/server_OziQ-2Q1.mjs';
+import { s as sequence } from './chunks/sequence_BGm6KjeW.mjs';
 
-// Astro Middleware for Route Protection
+// Astro Middleware for Route Protection (Temporarily Disabled)
 
 
 // Define protected and auth-only routes

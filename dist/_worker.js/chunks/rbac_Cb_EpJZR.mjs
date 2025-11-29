@@ -1,8 +1,9 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
+import { d as defineMiddleware } from './index_DHPUngCz.mjs';
 import crypto from 'crypto';
 import { C as Client, A as Account, D as Databases, I as ID, Q as Query } from './sdk_BPbYzYsq.mjs';
 
-const __vite_import_meta_env__$1 = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
+const __vite_import_meta_env__$1 = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true, "VITE_APPWRITE_API_KEY": "standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75", "VITE_APPWRITE_COLLECTION_MENU": "menu_items", "VITE_APPWRITE_COLLECTION_ORDERS": "orders", "VITE_APPWRITE_COLLECTION_USERS": "users", "VITE_APPWRITE_DATABASE_ID": "main-db", "VITE_APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1", "VITE_APPWRITE_PROJECT_ID": "6900b1ed001604d8befb", "VITE_FRONTEND_URL": "http://localhost:3000", "VITE_USER_NODE_ENV": "development"};
 class AppwriteService {
   client;
   account;
@@ -282,7 +283,7 @@ class AppwriteService {
 }
 new AppwriteService();
 
-const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true, "VITE_APPWRITE_API_KEY": "standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75", "VITE_APPWRITE_COLLECTION_MENU": "menu_items", "VITE_APPWRITE_COLLECTION_ORDERS": "orders", "VITE_APPWRITE_COLLECTION_USERS": "users", "VITE_APPWRITE_DATABASE_ID": "main-db", "VITE_APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1", "VITE_APPWRITE_PROJECT_ID": "6900b1ed001604d8befb", "VITE_FRONTEND_URL": "http://localhost:3000", "VITE_USER_NODE_ENV": "development"};
 const ACCESS_TOKEN_EXPIRY = 15 * 60;
 const REFRESH_TOKEN_EXPIRY = 7 * 24 * 60 * 60;
 class SessionManager {
@@ -581,4 +582,48 @@ class SessionManager {
 }
 const sessionManager = new SessionManager();
 
-export { AppwriteService as A, sessionManager as s };
+const authMiddleware = defineMiddleware(async (context, next) => {
+  const authHeader = context.request.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return new Response(
+      JSON.stringify({ error: "Authorization header required" }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
+  }
+  const token = authHeader.slice(7);
+  try {
+    const user = await sessionManager.validateAccessToken(token);
+    context.locals.user = user;
+    context.locals.isAuthenticated = true;
+    return next();
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: "Invalid or expired token" }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
+  }
+});
+function requireRole(...allowedRoles) {
+  return async (context, next) => {
+    if (!context.locals.isAuthenticated || !context.locals.user) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    const userRole = context.locals.user.role;
+    if (!allowedRoles.includes(userRole)) {
+      return new Response(
+        JSON.stringify({
+          error: "Insufficient permissions",
+          required: allowedRoles,
+          current: userRole
+        }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    return next();
+  };
+}
+
+export { AppwriteService as A, authMiddleware as a, requireRole as r, sessionManager as s };

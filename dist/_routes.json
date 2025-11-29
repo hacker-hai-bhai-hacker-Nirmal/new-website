@@ -6,8 +6,6 @@
   "exclude": [
     "/_astro/*",
     "/favicon.svg",
-    "/styles.css",
-    "/test-jwt-otp.html",
-    "/test.html"
+    "/styles.css"
   ]
 }

@@ -183,7 +183,7 @@ const config = {
   }
 };
 
-const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
+const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true, "VITE_APPWRITE_API_KEY": "standard_2ea684a82e7b55511b056b2857a03bdc93996b398ad9214410aa6e0faed1bc6ebeb03138858213a9f51e1433c4cddc9908821350bf826103f9b26389e315801beb75c5104ef4bd2490b0565a8ff4b0bf4e3907f525114172f8e6e398aa5d24f924dc5b0c467f4885a38aa3b42c4d7c0262cdf8c9f38111772075e021c5359c75", "VITE_APPWRITE_COLLECTION_MENU": "menu_items", "VITE_APPWRITE_COLLECTION_ORDERS": "orders", "VITE_APPWRITE_COLLECTION_USERS": "users", "VITE_APPWRITE_DATABASE_ID": "main-db", "VITE_APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1", "VITE_APPWRITE_PROJECT_ID": "6900b1ed001604d8befb", "VITE_FRONTEND_URL": "http://localhost:3000", "VITE_USER_NODE_ENV": "development"};
 const client = new Client().setEndpoint("https://fra.cloud.appwrite.io/v1").setProject("6900b1ed001604d8befb");
 const account = new Account(client);
 const databases = new Databases(client);
@@ -223,8 +223,8 @@ if (typeof window !== "undefined") {
   initDatabase();
 }
 function getEnvVar(name) {
-  if (typeof import.meta !== "undefined" && Object.assign(__vite_import_meta_env__, { VITE_APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", VITE_APPWRITE_DATABASE_ID: "main-db", APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", APPWRITE_DATABASE_ID: "main-db" })) {
-    return Object.assign(__vite_import_meta_env__, { VITE_APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", VITE_APPWRITE_DATABASE_ID: "main-db", APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", APPWRITE_DATABASE_ID: "main-db" })[name];
+  if (typeof import.meta !== "undefined" && Object.assign(__vite_import_meta_env__, { APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", APPWRITE_DATABASE_ID: "main-db" })) {
+    return Object.assign(__vite_import_meta_env__, { APPWRITE_PROJECT_ID: "6900b1ed001604d8befb", APPWRITE_DATABASE_ID: "main-db" })[name];
   }
   return void 0;
 }
@@ -232,4 +232,4 @@ function getEnvVar(name) {
   projectId: getEnvVar("VITE_APPWRITE_PROJECT_ID") || "6900b1ed001604d8befb",
   databaseId: getEnvVar("VITE_APPWRITE_DATABASE_ID") || "main-db"});
 
-export { account as a, client as c };
+export { account as a };

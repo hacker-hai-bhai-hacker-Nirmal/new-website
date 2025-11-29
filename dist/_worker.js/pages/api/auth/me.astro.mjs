@@ -1,104 +1,73 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { A as AppwriteService } from '../../../chunks/sessionManager_Bzw4u138.mjs';
-import { a as authMiddleware } from '../../../chunks/rbac_DSXUKwNO.mjs';
+import { A as AuthService, R as ROLE_PERMISSIONS } from '../../../chunks/authService_1REzO2KN.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 async function GET({ request, locals }) {
   try {
-    const context = { request, locals };
-    const authResult = await authMiddleware(context, async () => new Response(JSON.stringify({ success: true })));
-    if (authResult.status !== 200) {
-      return authResult;
+    const runtimeEnv = locals?.runtime?.env;
+    const auth = new AuthService(runtimeEnv);
+    let token = null;
+    const authHeader = request.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.substring(7);
     }
-    const user = locals.user;
+    if (!token) {
+      const cookies = request.headers.get("Cookie") || "";
+      const accessTokenMatch = cookies.match(/access_token=([^;]+)/);
+      if (accessTokenMatch) {
+        token = accessTokenMatch[1];
+      }
+    }
+    if (!token) {
+      return Response.json({
+        success: false,
+        error: "No authentication token provided"
+      }, { status: 401 });
+    }
+    const user = await auth.getUserFromToken(token);
     if (!user) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "User not authenticated"
-        }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
-      );
+      return Response.json({
+        success: false,
+        error: "Invalid or expired token"
+      }, { status: 401 });
     }
-    const appwrite = new AppwriteService();
-    const fullUser = await appwrite.getUser(user.userId);
-    if (!fullUser) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "User not found"
-        }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    const role = await appwrite.getRole(fullUser.roleId);
-    if (!role) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "User role not found"
-        }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    const {
-      verificationToken,
-      verificationTokenExpiry,
-      passwordResetToken,
-      passwordResetTokenExpiry,
-      twoFactorSecret,
-      ...safeUser
-    } = fullUser;
-    const response = {
+    const permissions = ROLE_PERMISSIONS[user.role] || [];
+    return Response.json({
       success: true,
       user: {
-        ...safeUser,
-        role: role.roleName,
-        permissions: role.permissions || [],
-        lastLoginAt: safeUser.lastLoginAt ? new Date(safeUser.lastLoginAt).toISOString() : void 0,
-        createdAt: new Date(safeUser.createdAt).toISOString()
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        restaurantId: user.restaurantId,
+        phone: user.phone,
+        isActive: user.isActive,
+        permissions,
+        createdAt: new Date(user.createdAt).toISOString(),
+        lastLoginAt: (/* @__PURE__ */ new Date()).toISOString()
+        // In production, track actual last login
       }
-    };
-    return new Response(
-      JSON.stringify(response),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
+    });
   } catch (error) {
-    console.error("Error fetching user info:", error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: error.message || "Failed to fetch user information"
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    console.error("Get user error:", error);
+    return Response.json({
+      success: false,
+      error: "Internal server error"
+    }, { status: 500 });
   }
 }
-async function POST() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
-}
-async function PUT() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
-}
-async function DELETE() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
+async function POST({ request, locals }) {
+  return Response.json({
+    success: false,
+    error: "Profile update not implemented yet"
+  }, { status: 501 });
 }
 
 const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  DELETE,
   GET,
-  POST,
-  PUT
+  POST
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;

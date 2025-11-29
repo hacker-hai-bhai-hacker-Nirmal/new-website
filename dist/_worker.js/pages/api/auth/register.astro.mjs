@@ -1,135 +1,82 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { OTPService } from '../../../chunks/otpService_CrrjiutG.mjs';
+import { A as AuthService } from '../../../chunks/authService_1REzO2KN.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SITE": undefined, "SSR": true};
 async function POST({ request, locals }) {
   try {
+    const runtimeEnv = locals?.runtime?.env;
+    const auth = new AuthService(runtimeEnv);
     const body = await request.json();
-    const env = locals?.env || Object.assign(__vite_import_meta_env__, { OS: process.env.OS });
-    const { email, firstName, lastName, role } = body;
-    if (!email || !firstName || !lastName || !role) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Missing required fields: email, firstName, lastName, role"
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    if (!body.email || !body.firstName || !body.lastName || !body.role) {
+      return Response.json({
+        success: false,
+        error: "Missing required fields: email, firstName, lastName, role"
+      }, { status: 400 });
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Invalid email format"
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    if (!emailRegex.test(body.email)) {
+      return Response.json({
+        success: false,
+        error: "Invalid email format"
+      }, { status: 400 });
     }
-    const allowedRoles = ["customer", "delivery_partner", "restaurant_staff"];
-    if (!allowedRoles.includes(role)) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Invalid role. Allowed roles: customer, delivery_partner, restaurant_staff"
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    const validRoles = ["customer", "delivery_partner", "restaurant_staff"];
+    if (!validRoles.includes(body.role)) {
+      return Response.json({
+        success: false,
+        error: "Invalid role. Must be one of: customer, delivery_partner, restaurant_staff"
+      }, { status: 400 });
     }
-    if (role === "restaurant_staff" && !body.restaurantId) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "restaurantId is required for restaurant_staff role"
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    if (body.role === "restaurant_staff" && !body.restaurantId) {
+      return Response.json({
+        success: false,
+        error: "Restaurant ID is required for restaurant staff role"
+      }, { status: 400 });
     }
-    const otpServiceInstance = new OTPService(env);
-    const otpResult = await otpServiceInstance.generateOTP({
-      email,
-      firstName,
-      lastName,
-      purpose: "registration"
-    });
-    if (!otpResult.success) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: otpResult.error || "Failed to generate OTP"
-        }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    try {
-      const emailResponse = await fetch("https://litterateur-otp-worker.nirmalkb21.workers.dev", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          otp: otpResult.otp,
-          // Use plain OTP for email
-          purpose: "registration",
-          firstName,
-          lastName
-        })
-      });
-      if (!emailResponse.ok) {
-        console.error("Failed to send OTP email:", await emailResponse.text());
-      }
-    } catch (emailError) {
-      console.error("Error sending OTP email:", emailError);
-    }
-    return new Response(
-      JSON.stringify({
+    const result = await auth.register(body);
+    if (result.success) {
+      console.log(`OTP for ${body.email}: ${result.otp}`);
+      return Response.json({
         success: true,
-        email,
-        otpToken: otpResult.otpToken,
-        // JWT containing encrypted OTP
-        otp: otpResult.otp,
-        // Include for development/testing
-        expiresIn: otpResult.expiresIn,
-        message: `Registration successful! OTP sent to ${email}. Valid for 10 minutes.`
-      }),
-      { status: 201, headers: { "Content-Type": "application/json" } }
-    );
+        message: result.message,
+        otpToken: result.otpToken,
+        user: {
+          id: result.user?.id,
+          email: result.user?.email,
+          firstName: result.user?.firstName,
+          lastName: result.user?.lastName,
+          role: result.user?.role,
+          restaurantId: result.user?.restaurantId
+        }
+      });
+    } else {
+      return Response.json({
+        success: false,
+        error: result.error
+      }, { status: 400 });
+    }
   } catch (error) {
     console.error("Registration error:", error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "Registration failed. Please try again."
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return Response.json({
+      success: false,
+      error: "Internal server error"
+    }, { status: 500 });
   }
 }
 async function GET() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
-}
-async function PUT() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
-}
-async function DELETE() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
+  return Response.json({
+    success: true,
+    message: "Registration endpoint - POST to register with role-based authentication",
+    supportedRoles: ["customer", "delivery_partner", "restaurant_staff"],
+    requiredFields: ["email", "firstName", "lastName", "role"],
+    optionalFields: ["phone", "restaurantId"]
+  });
 }
 
 const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  DELETE,
   GET,
-  POST,
-  PUT
+  POST
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;

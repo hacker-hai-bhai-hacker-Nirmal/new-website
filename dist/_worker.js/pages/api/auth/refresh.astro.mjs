@@ -1,80 +1,53 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { s as sessionManager } from '../../../chunks/sessionManager_Bzw4u138.mjs';
+import { A as AuthService } from '../../../chunks/authService_1REzO2KN.mjs';
 export { renderers } from '../../../renderers.mjs';
 
-async function POST({ request }) {
+async function POST({ request, locals }) {
   try {
+    const runtimeEnv = locals?.runtime?.env;
+    const auth = new AuthService(runtimeEnv);
     const body = await request.json();
-    const { refreshToken } = body;
-    if (!refreshToken) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Refresh token is required"
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-    const ipAddress = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "0.0.0.0";
-    const userAgent = request.headers.get("user-agent") || "Unknown";
-    const tokenData = await sessionManager.refreshToken(
-      refreshToken,
-      ipAddress,
-      userAgent
-    );
-    const response = {
-      success: true,
-      accessToken: tokenData.accessToken,
-      refreshToken: tokenData.refreshToken,
-      expiresIn: tokenData.expiresIn,
-      message: "Tokens refreshed successfully"
-    };
-    return new Response(
-      JSON.stringify(response),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Set-Cookie": `accessToken=${tokenData.accessToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${tokenData.expiresIn}`
-        }
-      }
-    );
-  } catch (error) {
-    console.error("Error refreshing token:", error);
-    return new Response(
-      JSON.stringify({
+    if (!body.refreshToken) {
+      return Response.json({
         success: false,
-        error: error.message || "Token refresh failed"
-      }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
+        error: "Missing required field: refreshToken"
+      }, { status: 400 });
+    }
+    const result = await auth.refreshToken(body.refreshToken);
+    if (result.success) {
+      return Response.json({
+        success: true,
+        message: result.message,
+        accessToken: result.accessToken,
+        expiresIn: result.expiresIn
+      });
+    } else {
+      return Response.json({
+        success: false,
+        error: result.error
+      }, { status: 401 });
+    }
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    return Response.json({
+      success: false,
+      error: "Internal server error"
+    }, { status: 500 });
   }
 }
 async function GET() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
-}
-async function PUT() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
-}
-async function DELETE() {
-  return new Response(
-    JSON.stringify({ error: "Method not allowed" }),
-    { status: 405, headers: { "Content-Type": "application/json" } }
-  );
+  return Response.json({
+    success: true,
+    message: "Token refresh endpoint - POST to refresh access tokens",
+    requiredFields: ["refreshToken"],
+    returns: ["accessToken", "expiresIn"]
+  });
 }
 
 const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  DELETE,
   GET,
-  POST,
-  PUT
+  POST
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
