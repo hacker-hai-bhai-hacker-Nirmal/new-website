@@ -210,9 +210,10 @@ export async function POST({ request }: { request: Request }) {
     </div>
 
     <script>
-        let debugData = {};
-
-        async function loadServerStatus() {
+        // Make functions globally available
+        window.debugData = {};
+        
+        window.loadServerStatus = async function() {
             const result = document.getElementById('server-status');
             result.className = 'result loading';
             result.textContent = 'Loading server status...';
@@ -220,7 +221,7 @@ export async function POST({ request }: { request: Request }) {
             try {
                 const response = await fetch('/debug', { method: 'GET' });
                 const data = await response.json();
-                debugData = data;
+                window.debugData = data;
                 
                 result.className = 'result success';
                 result.innerHTML = `
@@ -236,7 +237,7 @@ export async function POST({ request }: { request: Request }) {
             }
         }
 
-        async function testEnvironment() {
+        window.testEnvironment = async function() {
             const result = document.getElementById('env-test');
             result.className = 'result loading';
             result.textContent = 'Testing environment variables...';
@@ -265,7 +266,7 @@ export async function POST({ request }: { request: Request }) {
             }
         }
 
-        async function testAPI(endpoint) {
+        window.testAPI = async function(endpoint) {
             const result = document.getElementById('api-test');
             result.className = 'result loading';
             result.textContent = `Testing ${endpoint}...`;
@@ -292,7 +293,7 @@ export async function POST({ request }: { request: Request }) {
             }
         }
 
-        async function testAllAPIs() {
+        window.testAllAPIs = async function() {
             const endpoints = ['/api/auth', '/api/auth/register', '/api/auth/verify-otp', '/api/auth/me', '/api/test-auth', '/api/check-env'];
             const results = document.getElementById('all-api-results');
             results.innerHTML = '<div class="result loading">Testing all endpoints...</div>';
@@ -335,10 +336,10 @@ export async function POST({ request }: { request: Request }) {
                 </div>
             `;
             
-            updateDiagnosis(testResults);
+            window.updateDiagnosis(testResults);
         }
 
-        function updateDiagnosis(apiResults) {
+        window.updateDiagnosis = function(apiResults) {
             const diagnosis = document.getElementById('diagnosis');
             const workingCount = apiResults.filter(r => r.success).length;
             const totalCount = apiResults.length;
@@ -378,7 +379,7 @@ export async function POST({ request }: { request: Request }) {
         }
 
         // Auto-load server status on page load
-        window.addEventListener('load', loadServerStatus);
+        window.addEventListener('load', window.loadServerStatus);
     </script>
 </body>
 </html>
