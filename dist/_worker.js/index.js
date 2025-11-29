@@ -1,7 +1,7 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { renderers } from './renderers.mjs';
 import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_D6_9RzNp.mjs';
-import { manifest } from './manifest_bENJ-2Nm.mjs';
+import { manifest } from './manifest_Cv_iinPl.mjs';
 
 const serverIslandMap = new Map();;
 
@@ -42,7 +42,7 @@ const pageMap = new Map([
     ["src/pages/api/auth/register.ts", _page6],
     ["src/pages/api/auth/send-otp.ts", _page7],
     ["src/pages/api/auth/verify-otp.ts", _page8],
-    ["src/pages/api/auth/index.ts", _page9],
+    ["src/pages/api/auth/index.astro", _page9],
     ["src/pages/api/check-env.ts", _page10],
     ["src/pages/api/test-auth.ts", _page11],
     ["src/pages/api/test-correct-pattern.ts", _page12],
