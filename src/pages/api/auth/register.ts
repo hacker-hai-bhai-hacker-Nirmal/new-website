@@ -2,7 +2,7 @@
 // POST /api/auth/register
 // Supports role-based registration with JWT tokens
 
-import { authService, RegisterRequest, RegisterResponse } from '../../../lib/authService.js';
+import { AuthService, RegisterRequest, RegisterResponse } from '../../../lib/authService.js';
 
 export async function POST({ request, locals }: { request: Request; locals: any }) {
   try {
@@ -10,7 +10,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     const runtimeEnv = locals?.runtime?.env;
     
     // Create auth service with environment variables
-    const auth = new authService.constructor(runtimeEnv);
+    const auth = new AuthService(runtimeEnv);
 
     const body: RegisterRequest = await request.json();
 

@@ -1,7 +1,8 @@
 // Role-Based Access Control (RBAC) Utility
 // Provides helper functions for role-based permissions and access control
 
-import { User, ROLE_PERMISSIONS } from './authService.js';
+import type { User } from './authService.js';
+import { ROLE_PERMISSIONS } from './authService.js';
 
 export type Role = 'customer' | 'delivery_partner' | 'restaurant_staff' | 'admin';
 
@@ -14,7 +15,7 @@ export interface RolePermissions {
   [key: string]: Permission[];
 }
 
-// Define detailed permissions for each role
+// Define detailed permissions for each role (including admin)
 export const DETAILED_ROLE_PERMISSIONS: RolePermissions = {
   customer: [
     {

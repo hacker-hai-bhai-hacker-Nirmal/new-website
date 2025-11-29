@@ -2,7 +2,7 @@
 // GET /api/auth/me
 // Returns information about the currently authenticated user with role data
 
-import { authService, ROLE_PERMISSIONS } from '../../../lib/authService.js';
+import { AuthService, ROLE_PERMISSIONS } from '../../../lib/authService.js';
 
 export async function GET({ request, locals }: { request: Request; locals: any }) {
   try {
@@ -10,7 +10,7 @@ export async function GET({ request, locals }: { request: Request; locals: any }
     const runtimeEnv = locals?.runtime?.env;
     
     // Create auth service with environment variables
-    const auth = new authService.constructor(runtimeEnv);
+    const auth = new AuthService(runtimeEnv);
 
     // Extract token from Authorization header or cookies
     let token = null;
@@ -48,7 +48,7 @@ export async function GET({ request, locals }: { request: Request; locals: any }
     }
 
     // Get user permissions based on role
-    const permissions = ROLE_PERMISSIONS[user.role] || [];
+    const permissions = ROLE_PERMISSIONS[user.role as keyof typeof ROLE_PERMISSIONS] || [];
 
     return Response.json({
       success: true,

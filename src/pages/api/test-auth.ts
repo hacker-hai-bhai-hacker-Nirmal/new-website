@@ -2,7 +2,7 @@
 // GET /api/test-auth
 // Tests the role-based authentication system
 
-import { authService, ROLE_PERMISSIONS } from '../lib/authService.js';
+import { AuthService, ROLE_PERMISSIONS } from '../lib/authService.js';
 import { RBACService } from '../lib/rbac.js';
 
 export async function GET({ request, locals }: { request: Request; locals: any }) {
@@ -11,7 +11,7 @@ export async function GET({ request, locals }: { request: Request; locals: any }
     const runtimeEnv = locals?.runtime?.env;
     
     // Create auth service with environment variables
-    const auth = new authService.constructor(runtimeEnv);
+    const auth = new AuthService(runtimeEnv);
 
     // Extract token from Authorization header or cookies
     let token = null;
@@ -74,7 +74,7 @@ export async function GET({ request, locals }: { request: Request; locals: any }
       
       permissions: {
         count: permissions.length,
-        list: permissions.map(p => ({
+        list: permissions.map((p: any) => ({
           resource: p.resource,
           actions: p.actions
         }))
@@ -84,7 +84,7 @@ export async function GET({ request, locals }: { request: Request; locals: any }
         dashboard: canAccessDashboard,
         admin: canAccessAdmin,
         kitchen: canAccessKitchen,
-        availableRoutes: ROLE_PERMISSIONS[user.role] || []
+        availableRoutes: ROLE_PERMISSIONS[user.role as keyof typeof ROLE_PERMISSIONS] || []
       },
       
       rbacTests: {
@@ -117,7 +117,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
   try {
     // Test registration flow
     const runtimeEnv = locals?.runtime?.env;
-    const auth = new authService.constructor(runtimeEnv);
+    const auth = new AuthService(runtimeEnv);
 
     const body = await request.json();
     

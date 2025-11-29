@@ -2,7 +2,7 @@
 // POST /api/auth/refresh
 // Refreshes access tokens using refresh tokens
 
-import { authService } from '../../../lib/authService.js';
+import { AuthService } from '../../../lib/authService.js';
 
 export async function POST({ request, locals }: { request: Request; locals: any }) {
   try {
@@ -10,7 +10,7 @@ export async function POST({ request, locals }: { request: Request; locals: any 
     const runtimeEnv = locals?.runtime?.env;
     
     // Create auth service with environment variables
-    const auth = new authService.constructor(runtimeEnv);
+    const auth = new AuthService(runtimeEnv);
 
     const body = await request.json();
 
