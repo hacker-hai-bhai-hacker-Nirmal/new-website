@@ -1,169 +1,95 @@
-// User Registration API Endpoint - JWT OTP Only
+// Enhanced User Registration API Endpoint with Role-Based Authentication
 // POST /api/auth/register
-// Pure JWT-based OTP registration (no database required)
+// Supports role-based registration with JWT tokens
 
-import { OTPService } from '../../../lib/otpService.js';
+import { authService, RegisterRequest, RegisterResponse } from '../../../lib/authService.js';
 
-interface RegisterRequest {
-  email: string;
-  phone?: string;
-  firstName: string;
-  lastName: string;
-  role: 'customer' | 'delivery_partner' | 'restaurant_staff';
-  restaurantId?: string; // Required for restaurant_staff role
-}
-
-interface RegisterResponse {
-  success: boolean;
-  email?: string;
-  otpToken?: string; // JWT containing OTP
-  otp?: string; // Plain OTP for development
-  expiresIn?: number;
-  error?: string;
-  message?: string;
-}
-
-export async function POST({ request, locals }: { request: Request; locals: any }): Promise<Response> {
+export async function POST({ request, locals }: { request: Request; locals: any }) {
   try {
+    // Get the runtime environment for JWT secret
+    const runtimeEnv = locals?.runtime?.env;
+    
+    // Create auth service with environment variables
+    const auth = new authService.constructor(runtimeEnv);
+
     const body: RegisterRequest = await request.json();
-    
-    // Get environment variables from locals (Cloudflare Pages)
-    const env = (locals as any)?.env || import.meta.env;
-    
+
     // Validate required fields
-    const { email, firstName, lastName, role } = body;
-    
-    if (!email || !firstName || !lastName || !role) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Missing required fields: email, firstName, lastName, role' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+    if (!body.email || !body.firstName || !body.lastName || !body.role) {
+      return Response.json({
+        success: false,
+        error: 'Missing required fields: email, firstName, lastName, role'
+      }, { status: 400 });
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Invalid email format' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+    if (!emailRegex.test(body.email)) {
+      return Response.json({
+        success: false,
+        error: 'Invalid email format'
+      }, { status: 400 });
     }
 
     // Validate role
-    const allowedRoles = ['customer', 'delivery_partner', 'restaurant_staff'];
-    if (!allowedRoles.includes(role)) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Invalid role. Allowed roles: customer, delivery_partner, restaurant_staff' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+    const validRoles = ['customer', 'delivery_partner', 'restaurant_staff'];
+    if (!validRoles.includes(body.role)) {
+      return Response.json({
+        success: false,
+        error: 'Invalid role. Must be one of: customer, delivery_partner, restaurant_staff'
+      }, { status: 400 });
     }
 
-    // Check if restaurantId is required and provided
-    if (role === 'restaurant_staff' && !body.restaurantId) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'restaurantId is required for restaurant_staff role' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+    // Validate restaurant staff requirements
+    if (body.role === 'restaurant_staff' && !body.restaurantId) {
+      return Response.json({
+        success: false,
+        error: 'Restaurant ID is required for restaurant staff role'
+      }, { status: 400 });
     }
 
-    // Generate JWT-based OTP (no database required)
-    const otpServiceInstance = new OTPService(env);
-    const otpResult = await otpServiceInstance.generateOTP({
-      email,
-      firstName,
-      lastName,
-      purpose: 'registration'
-    });
+    // Register user
+    const result: RegisterResponse = await auth.register(body);
 
-    if (!otpResult.success) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: otpResult.error || 'Failed to generate OTP' 
-        }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Send OTP email via Brevo service (if available)
-    try {
-      const emailResponse = await fetch('https://litterateur-otp-worker.nirmalkb21.workers.dev', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email,
-          otp: otpResult.otp, // Use plain OTP for email
-          purpose: 'registration',
-          firstName,
-          lastName
-        })
-      });
-
-      if (!emailResponse.ok) {
-        console.error('Failed to send OTP email:', await emailResponse.text());
-        // Continue even if email fails - user can request OTP resend
-      }
-    } catch (emailError) {
-      console.error('Error sending OTP email:', emailError);
-      // Continue even if email fails
-    }
-
-    // Return success with OTP token (JWT containing encrypted OTP)
-    return new Response(
-      JSON.stringify({
+    if (result.success) {
+      // Send OTP email (in production, integrate with email service)
+      console.log(`OTP for ${body.email}: ${result.otp}`);
+      
+      return Response.json({
         success: true,
-        email,
-        otpToken: otpResult.otpToken, // JWT containing encrypted OTP
-        otp: otpResult.otp, // Include for development/testing
-        expiresIn: otpResult.expiresIn,
-        message: `Registration successful! OTP sent to ${email}. Valid for 10 minutes.`
-      }),
-      { status: 201, headers: { 'Content-Type': 'application/json' } }
-    );
+        message: result.message,
+        otpToken: result.otpToken,
+        user: {
+          id: result.user?.id,
+          email: result.user?.email,
+          firstName: result.user?.firstName,
+          lastName: result.user?.lastName,
+          role: result.user?.role,
+          restaurantId: result.user?.restaurantId
+        }
+      });
+    } else {
+      return Response.json({
+        success: false,
+        error: result.error
+      }, { status: 400 });
+    }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Registration error:', error);
-    
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: 'Registration failed. Please try again.' 
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return Response.json({
+      success: false,
+      error: 'Internal server error'
+    }, { status: 500 });
   }
 }
 
-// Handle other HTTP methods
-export async function GET(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function PUT(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function DELETE(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
+export async function GET() {
+  return Response.json({
+    success: true,
+    message: "Registration endpoint - POST to register with role-based authentication",
+    supportedRoles: ['customer', 'delivery_partner', 'restaurant_staff'],
+    requiredFields: ['email', 'firstName', 'lastName', 'role'],
+    optionalFields: ['phone', 'restaurantId']
+  });
 }

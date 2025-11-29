@@ -1,137 +1,85 @@
-// Get Current User API Endpoint
+// Enhanced Get Current User API Endpoint with Role-Based Information
 // GET /api/auth/me
-// Returns information about the currently authenticated user
+// Returns information about the currently authenticated user with role data
 
-import { AppwriteService } from '../../../lib/appwriteService.js';
-import { authMiddleware } from '../../../middleware/rbac.js';
+import { authService, ROLE_PERMISSIONS } from '../../../lib/authService.js';
 
-interface MeResponse {
-  success: boolean;
-  user?: {
-    userId: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    profileImage?: string;
-    role: string;
-    permissions: string[];
-    status: string;
-    preferences: {
-      language: string;
-      notificationsEnabled: boolean;
-      theme: string;
-    };
-    lastLoginAt?: string;
-    createdAt: string;
-  };
-  error?: string;
-  message?: string;
-}
-
-export async function GET({ request, locals }: { request: Request; locals: any }): Promise<Response> {
+export async function GET({ request, locals }: { request: Request; locals: any }) {
   try {
-    // Apply authentication middleware
-    const context = { request, locals };
-    const authResult = await authMiddleware(context, async () => new Response(JSON.stringify({ success: true })));
-    if (authResult.status !== 200) {
-      return authResult as Response;
+    // Get the runtime environment for JWT secret
+    const runtimeEnv = locals?.runtime?.env;
+    
+    // Create auth service with environment variables
+    const auth = new authService.constructor(runtimeEnv);
+
+    // Extract token from Authorization header or cookies
+    let token = null;
+    
+    // Check Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    }
+    
+    // Check cookies as fallback
+    if (!token) {
+      const cookies = request.headers.get('Cookie') || '';
+      const accessTokenMatch = cookies.match(/access_token=([^;]+)/);
+      if (accessTokenMatch) {
+        token = accessTokenMatch[1];
+      }
     }
 
-    const user = locals.user;
+    if (!token) {
+      return Response.json({
+        success: false,
+        error: 'No authentication token provided'
+      }, { status: 401 });
+    }
+
+    // Get user from token
+    const user = await auth.getUserFromToken(token);
     
     if (!user) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'User not authenticated' 
-        }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } }
-      );
+      return Response.json({
+        success: false,
+        error: 'Invalid or expired token'
+      }, { status: 401 });
     }
 
-    const appwrite = new AppwriteService();
+    // Get user permissions based on role
+    const permissions = ROLE_PERMISSIONS[user.role] || [];
 
-    // Get full user details from database
-    const fullUser = await appwrite.getUser(user.userId);
-    if (!fullUser) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'User not found' 
-        }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Get role information
-    const role = await appwrite.getRole(fullUser.roleId);
-    if (!role) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'User role not found' 
-        }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Remove sensitive information
-    const { 
-      verificationToken, 
-      verificationTokenExpiry, 
-      passwordResetToken, 
-      passwordResetTokenExpiry, 
-      twoFactorSecret,
-      ...safeUser 
-    } = fullUser;
-
-    const response: MeResponse = {
+    return Response.json({
       success: true,
       user: {
-        ...safeUser,
-        role: role.roleName,
-        permissions: role.permissions || [],
-        lastLoginAt: safeUser.lastLoginAt ? new Date(safeUser.lastLoginAt).toISOString() : undefined,
-        createdAt: new Date(safeUser.createdAt).toISOString()
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        restaurantId: user.restaurantId,
+        phone: user.phone,
+        isActive: user.isActive,
+        permissions: permissions,
+        createdAt: new Date(user.createdAt).toISOString(),
+        lastLoginAt: new Date().toISOString() // In production, track actual last login
       }
-    };
-
-    return new Response(
-      JSON.stringify(response),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
+    });
 
   } catch (error: any) {
-    console.error('Error fetching user info:', error);
-    
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message || 'Failed to fetch user information' 
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    console.error('Get user error:', error);
+    return Response.json({
+      success: false,
+      error: 'Internal server error'
+    }, { status: 500 });
   }
 }
 
-// Handle other HTTP methods
-export async function POST(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function PUT(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function DELETE(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
+export async function POST({ request, locals }: { request: Request; locals: any }) {
+  // POST endpoint for updating user profile (future implementation)
+  return Response.json({
+    success: false,
+    error: 'Profile update not implemented yet'
+  }, { status: 501 });
 }

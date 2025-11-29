@@ -1,108 +1,60 @@
-// OTP Verification API Endpoint - JWT Only
+// Enhanced OTP Verification API Endpoint with Role-Based Authentication
 // POST /api/auth/verify-otp
-// Pure JWT-based OTP verification (no database required)
+// Verifies OTP and returns JWT tokens with role information
 
-import { OTPService } from '../../../lib/otpService.js';
+import { authService } from '../../../lib/authService.js';
 
-interface VerifyOTPRequest {
-  email: string;
-  otp: string;
-  otpToken: string; // JWT containing encrypted OTP
-  userId?: string; // For backward compatibility
-}
-
-interface VerifyOTPResponse {
-  success: boolean;
-  email?: string;
-  message?: string;
-  error?: string;
-}
-
-export async function POST({ request, locals }: { request: Request; locals: any }): Promise<Response> {
+export async function POST({ request, locals }: { request: Request; locals: any }) {
   try {
-    const body: VerifyOTPRequest = await request.json();
+    // Get the runtime environment for JWT secret
+    const runtimeEnv = locals?.runtime?.env;
     
-    // Get environment variables from locals (Cloudflare Pages)
-    const env = (locals as any)?.env || import.meta.env;
-    
+    // Create auth service with environment variables
+    const auth = new authService.constructor(runtimeEnv);
+
+    const body = await request.json();
+
     // Validate required fields
-    const { email, otp, otpToken } = body;
-    
-    if (!email || !otp || !otpToken) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Email, OTP, and OTP token are required' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+    if (!body.email || !body.otp || !body.otpToken) {
+      return Response.json({
+        success: false,
+        error: 'Missing required fields: email, otp, otpToken'
+      }, { status: 400 });
     }
 
-    // Verify the OTP using JWT token (no database needed)
-    const otpServiceInstance = new OTPService(env);
-    const otpVerification = await otpServiceInstance.verifyOTP({
-      email,
-      otp,
-      otpToken
-    });
+    // Verify OTP and get tokens
+    const result = await auth.verifyOTP(body.email, body.otp, body.otpToken);
 
-    if (!otpVerification.success) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: otpVerification.error || 'Invalid or expired OTP' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Log successful verification
-    console.log('OTP verification successful:', {
-      email,
-      timestamp: new Date().toISOString()
-    });
-
-    // Return success response
-    return new Response(
-      JSON.stringify({
+    if (result.success) {
+      return Response.json({
         success: true,
-        email,
-        message: 'OTP verified successfully!'
-      }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
+        message: result.message,
+        user: result.user,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        expiresIn: result.expiresIn
+      });
+    } else {
+      return Response.json({
+        success: false,
+        error: result.error
+      }, { status: 400 });
+    }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('OTP verification error:', error);
-    
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: 'OTP verification failed. Please try again.' 
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return Response.json({
+      success: false,
+      error: 'Internal server error'
+    }, { status: 500 });
   }
 }
 
-// Handle other HTTP methods
-export async function GET(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function PUT(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function DELETE(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
+export async function GET() {
+  return Response.json({
+    success: true,
+    message: "OTP verification endpoint - POST to verify OTP and get JWT tokens",
+    requiredFields: ['email', 'otp', 'otpToken'],
+    returns: ['user', 'accessToken', 'refreshToken', 'expiresIn']
+  });
 }

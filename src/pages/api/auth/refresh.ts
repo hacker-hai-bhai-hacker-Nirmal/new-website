@@ -1,100 +1,58 @@
-// Refresh Token API Endpoint
+// Enhanced Refresh Token API Endpoint with Role-Based Authentication
 // POST /api/auth/refresh
 // Refreshes access tokens using refresh tokens
 
-import { sessionManager } from '../../../lib/sessionManager.js';
+import { authService } from '../../../lib/authService.js';
 
-interface RefreshRequest {
-  refreshToken: string;
-}
-
-interface RefreshResponse {
-  success: boolean;
-  accessToken?: string;
-  refreshToken?: string;
-  expiresIn?: number;
-  error?: string;
-  message?: string;
-}
-
-export async function POST({ request }: { request: Request }): Promise<Response> {
+export async function POST({ request, locals }: { request: Request; locals: any }) {
   try {
-    const body: RefreshRequest = await request.json();
-    const { refreshToken } = body;
+    // Get the runtime environment for JWT secret
+    const runtimeEnv = locals?.runtime?.env;
     
-    if (!refreshToken) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Refresh token is required' 
-        }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+    // Create auth service with environment variables
+    const auth = new authService.constructor(runtimeEnv);
+
+    const body = await request.json();
+
+    // Validate required fields
+    if (!body.refreshToken) {
+      return Response.json({
+        success: false,
+        error: 'Missing required field: refreshToken'
+      }, { status: 400 });
     }
 
-    // Get client IP and user agent for audit logging
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
-                     '0.0.0.0';
-    const userAgent = request.headers.get('user-agent') || 'Unknown';
+    // Refresh token
+    const result = await auth.refreshToken(body.refreshToken);
 
-    // Refresh the tokens
-    const tokenData = await sessionManager.refreshToken(
-      refreshToken,
-      ipAddress,
-      userAgent
-    );
-
-    const response: RefreshResponse = {
-      success: true,
-      accessToken: tokenData.accessToken,
-      refreshToken: tokenData.refreshToken,
-      expiresIn: tokenData.expiresIn,
-      message: 'Tokens refreshed successfully'
-    };
-
-    return new Response(
-      JSON.stringify(response),
-      { 
-        status: 200, 
-        headers: { 
-          'Content-Type': 'application/json',
-          'Set-Cookie': `accessToken=${tokenData.accessToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${tokenData.expiresIn}`
-        }
-      }
-    );
+    if (result.success) {
+      return Response.json({
+        success: true,
+        message: result.message,
+        accessToken: result.accessToken,
+        expiresIn: result.expiresIn
+      });
+    } else {
+      return Response.json({
+        success: false,
+        error: result.error
+      }, { status: 401 });
+    }
 
   } catch (error: any) {
-    console.error('Error refreshing token:', error);
-    
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message || 'Token refresh failed' 
-      }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
-    );
+    console.error('Token refresh error:', error);
+    return Response.json({
+      success: false,
+      error: 'Internal server error'
+    }, { status: 500 });
   }
 }
 
-// Handle other HTTP methods
-export async function GET(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function PUT(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-export async function DELETE(): Promise<Response> {
-  return new Response(
-    JSON.stringify({ error: 'Method not allowed' }),
-    { status: 405, headers: { 'Content-Type': 'application/json' } }
-  );
+export async function GET() {
+  return Response.json({
+    success: true,
+    message: "Token refresh endpoint - POST to refresh access tokens",
+    requiredFields: ['refreshToken'],
+    returns: ['accessToken', 'expiresIn']
+  });
 }
