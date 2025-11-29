@@ -1,6 +1,7 @@
 // Authentication API Documentation and Status Endpoint
 // GET /api/auth
 // Provides comprehensive documentation for the authentication system
+// Updated: 2025-11-30 - Testing deployment
 
 import { authService, ROLE_PERMISSIONS } from '../../../lib/authService.js';
 import { DETAILED_ROLE_PERMISSIONS } from '../../../lib/rbac.js';
