@@ -1,8 +1,8 @@
 {
   "version": 1,
   "include": [
-    "/*"
-  ],
+"/api/*",
+    "/debug"  ],
   "exclude": [
     "/_astro/*",
     "/favicon.svg",
