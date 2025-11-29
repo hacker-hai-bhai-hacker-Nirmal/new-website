@@ -121,7 +121,7 @@ async function POST({ request }) {
   } catch (error) {
     return Response.json({
       error: "Server error",
-      message: error.message,
+      message: error?.message || "Unknown error",
       success: false
     }, { status: 500 });
   }

@@ -8,7 +8,7 @@ export async function GET() {
   const isServer = typeof Astro !== 'undefined';
   
   // Test 2: Check environment variables
-  const runtimeEnv = Astro?.locals?.runtime?.env || {};
+  const runtimeEnv = (Astro as any)?.locals?.runtime?.env || {};
   const envVars = {
     JWT_SECRET: runtimeEnv.JWT_SECRET || 'NOT_FOUND',
     brevo_MCP_key: runtimeEnv.brevo_MCP_key ? 'FOUND' : 'NOT_FOUND',
@@ -136,10 +136,10 @@ export async function POST({ request }: { request: Request }) {
       received: action
     });
 
-  } catch (error) {
+  } catch (error: any) {
     return Response.json({
       error: 'Server error',
-      message: error.message,
+      message: error?.message || 'Unknown error',
       success: false
     }, { status: 500 });
   }
@@ -210,11 +210,24 @@ export async function POST({ request }: { request: Request }) {
     </div>
 
     <script>
+        // Type declarations for window functions
+        declare global {
+            interface Window {
+                debugData: any;
+                loadServerStatus: () => Promise<void>;
+                testEnvironment: () => Promise<void>;
+                testAPI: (endpoint: string) => Promise<void>;
+                testAllAPIs: () => Promise<void>;
+                updateDiagnosis: (apiResults: any[]) => void;
+            }
+        }
+
         // Make functions globally available
         window.debugData = {};
         
         window.loadServerStatus = async function() {
             const result = document.getElementById('server-status');
+            if (!result) return;
             result.className = 'result loading';
             result.textContent = 'Loading server status...';
             
@@ -231,14 +244,15 @@ export async function POST({ request }: { request: Request }) {
                     <br><strong>JWT_SECRET:</strong> ${data.environmentCheck.variables.JWT_SECRET}
                     <br><strong>API Endpoints:</strong> ${data.apiRoutesTest.endpoints.length} configured
                 `;
-            } catch (error) {
+            } catch (error: any) {
                 result.className = 'result error';
-                result.innerHTML = `<span class="status-indicator status-error"></span><strong>Error:</strong> ${error.message}`;
+                result.innerHTML = `<span class="status-indicator status-error"></span><strong>Error:</strong> ${error?.message || 'Unknown error'}`;
             }
         }
 
         window.testEnvironment = async function() {
             const result = document.getElementById('env-test');
+            if (!result) return;
             result.className = 'result loading';
             result.textContent = 'Testing environment variables...';
             
@@ -250,7 +264,7 @@ export async function POST({ request }: { request: Request }) {
                 });
                 const data = await response.json();
                 
-                const allFound = Object.values(data.variables).every(v => v === 'FOUND');
+                const allFound = Object.values(data.variables).every((v: any) => v === 'FOUND');
                 result.className = allFound ? 'result success' : 'result error';
                 result.innerHTML = `
                     <strong>Environment Variables:</strong> ${allFound ? '✅ All Found' : '❌ Missing Variables'}
@@ -260,14 +274,15 @@ export async function POST({ request }: { request: Request }) {
                     <br>APPWRITE_ENDPOINT: ${data.variables.APPWRITE_ENDPOINT}
                     <br>APPWRITE_DATABASE_ID: ${data.variables.APPWRITE_DATABASE_ID}
                 `;
-            } catch (error) {
+            } catch (error: any) {
                 result.className = 'result error';
-                result.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                result.innerHTML = `<strong>Error:</strong> ${error?.message || 'Unknown error'}`;
             }
         }
 
-        window.testAPI = async function(endpoint) {
+        window.testAPI = async function(endpoint: string) {
             const result = document.getElementById('api-test');
+            if (!result) return;
             result.className = 'result loading';
             result.textContent = `Testing ${endpoint}...`;
             
@@ -287,18 +302,19 @@ export async function POST({ request }: { request: Request }) {
                     <br><strong>Result:</strong> ${success ? '✅ Working' : '❌ 404 Not Found'}
                     <br><strong>Response:</strong> ${data.responseText.substring(0, 200)}${data.responseText.length > 200 ? '...' : ''}
                 `;
-            } catch (error) {
+            } catch (error: any) {
                 result.className = 'result error';
-                result.innerHTML = `<strong>Error testing ${endpoint}:</strong> ${error.message}`;
+                result.innerHTML = `<strong>Error testing ${endpoint}:</strong> ${error?.message || 'Unknown error'}`;
             }
         }
 
         window.testAllAPIs = async function() {
             const endpoints = ['/api/auth', '/api/auth/register', '/api/auth/verify-otp', '/api/auth/me', '/api/test-auth', '/api/check-env'];
             const results = document.getElementById('all-api-results');
+            if (!results) return;
             results.innerHTML = '<div class="result loading">Testing all endpoints...</div>';
             
-            const testResults = [];
+            const testResults: any[] = [];
             
             for (const endpoint of endpoints) {
                 try {
@@ -314,23 +330,23 @@ export async function POST({ request }: { request: Request }) {
                         status: data.status,
                         success: data.status !== 404
                     });
-                } catch (error) {
+                } catch (error: any) {
                     testResults.push({
                         endpoint,
                         status: 'ERROR',
                         success: false,
-                        error: error.message
+                        error: error?.message || 'Unknown error'
                     });
                 }
             }
             
-            const workingCount = testResults.filter(r => r.success).length;
+            const workingCount = testResults.filter((r: any) => r.success).length;
             const totalCount = testResults.length;
             
             results.innerHTML = `
                 <div class="result ${workingCount > 0 ? 'success' : 'error'}">
                     <strong>API Test Results:</strong> ${workingCount}/${totalCount} endpoints working
-                    <br><br>${testResults.map(r => 
+                    <br><br>${testResults.map((r: any) => 
                         `${r.success ? '✅' : '❌'} ${r.endpoint} - ${r.status}${r.error ? ' (' + r.error + ')' : ''}`
                     ).join('<br>')}
                 </div>
@@ -339,9 +355,10 @@ export async function POST({ request }: { request: Request }) {
             window.updateDiagnosis(testResults);
         }
 
-        window.updateDiagnosis = function(apiResults) {
+        window.updateDiagnosis = function(apiResults: any[]) {
             const diagnosis = document.getElementById('diagnosis');
-            const workingCount = apiResults.filter(r => r.success).length;
+            if (!diagnosis) return;
+            const workingCount = apiResults.filter((r: any) => r.success).length;
             const totalCount = apiResults.length;
             
             let diagnosisText = '';
