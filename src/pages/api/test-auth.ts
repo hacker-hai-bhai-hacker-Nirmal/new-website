@@ -2,8 +2,8 @@
 // GET /api/test-auth
 // Tests the role-based authentication system
 
-import { AuthService, ROLE_PERMISSIONS } from '../lib/authService.js';
-import { RBACService } from '../lib/rbac.js';
+import { AuthService, ROLE_PERMISSIONS } from '../../lib/authService.js';
+import { RBACService } from '../../lib/rbac.js';
 
 export async function GET({ request, locals }: { request: Request; locals: any }) {
   try {

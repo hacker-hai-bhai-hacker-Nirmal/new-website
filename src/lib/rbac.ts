@@ -6,6 +6,9 @@ import { ROLE_PERMISSIONS } from './authService.js';
 
 export type Role = 'customer' | 'delivery_partner' | 'restaurant_staff' | 'admin';
 
+// Define the User role type consistently
+export type UserRole = 'customer' | 'delivery_partner' | 'restaurant_staff' | 'admin';
+
 export interface Permission {
   resource: string;
   actions: ('create' | 'read' | 'update' | 'delete')[];
@@ -210,7 +213,7 @@ export class RBACService {
     }
 
     // Default: return data based on role-specific business logic
-    switch (user.role) {
+    switch (user.role as UserRole) {
       case 'customer':
         // Customers can only see their own orders, profile, etc.
         return data.filter(item => {

@@ -2,7 +2,8 @@
 // POST /api/auth/register
 // Supports role-based registration with JWT tokens
 
-import { AuthService, RegisterRequest, RegisterResponse } from '../../../lib/authService.js';
+import { AuthService } from '../../../lib/authService.js';
+import type { RegisterRequest, RegisterResponse } from '../../../lib/authService.js';
 
 export async function POST({ request, locals }: { request: Request; locals: any }) {
   try {
