@@ -3,6 +3,8 @@
 // Purpose: Diagnose API routes 404 issue and find root cause
 // Updated: 2025-11-30
 
+export const prerender = false;
+
 export async function GET() {
   // Test 1: Check if we're in server mode
   const isServer = typeof Astro !== 'undefined';
