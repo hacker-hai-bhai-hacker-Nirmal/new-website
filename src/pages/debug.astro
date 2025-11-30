@@ -98,47 +98,42 @@ export async function POST({ request }: { request: Request }) {
         headers: { 'Content-Type': 'application/json' }
       });
       
-      const status = response.status;
-      const statusText = response.statusText;
-      let responseText = '';
+      const data = await response.text();
       
-      try {
-        responseText = await response.text();
-      } catch (e) {
-        responseText = 'Could not read response body';
-      }
-
       return Response.json({
-        action: 'api-test-result',
         endpoint,
-        status,
-        statusText,
-        responseText: responseText.substring(0, 500), // Limit response size
-        success: status !== 404
+        status: response.status,
+        statusText: response.statusText,
+        data: data.substring(0, 500), // Limit response size
+        success: response.ok
       });
-    }
 
-    if (action === 'test-env') {
-      // Test environment variables
-      const runtimeEnv = (Astro.locals as any)?.runtime?.env || {};
+    } else if (action === 'test-env') {
+      // Test environment variables from server side
+      const runtimeEnv = (Astro as any)?.locals?.runtime?.env || {};
+      const envVars = {
+        brevo_MCP_key: runtimeEnv?.brevo_MCP_key ? 'FOUND' : 'NOT_FOUND',
+        JWT_SECRET: runtimeEnv?.JWT_SECRET ? 'FOUND' : 'NOT_FOUND',
+        APPWRITE_PROJECT_ID: runtimeEnv?.APPWRITE_PROJECT_ID || 'NOT_FOUND',
+        APPWRITE_ENDPOINT: runtimeEnv?.APPWRITE_ENDPOINT || 'NOT_FOUND',
+        APPWRITE_DATABASE_ID: runtimeEnv?.APPWRITE_DATABASE_ID || 'NOT_FOUND'
+      };
+
       return Response.json({
-        action: 'env-test-result',
-        variables: {
-          JWT_SECRET: runtimeEnv.JWT_SECRET ? 'FOUND' : 'NOT_FOUND',
-          brevo_MCP_key: runtimeEnv.brevo_MCP_key ? 'FOUND' : 'NOT_FOUND',
-          APPWRITE_PROJECT_ID: runtimeEnv.APPWRITE_PROJECT_ID || 'NOT_FOUND',
-          APPWRITE_ENDPOINT: runtimeEnv.APPWRITE_ENDPOINT || 'NOT_FOUND',
-          APPWRITE_DATABASE_ID: runtimeEnv.APPWRITE_DATABASE_ID || 'NOT_FOUND'
-        },
+        action: 'test-env',
+        environment: envVars,
+        allFound: Object.values(envVars).every(v => v !== 'NOT_FOUND'),
         success: true
       });
-    }
 
-    return Response.json({
-      error: 'Unknown action',
-      availableActions: ['test-api', 'test-env'],
-      received: action
-    });
+    } else {
+      return Response.json({
+        error: 'Invalid action',
+        availableActions: ['test-api', 'test-env'],
+        received: action
+      });
+
+    }
 
   } catch (error) {
     return Response.json({
