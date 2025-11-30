@@ -1,9 +1,6 @@
 name = "new-website"
 compatibility_date = "2025-11-25"
 compatibility_flags = ["nodejs_compat"]
-
-[build]
-command = "npm run build"
 pages_build_output_dir = "dist"
 
 # Environment variables for Cloudflare Pages
