@@ -1,8 +1,8 @@
-// Astro Middleware for Route Protection (Temporarily Disabled)
+// Astro Middleware for Route Protection (Cloudflare-Only Approach)
 
 import { defineMiddleware } from 'astro:middleware';
 
-// Define protected and auth-only routes
+// Define protected routes that require authentication
 const protectedRoutes = ['/dashboard', '/checkout', '/rewards', '/admin', '/kitchen'];
 const authOnlyRoutes = ['/login'];
 
@@ -13,15 +13,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   const isAuthOnlyRoute = authOnlyRoutes.some(route => pathname.startsWith(route));
   
-  // For now, we'll handle client-side authentication
-  // In a production environment, you might want to verify tokens server-side
+  // TODO: Implement JWT verification for Cloudflare-only auth
+  // For now, allow all access (will implement later)
   
-  // Allow access to public routes
-  if (!isProtectedRoute && !isAuthOnlyRoute) {
-    return next();
-  }
-  
-  // For protected routes, let the client-side auth handle it
-  // This allows us to show proper error messages and handle redirects gracefully
   return next();
 });
