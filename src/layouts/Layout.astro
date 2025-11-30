@@ -506,10 +506,9 @@
 			const scrolled = window.pageYOffset;
 			
 			parallaxElements.forEach(element => {
-				const htmlElement = element as HTMLElement;
 				const speed = 0.5;
 				const yPos = -(scrolled * speed);
-				htmlElement.style.transform = `translateY(${yPos}px)`;
+				element.style.transform = `translateY(${yPos}px)`;
 			});
 		});
 	};
