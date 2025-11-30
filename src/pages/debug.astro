@@ -213,9 +213,9 @@ export async function POST({ request }: { request: Request }) {
         </div>
     </div>
 
-    <script>
-        // Inject server-side data
-        window.debugData = JSON.parse(`${JSON.stringify(Astro.props.debugData)}`);
+    <script define:vars={{ debugData: Astro.props.debugData }}>
+        // Inject server-side data directly as JavaScript object
+        window.debugData = debugData;
     </script>
     <script>
         // Type declarations for window functions
