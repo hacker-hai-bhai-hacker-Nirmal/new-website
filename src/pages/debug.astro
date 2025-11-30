@@ -213,18 +213,6 @@ export async function POST({ request }: { request: Request }) {
         window.debugData = debugData;
     </script>
     <script>
-        // Type declarations for window functions
-        declare global {
-            interface Window {
-                debugData: any;
-                loadServerStatus: () => Promise<void>;
-                testEnvironment: () => Promise<void>;
-                testAPI: (endpoint: string) => Promise<void>;
-                testAllAPIs: () => Promise<void>;
-                updateDiagnosis: (apiResults: any[]) => void;
-            }
-        }
-
         // Make functions globally available
         window.debugData = {};
         
@@ -255,7 +243,7 @@ export async function POST({ request }: { request: Request }) {
                 `;
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<span class="status-indicator status-error"></span><strong>Error:</strong> ${(error as any)?.message || 'Unknown error'}`;
+                result.innerHTML = `<span class="status-indicator status-error"></span><strong>Error:</strong> ${error?.message || 'Unknown error'}`;
             }
         }
 
@@ -309,11 +297,11 @@ export async function POST({ request }: { request: Request }) {
                     <strong>Endpoint:</strong> ${endpoint}
                     <br><strong>Status:</strong> ${data.status} ${data.statusText}
                     <br><strong>Result:</strong> ${success ? '✅ Working' : '❌ 404 Not Found'}
-                    <br><strong>Response:</strong> ${data.responseText.substring(0, 200)}${data.responseText.length > 200 ? '...' : ''}
+                    <br><strong>Response:</strong> ${data.data ? data.data.substring(0, 200) + (data.data.length > 200 ? '...' : '') : 'No response data'}
                 `;
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<strong>Error testing ${endpoint}:</strong> ${(error as any)?.message || 'Unknown error'}`;
+                result.innerHTML = `<strong>Error testing ${endpoint}:</strong> ${error?.message || 'Unknown error'}`;
             }
         }
 
@@ -323,7 +311,7 @@ export async function POST({ request }: { request: Request }) {
             if (!results) return;
             results.innerHTML = '<div class="result loading">Testing all endpoints...</div>';
             
-            const testResults: any[] = [];
+            const testResults = [];
             
             for (const endpoint of endpoints) {
                 try {
@@ -344,7 +332,7 @@ export async function POST({ request }: { request: Request }) {
                         endpoint,
                         status: 'ERROR',
                         success: false,
-                        error: (error as any)?.message || 'Unknown error'
+                        error: error?.message || 'Unknown error'
                     });
                 }
             }
