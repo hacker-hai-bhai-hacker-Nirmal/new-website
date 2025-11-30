@@ -6,6 +6,18 @@
 
 export const prerender = false;
 
+// TypeScript interface declarations for Window object
+declare global {
+  interface Window {
+    debugData: any;
+    loadServerStatus: () => Promise<void>;
+    testEnvironment: () => Promise<void>;
+    testAPI: (endpoint: string) => Promise<void>;
+    testAllAPIs: () => Promise<void>;
+    updateDiagnosis: (apiResults: any[]) => void;
+  }
+}
+
 export async function GET() {
   // Test 1: Check if we're in server mode
   const isServer = typeof Astro !== 'undefined';
@@ -277,7 +289,7 @@ export async function POST({ request }: { request: Request }) {
             }
         }
 
-        window.testAPI = async function(endpoint) {
+        window.testAPI = async function(endpoint: string) {
             const result = document.getElementById('api-test');
             if (!result) return;
             result.className = 'result loading';
@@ -337,13 +349,13 @@ export async function POST({ request }: { request: Request }) {
                 }
             }
             
-            const workingCount = testResults.filter(r => r.success).length;
+            const workingCount = testResults.filter((r: any) => r.success).length;
             const totalCount = testResults.length;
             
             results.innerHTML = `
                 <div class="result ${workingCount > 0 ? 'success' : 'error'}">
                     <strong>API Test Results:</strong> ${workingCount}/${totalCount} endpoints working
-                    <br><br>${testResults.map(r => 
+                    <br><br>${testResults.map((r: any) => 
                         `${r.success ? '✅' : '❌'} ${r.endpoint} - ${r.status}${r.error ? ' (' + r.error + ')' : ''}`
                     ).join('<br>')}
                 </div>
@@ -352,10 +364,10 @@ export async function POST({ request }: { request: Request }) {
             window.updateDiagnosis(testResults);
         }
 
-        window.updateDiagnosis = function(apiResults) {
+        window.updateDiagnosis = function(apiResults: any[]) {
             const diagnosis = document.getElementById('diagnosis');
             if (!diagnosis) return;
-            const workingCount = apiResults.filter(r => r.success).length;
+            const workingCount = apiResults.filter((r: any) => r.success).length;
             const totalCount = apiResults.length;
             
             let diagnosisText = '';
