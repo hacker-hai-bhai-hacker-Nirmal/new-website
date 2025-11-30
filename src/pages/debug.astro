@@ -247,16 +247,15 @@ export async function POST({ request }: { request: Request }) {
                 };
                 
                 result.className = 'result success';
-                result.innerHTML = `
-                    <span class="status-indicator status-success"></span>
-                    <strong>Server Status:</strong> ${data.debugSession.mode}
-                    <br><strong>Environment:</strong> ${data.environmentCheck.allFound ? '✅ All Variables Found' : '❌ Missing Variables'}
-                    <br><strong>JWT_SECRET:</strong> ${data.environmentCheck.variables.JWT_SECRET}
-                    <br><strong>API Endpoints:</strong> ${data.apiRoutesTest.endpoints.length} configured
-                `;
+                result.innerHTML = 
+                    '<span class="status-indicator status-success"></span>' +
+                    '<strong>Server Status:</strong> ' + data.debugSession.mode +
+                    '<br><strong>Environment:</strong> ' + (data.environmentCheck.allFound ? '✅ All Variables Found' : '❌ Missing Variables') +
+                    '<br><strong>JWT_SECRET:</strong> ' + data.environmentCheck.variables.JWT_SECRET +
+                    '<br><strong>API Endpoints:</strong> ' + data.apiRoutesTest.endpoints.length + ' configured';
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<span class="status-indicator status-error"></span><strong>Error:</strong> ${error?.message || 'Unknown error'}`;
+                result.innerHTML = '<span class="status-indicator status-error"></span><strong>Error:</strong> ' + (error?.message || 'Unknown error');
             }
         }
 
@@ -276,17 +275,16 @@ export async function POST({ request }: { request: Request }) {
                 
                 const allFound = Object.values(data.variables).every(v => v === 'FOUND');
                 result.className = allFound ? 'result success' : 'result error';
-                result.innerHTML = `
-                    <strong>Environment Variables:</strong> ${allFound ? '✅ All Found' : '❌ Missing Variables'}
-                    <br>JWT_SECRET: ${data.variables.JWT_SECRET}
-                    <br>brevo_MCP_key: ${data.variables.brevo_MCP_key}
-                    <br>APPWRITE_PROJECT_ID: ${data.variables.APPWRITE_PROJECT_ID}
-                    <br>APPWRITE_ENDPOINT: ${data.variables.APPWRITE_ENDPOINT}
-                    <br>APPWRITE_DATABASE_ID: ${data.variables.APPWRITE_DATABASE_ID}
-                `;
+                result.innerHTML = 
+                    '<strong>Environment Variables:</strong> ' + (allFound ? '✅ All Found' : '❌ Missing Variables') +
+                    '<br>JWT_SECRET: ' + data.variables.JWT_SECRET +
+                    '<br>brevo_MCP_key: ' + data.variables.brevo_MCP_key +
+                    '<br>APPWRITE_PROJECT_ID: ' + data.variables.APPWRITE_PROJECT_ID +
+                    '<br>APPWRITE_ENDPOINT: ' + data.variables.APPWRITE_ENDPOINT +
+                    '<br>APPWRITE_DATABASE_ID: ' + data.variables.APPWRITE_DATABASE_ID;
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<strong>Error:</strong> ${(error as any)?.message || 'Unknown error'}`;
+                result.innerHTML = '<strong>Error:</strong> ' + (error?.message || 'Unknown error');
             }
         }
 
@@ -294,7 +292,7 @@ export async function POST({ request }: { request: Request }) {
             const result = document.getElementById('api-test');
             if (!result) return;
             result.className = 'result loading';
-            result.textContent = `Testing ${endpoint}...`;
+            result.textContent = 'Testing ' + endpoint + '...';
             
             try {
                 const response = await fetch('/debug', {
@@ -306,15 +304,14 @@ export async function POST({ request }: { request: Request }) {
                 
                 const success = data.status !== 404;
                 result.className = success ? 'result success' : 'result error';
-                result.innerHTML = `
-                    <strong>Endpoint:</strong> ${endpoint}
-                    <br><strong>Status:</strong> ${data.status} ${data.statusText}
-                    <br><strong>Result:</strong> ${success ? '✅ Working' : '❌ 404 Not Found'}
-                    <br><strong>Response:</strong> ${data.data ? data.data.substring(0, 200) + (data.data.length > 200 ? '...' : '') : 'No response data'}
-                `;
+                result.innerHTML = 
+                    '<strong>Endpoint:</strong> ' + endpoint +
+                    '<br><strong>Status:</strong> ' + data.status + ' ' + data.statusText +
+                    '<br><strong>Result:</strong> ' + (success ? '✅ Working' : '❌ 404 Not Found') +
+                    '<br><strong>Response:</strong> ' + (data.data ? data.data.substring(0, 200) + (data.data.length > 200 ? '...' : '') : 'No response data');
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<strong>Error testing ${endpoint}:</strong> ${error?.message || 'Unknown error'}`;
+                result.innerHTML = '<strong>Error testing ' + endpoint + ':</strong> ' + (error?.message || 'Unknown error');
             }
         }
 
@@ -353,14 +350,13 @@ export async function POST({ request }: { request: Request }) {
             const workingCount = testResults.filter((r: any) => r.success).length;
             const totalCount = testResults.length;
             
-            results.innerHTML = `
-                <div class="result ${workingCount > 0 ? 'success' : 'error'}">
-                    <strong>API Test Results:</strong> ${workingCount}/${totalCount} endpoints working
-                    <br><br>${testResults.map((r: any) => 
-                        `${r.success ? '✅' : '❌'} ${r.endpoint} - ${r.status}${r.error ? ' (' + r.error + ')' : ''}`
-                    ).join('<br>')}
-                </div>
-            `;
+            results.innerHTML = 
+                '<div class="result ' + (workingCount > 0 ? 'success' : 'error') + '">' +
+                    '<strong>API Test Results:</strong> ' + workingCount + '/' + totalCount + ' endpoints working' +
+                    '<br><br>' + testResults.map((r: any) => 
+                        (r.success ? '✅' : '❌') + ' ' + r.endpoint + ' - ' + r.status + (r.error ? ' (' + r.error + ')' : '')
+                    ).join('<br>') +
+                '</div>';
             
             window.updateDiagnosis(testResults);
         }
@@ -373,33 +369,30 @@ export async function POST({ request }: { request: Request }) {
             
             let diagnosisText = '';
             if (workingCount === 0) {
-                diagnosisText = `
-                    <div class="result error">
-                        <strong>🚨 CRITICAL ISSUE:</strong> All API endpoints are failing (404 errors)
-                        <br><br><strong>Root Cause:</strong> Cloudflare Pages Functions not properly configured
-                        <br><strong>Next Steps:</strong>
-                        <br>1. Check Cloudflare Pages Functions settings
-                        <br>2. Verify wrangler.toml configuration
-                        <br>3. Ensure output: 'server' is working correctly
-                        <br>4. Check build output for _worker.js directory
-                    </div>
-                `;
+                diagnosisText = 
+                    '<div class="result error">' +
+                        '<strong>🚨 CRITICAL ISSUE:</strong> All API endpoints are failing (404 errors)' +
+                        '<br><br><strong>Root Cause:</strong> Cloudflare Pages Functions not properly configured' +
+                        '<br><strong>Next Steps:</strong>' +
+                        '<br>1. Check Cloudflare Pages Functions settings' +
+                        '<br>2. Verify wrangler.toml configuration' +
+                        '<br>3. Ensure output: \'server\' is working correctly' +
+                        '<br>4. Check build output for _worker.js directory' +
+                    '</div>';
             } else if (workingCount < totalCount) {
-                diagnosisText = `
-                    <div class="result info">
-                        <strong>⚠️ PARTIAL ISSUE:</strong> Some API endpoints working, others failing
-                        <br><br><strong>Working:</strong> ${workingCount}/${totalCount} endpoints
-                        <br><strong>Root Cause:</strong> Specific API routes have configuration issues
-                        <br><strong>Next Steps:</strong> Check individual failing endpoints
-                    </div>
-                `;
+                diagnosisText = 
+                    '<div class="result info">' +
+                        '<strong>⚠️ PARTIAL ISSUE:</strong> Some API endpoints working, others failing' +
+                        '<br><br><strong>Working:</strong> ' + workingCount + '/' + totalCount + ' endpoints' +
+                        '<br><strong>Root Cause:</strong> Specific API routes have configuration issues' +
+                        '<br><strong>Next Steps:</strong> Check individual failing endpoints' +
+                    '</div>';
             } else {
-                diagnosisText = `
-                    <div class="result success">
-                        <strong>✅ ALL GOOD:</strong> All API endpoints are working
-                        <br><strong>Authentication system is functional!</strong>
-                    </div>
-                `;
+                diagnosisText = 
+                    '<div class="result success">' +
+                        '<strong>✅ ALL GOOD:</strong> All API endpoints are working' +
+                        '<br><strong>Authentication system is functional!</strong>' +
+                    '</div>';
             }
             
             diagnosis.innerHTML = diagnosisText;
