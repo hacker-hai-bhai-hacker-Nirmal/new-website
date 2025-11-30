@@ -145,7 +145,7 @@ export async function POST({ request }: { request: Request }) {
   } catch (error) {
     return Response.json({
       error: 'Server error',
-      message: error?.message || 'Unknown error',
+      message: (error as any)?.message || 'Unknown error',
       success: false
     }, { status: 500 });
   }
@@ -262,7 +262,7 @@ export async function POST({ request }: { request: Request }) {
                 `;
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<span class="status-indicator status-error"></span><strong>Error:</strong> ${error?.message || 'Unknown error'}`;
+                result.innerHTML = `<span class="status-indicator status-error"></span><strong>Error:</strong> ${(error as any)?.message || 'Unknown error'}`;
             }
         }
 
@@ -292,7 +292,7 @@ export async function POST({ request }: { request: Request }) {
                 `;
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<strong>Error:</strong> ${error?.message || 'Unknown error'}`;
+                result.innerHTML = `<strong>Error:</strong> ${(error as any)?.message || 'Unknown error'}`;
             }
         }
 
@@ -320,7 +320,7 @@ export async function POST({ request }: { request: Request }) {
                 `;
             } catch (error) {
                 result.className = 'result error';
-                result.innerHTML = `<strong>Error testing ${endpoint}:</strong> ${error?.message || 'Unknown error'}`;
+                result.innerHTML = `<strong>Error testing ${endpoint}:</strong> ${(error as any)?.message || 'Unknown error'}`;
             }
         }
 
@@ -351,7 +351,7 @@ export async function POST({ request }: { request: Request }) {
                         endpoint,
                         status: 'ERROR',
                         success: false,
-                        error: error?.message || 'Unknown error'
+                        error: (error as any)?.message || 'Unknown error'
                     });
                 }
             }
