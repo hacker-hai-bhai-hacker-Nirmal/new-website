@@ -101,7 +101,7 @@ async function POST({ request }) {
       });
     }
     if (action === "test-env") {
-      const runtimeEnv = Astro?.locals?.runtime?.env || {};
+      const runtimeEnv = Astro.locals?.runtime?.env || {};
       return Response.json({
         action: "env-test-result",
         variables: {

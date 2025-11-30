@@ -118,7 +118,7 @@ export async function POST({ request }: { request: Request }) {
 
     if (action === 'test-env') {
       // Test environment variables
-      const runtimeEnv = Astro?.locals?.runtime?.env || {};
+      const runtimeEnv = (Astro.locals as any)?.runtime?.env || {};
       return Response.json({
         action: 'env-test-result',
         variables: {
