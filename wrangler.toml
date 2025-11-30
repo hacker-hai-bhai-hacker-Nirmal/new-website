@@ -7,15 +7,11 @@ pages_build_output_dir = "dist"
 # These should be set as secrets in Cloudflare Pages dashboard
 # The variable names here MUST match what's used in the code
 [env.production.vars]
-brevo_MCP_key = ""
-JWT_SECRET = ""
 APPWRITE_PROJECT_ID = "6900b1ed001604d8befb"
 APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1"
 APPWRITE_DATABASE_ID = "main-db"
 
 [env.preview.vars]
-brevo_MCP_key = ""
-JWT_SECRET = ""
 APPWRITE_PROJECT_ID = "6900b1ed001604d8befb"
 APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1"
 APPWRITE_DATABASE_ID = "main-db"
