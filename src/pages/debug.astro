@@ -31,7 +31,7 @@ export async function GET() {
   ];
 
   // Pass data to the HTML template
-  return Astro.props({
+  return Astro.props.debugData = {
     debugData: {
       debugSession: {
         timestamp: new Date().toISOString(),
@@ -84,8 +84,7 @@ export async function GET() {
           "Test API endpoint from server side"
         ]
       }
-    }
-  });
+    };
 }
 
 export async function POST({ request }: { request: Request }) {
