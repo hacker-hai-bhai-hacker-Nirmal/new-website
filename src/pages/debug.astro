@@ -32,60 +32,58 @@ export async function GET() {
 
   // Pass data to the HTML template
   return Astro.props.debugData = {
-    debugData: {
-      debugSession: {
-        timestamp: new Date().toISOString(),
-        purpose: "Diagnose API routes 404 issue",
-        mode: isServer ? 'SERVER' : 'CLIENT'
-      },
-      
-      environmentCheck: {
-        status: "Environment Variables Test",
-        variables: envVars,
-        allFound: Object.values(envVars).every(v => v !== 'NOT_FOUND')
-      },
+    debugSession: {
+      timestamp: new Date().toISOString(),
+      purpose: "Diagnose API routes 404 issue",
+      mode: isServer ? 'SERVER' : 'CLIENT'
+    },
+    
+    environmentCheck: {
+      status: "Environment Variables Test",
+      variables: envVars,
+      allFound: Object.values(envVars).every(v => v !== 'NOT_FOUND')
+    },
 
-      apiRoutesTest: {
-        status: "API Routes Availability Test",
-        endpoints: apiEndpoints.map(endpoint => ({
-          path: endpoint,
-          expectedStatus: "Should return 200 or proper error",
-          actualStatus: "UNKNOWN - Test via frontend"
-        }))
-      },
+    apiRoutesTest: {
+      status: "API Routes Availability Test",
+      endpoints: apiEndpoints.map(endpoint => ({
+        path: endpoint,
+        expectedStatus: "Should return 200 or proper error",
+        actualStatus: "UNKNOWN - Test via frontend"
+      }))
+    },
 
-      systemInfo: {
-        astroVersion: "5.16.1",
-        adapter: "@astrojs/cloudflare",
-        outputMode: "server",
-        deploymentPlatform: "Cloudflare Pages"
-      },
+    systemInfo: {
+      astroVersion: "5.16.1",
+      adapter: "@astrojs/cloudflare",
+      outputMode: "server",
+      deploymentPlatform: "Cloudflare Pages"
+    },
 
-      nextSteps: [
-        "1. Check if environment variables are accessible",
-        "2. Test API endpoints via frontend JavaScript",
-        "3. Verify Cloudflare Pages Functions configuration",
-        "4. Check build output for API routes"
+    nextSteps: [
+      "1. Check if environment variables are accessible",
+      "2. Test API endpoints via frontend JavaScript",
+      "3. Verify Cloudflare Pages Functions configuration",
+      "4. Check build output for API routes"
+    ],
+
+    troubleshooting: {
+      possibleCauses: [
+        "Cloudflare Pages Functions not enabled",
+        "Environment variables not properly configured", 
+        "Build configuration issue",
+        "API routes not being compiled correctly",
+        "Server mode not properly activated"
       ],
-
-      troubleshooting: {
-        possibleCauses: [
-          "Cloudflare Pages Functions not enabled",
-          "Environment variables not properly configured", 
-          "Build configuration issue",
-          "API routes not being compiled correctly",
-          "Server mode not properly activated"
-        ],
-        testsToRun: [
-          "Environment variable access test",
-          "API endpoint fetch test", 
-          "Build output verification",
-          "Cloudflare configuration check",
-          "Test API endpoint from server side"
-        ]
-      }
-    };
-}
+      testsToRun: [
+        "Environment variable access test",
+        "API endpoint fetch test", 
+        "Build output verification",
+        "Cloudflare configuration check",
+        "Test API endpoint from server side"
+      ]
+    }
+  };
 
 export async function POST({ request }: { request: Request }) {
   try {
