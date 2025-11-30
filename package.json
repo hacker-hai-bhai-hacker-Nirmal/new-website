@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "node check-env.js && astro build",
+    "build": "node test-level1.js && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
