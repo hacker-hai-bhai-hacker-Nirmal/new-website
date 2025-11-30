@@ -1,8 +1,60 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { v as decryptString, w as createSlotValueFromString, x as isAstroComponentFactory, k as renderComponent, r as renderTemplate, y as REROUTE_DIRECTIVE_HEADER, A as AstroError, z as i18nNoLocaleFoundInPath, B as ResponseSentError, C as originPathnameSymbol, G as RewriteWithBodyUsed, H as GetStaticPathsRequired, J as InvalidGetStaticPathsReturn, K as InvalidGetStaticPathsEntry, O as GetStaticPathsExpectedParams, P as GetStaticPathsInvalidRouteParam, Q as PageNumberParamNotFound, D as DEFAULT_404_COMPONENT, S as NoMatchingStaticPathFound, T as PrerenderDynamicEndpointPathCollide, V as ReservedSlotName, W as renderSlotToString, X as renderJSX, Y as chunkToString, Z as isRenderInstruction, _ as ActionNotFoundError, $ as MiddlewareNoDataOrNextCalled, a0 as MiddlewareNotAResponse, a1 as SessionStorageInitError, a2 as SessionStorageSaveError, a3 as ROUTE_TYPE_HEADER, a4 as ForbiddenRewrite, a5 as ASTRO_VERSION, a6 as CspNotEnabled, a7 as s, a8 as LocalsReassigned, a9 as generateCspDigest, aa as PrerenderClientAddressNotAvailable, ab as clientAddressSymbol, ac as ClientAddressNotAvailable, ad as StaticClientAddressNotAvailable, ae as AstroResponseHeadersReassigned, af as responseSentSymbol$1, ag as renderPage, ah as REWRITE_DIRECTIVE_HEADER_KEY, ai as REWRITE_DIRECTIVE_HEADER_VALUE, aj as renderEndpoint } from './astro/server_OziQ-2Q1.mjs';
-import { d as defineMiddleware } from './index_DHPUngCz.mjs';
-import { a as appendForwardSlash, j as joinPaths, r as removeTrailingForwardSlash, p as prependForwardSlash, t as trimSlashes } from './path_CH3auf61.mjs';
-import { g as getActionQueryString, d as deserializeActionResult, D as DEFAULT_404_ROUTE, A as ActionError, s as serializeActionResult, a as ACTION_RPC_ROUTE_PATTERN, b as ACTION_QUERY_PARAMS, u as unflatten$1, c as stringify$2 } from './astro-designed-error-pages_Cwtd_jYS.mjs';
+import { j as decryptString, k as createSlotValueFromString, l as isAstroComponentFactory, r as renderComponent, a as renderTemplate, n as REROUTE_DIRECTIVE_HEADER, A as AstroError, o as i18nNoLocaleFoundInPath, p as ResponseSentError, q as originPathnameSymbol, s as RewriteWithBodyUsed, G as GetStaticPathsRequired, I as InvalidGetStaticPathsReturn, t as InvalidGetStaticPathsEntry, u as GetStaticPathsExpectedParams, v as GetStaticPathsInvalidRouteParam, P as PageNumberParamNotFound, D as DEFAULT_404_COMPONENT, N as NoMatchingStaticPathFound, w as PrerenderDynamicEndpointPathCollide, x as ReservedSlotName, y as renderSlotToString, z as renderJSX, B as chunkToString, C as isRenderInstruction, E as ActionNotFoundError, M as MiddlewareNoDataOrNextCalled, F as MiddlewareNotAResponse, S as SessionStorageInitError, H as SessionStorageSaveError, J as ROUTE_TYPE_HEADER, K as ForbiddenRewrite, L as ASTRO_VERSION, O as CspNotEnabled, Q as s, T as LocalsReassigned, U as generateCspDigest, V as PrerenderClientAddressNotAvailable, W as clientAddressSymbol, X as ClientAddressNotAvailable, Y as StaticClientAddressNotAvailable, Z as AstroResponseHeadersReassigned, _ as responseSentSymbol$1, $ as renderPage, a0 as REWRITE_DIRECTIVE_HEADER_KEY, a1 as REWRITE_DIRECTIVE_HEADER_VALUE, a2 as renderEndpoint } from './astro/server_B5WI7quS.mjs';
+import { d as defineMiddleware } from './index_BanjRzCv.mjs';
+import { g as getActionQueryString, d as deserializeActionResult, D as DEFAULT_404_ROUTE, A as ActionError, s as serializeActionResult, a as ACTION_RPC_ROUTE_PATTERN, b as ACTION_QUERY_PARAMS, u as unflatten$1, c as stringify$2 } from './astro-designed-error-pages_9HTKAt0F.mjs';
+
+function appendForwardSlash(path) {
+  return path.endsWith("/") ? path : path + "/";
+}
+function prependForwardSlash(path) {
+  return path[0] === "/" ? path : "/" + path;
+}
+const MANY_TRAILING_SLASHES = /\/{2,}$/g;
+function collapseDuplicateTrailingSlashes(path, trailingSlash) {
+  if (!path) {
+    return path;
+  }
+  return path.replace(MANY_TRAILING_SLASHES, trailingSlash ? "/" : "") || "/";
+}
+function removeTrailingForwardSlash(path) {
+  return path.endsWith("/") ? path.slice(0, path.length - 1) : path;
+}
+function removeLeadingForwardSlash(path) {
+  return path.startsWith("/") ? path.substring(1) : path;
+}
+function trimSlashes(path) {
+  return path.replace(/^\/|\/$/g, "");
+}
+function isString(path) {
+  return typeof path === "string" || path instanceof String;
+}
+const INTERNAL_PREFIXES = /* @__PURE__ */ new Set(["/_", "/@", "/.", "//"]);
+const JUST_SLASHES = /^\/{2,}$/;
+function isInternalPath(path) {
+  return INTERNAL_PREFIXES.has(path.slice(0, 2)) && !JUST_SLASHES.test(path);
+}
+function joinPaths(...paths) {
+  return paths.filter(isString).map((path, i) => {
+    if (i === 0) {
+      return removeTrailingForwardSlash(path);
+    } else if (i === paths.length - 1) {
+      return removeLeadingForwardSlash(path);
+    } else {
+      return trimSlashes(path);
+    }
+  }).join("/");
+}
+function slash(path) {
+  return path.replace(/\\/g, "/");
+}
+function fileExtension(path) {
+  const ext = path.split(".").pop();
+  return ext !== path ? `.${ext}` : "";
+}
+const WITH_FILE_EXT = /\/[^/]+\.\w+$/;
+function hasFileExtension(path) {
+  return WITH_FILE_EXT.test(path);
+}
 
 const ACTION_API_CONTEXT_SYMBOL = Symbol.for("astro.actionAPIContext");
 const formContentTypes = ["application/x-www-form-urlencoded", "multipart/form-data"];
@@ -3561,4 +3613,4 @@ function sequence(...handlers) {
   });
 }
 
-export { PERSIST_SYMBOL as P, RouteCache as R, SERVER_ISLAND_COMPONENT as S, redirectToFallback as a, redirectToDefaultLocale as b, requestHasLocale as c, normalizeTheLocale as d, SERVER_ISLAND_ROUTE as e, createEndpoint as f, findRouteToRewrite as g, RenderContext as h, isRequestServerIsland as i, getSetCookiesFromResponse as j, matchRoute as m, notFound as n, requestIs404Or500 as r, sequence as s };
+export { PERSIST_SYMBOL as P, RouteCache as R, SERVER_ISLAND_COMPONENT as S, redirectToFallback as a, redirectToDefaultLocale as b, requestHasLocale as c, normalizeTheLocale as d, SERVER_ISLAND_ROUTE as e, createEndpoint as f, fileExtension as g, slash as h, isRequestServerIsland as i, joinPaths as j, findRouteToRewrite as k, removeTrailingForwardSlash as l, matchRoute as m, notFound as n, appendForwardSlash as o, prependForwardSlash as p, isInternalPath as q, requestIs404Or500 as r, sequence as s, collapseDuplicateTrailingSlashes as t, hasFileExtension as u, RenderContext as v, getSetCookiesFromResponse as w };

@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "message": "Environment variable check completed",
+  "timestamp": "2025-11-30T01:19:14.618Z",
+  "brevo_MCP_key_present": false,
+  "brevo_MCP_key_length": 0,
+  "brevo_MCP_key_first_chars": "undefined...",
+  "all_environment_variables": [],
+  "node_env": "production",
+  "dev": false,
+  "prod": true,
+  "deployment_status": "ENVIRONMENT_VARIABLES_MISSING"
+}

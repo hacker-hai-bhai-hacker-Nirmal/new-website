@@ -10,7 +10,7 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  output: 'server',
+  output: 'static',
   vite: {
     define: {
       global: 'globalThis',

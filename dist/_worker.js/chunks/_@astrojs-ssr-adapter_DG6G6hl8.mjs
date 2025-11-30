@@ -1,11 +1,9 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { f as fileExtension, j as joinPaths, s as slash, p as prependForwardSlash, r as removeTrailingForwardSlash, a as appendForwardSlash, b as isInternalPath, c as collapseDuplicateTrailingSlashes, h as hasFileExtension } from './path_CH3auf61.mjs';
-import { m as matchPattern } from './remote_CrdlObHx.mjs';
-import { r as requestIs404Or500, i as isRequestServerIsland, n as notFound, a as redirectToFallback, b as redirectToDefaultLocale, c as requestHasLocale, d as normalizeTheLocale, S as SERVER_ISLAND_COMPONENT, e as SERVER_ISLAND_ROUTE, f as createEndpoint, R as RouteCache, s as sequence, g as findRouteToRewrite, m as matchRoute, h as RenderContext, P as PERSIST_SYMBOL, j as getSetCookiesFromResponse } from './sequence_BGm6KjeW.mjs';
-import { a3 as ROUTE_TYPE_HEADER, y as REROUTE_DIRECTIVE_HEADER, D as DEFAULT_404_COMPONENT, A as AstroError, _ as ActionNotFoundError, a7 as s, ab as clientAddressSymbol, am as LocalsNotAnObject, an as REROUTABLE_STATUS_CODES, af as responseSentSymbol } from './astro/server_OziQ-2Q1.mjs';
-import { N as NOOP_MIDDLEWARE_FN } from './noop-middleware_Ou-_1Mlp.mjs';
-import { D as DEFAULT_404_ROUTE, e as default404Instance, f as ensure404Route } from './astro-designed-error-pages_Cwtd_jYS.mjs';
-import { d as defineMiddleware } from './index_DHPUngCz.mjs';
+import { r as requestIs404Or500, i as isRequestServerIsland, n as notFound, a as redirectToFallback, b as redirectToDefaultLocale, c as requestHasLocale, d as normalizeTheLocale, S as SERVER_ISLAND_COMPONENT, e as SERVER_ISLAND_ROUTE, f as createEndpoint, R as RouteCache, s as sequence, g as fileExtension, j as joinPaths, h as slash, p as prependForwardSlash, k as findRouteToRewrite, l as removeTrailingForwardSlash, m as matchRoute, o as appendForwardSlash, q as isInternalPath, t as collapseDuplicateTrailingSlashes, u as hasFileExtension, v as RenderContext, P as PERSIST_SYMBOL, w as getSetCookiesFromResponse } from './sequence_BhfoHPsP.mjs';
+import { J as ROUTE_TYPE_HEADER, n as REROUTE_DIRECTIVE_HEADER, D as DEFAULT_404_COMPONENT, A as AstroError, E as ActionNotFoundError, Q as s, W as clientAddressSymbol, a5 as LocalsNotAnObject, a6 as REROUTABLE_STATUS_CODES, _ as responseSentSymbol } from './astro/server_B5WI7quS.mjs';
+import { N as NOOP_MIDDLEWARE_FN } from './noop-middleware_DwgcH3h6.mjs';
+import { D as DEFAULT_404_ROUTE, e as default404Instance, f as ensure404Route } from './astro-designed-error-pages_9HTKAt0F.mjs';
+import { d as defineMiddleware } from './index_BanjRzCv.mjs';
 import 'cloudflare:workers';
 
 function createI18nMiddleware(i18n, base, trailingSlash, format) {
@@ -293,6 +291,49 @@ const RedirectSinglePageBuiltModule = {
   onRequest: (_, next) => next(),
   renderers: []
 };
+
+function matchPattern(url, remotePattern) {
+  return matchProtocol(url, remotePattern.protocol) && matchHostname(url, remotePattern.hostname, true) && matchPort(url, remotePattern.port) && matchPathname(url, remotePattern.pathname, true);
+}
+function matchPort(url, port) {
+  return !port || port === url.port;
+}
+function matchProtocol(url, protocol) {
+  return !protocol || protocol === url.protocol.slice(0, -1);
+}
+function matchHostname(url, hostname, allowWildcard = false) {
+  if (!hostname) {
+    return true;
+  } else if (!allowWildcard || !hostname.startsWith("*")) {
+    return hostname === url.hostname;
+  } else if (hostname.startsWith("**.")) {
+    const slicedHostname = hostname.slice(2);
+    return slicedHostname !== url.hostname && url.hostname.endsWith(slicedHostname);
+  } else if (hostname.startsWith("*.")) {
+    const slicedHostname = hostname.slice(1);
+    if (!url.hostname.endsWith(slicedHostname)) {
+      return false;
+    }
+    const subdomainWithDot = url.hostname.slice(0, -(slicedHostname.length - 1));
+    return subdomainWithDot.endsWith(".") && !subdomainWithDot.slice(0, -1).includes(".");
+  }
+  return false;
+}
+function matchPathname(url, pathname, allowWildcard = false) {
+  if (!pathname) {
+    return true;
+  } else if (!allowWildcard || !pathname.endsWith("*")) {
+    return pathname === url.pathname;
+  } else if (pathname.endsWith("/**")) {
+    const slicedPathname = pathname.slice(0, -2);
+    return slicedPathname !== url.pathname && url.pathname.startsWith(slicedPathname);
+  } else if (pathname.endsWith("/*")) {
+    const slicedPathname = pathname.slice(0, -1);
+    const additionalPathChunks = url.pathname.replace(slicedPathname, "").split("/").filter(Boolean);
+    return additionalPathChunks.length === 1;
+  }
+  return false;
+}
 
 const dateTimeFormat = new Intl.DateTimeFormat([], {
   hour: "2-digit",
