@@ -191,27 +191,27 @@ export async function POST({ request }: { request: Request }) {
         <div class="test-section">
             <h3>📊 Initial Server Status</h3>
             <div id="server-status">Loading server status...</div>
-            <button onclick="loadServerStatus()">🔄 Reload Server Status</button>
+            <button id="reload-server-btn">🔄 Reload Server Status</button>
         </div>
 
         <div class="test-section">
             <h3>🔧 Environment Variables Test</h3>
             <div id="env-test">Not tested yet</div>
-            <button onclick="testEnvironment()">🌍 Test Environment Variables</button>
+            <button id="test-env-btn">🌍 Test Environment Variables</button>
         </div>
 
         <div class="test-section">
             <h3>🌐 API Endpoints Test</h3>
             <div id="api-test">Not tested yet</div>
-            <button onclick="testAPI('/api/auth')">🔗 Test /api/auth</button>
-            <button onclick="testAPI('/api/auth/register')">🔗 Test /api/auth/register</button>
-            <button onclick="testAPI('/api/test-auth')">🔗 Test /api/test-auth</button>
-            <button onclick="testAPI('/api/check-env')">🔗 Test /api/check-env</button>
+            <button id="test-api-auth-btn">🔗 Test /api/auth</button>
+            <button id="test-api-register-btn">🔗 Test /api/auth/register</button>
+            <button id="test-api-testauth-btn">🔗 Test /api/test-auth</button>
+            <button id="test-api-env-btn">🔗 Test /api/check-env</button>
         </div>
 
         <div class="test-section">
             <h3>📋 All API Tests</h3>
-            <button onclick="testAllAPIs()">🚀 Run All API Tests</button>
+            <button id="test-all-apis-btn">🚀 Run All API Tests</button>
             <div id="all-api-results"></div>
         </div>
 
@@ -399,7 +399,54 @@ export async function POST({ request }: { request: Request }) {
         }
 
         // Auto-load server status on page load
-        window.addEventListener('load', window.loadServerStatus);
+        window.addEventListener('load', function() {
+            // Load initial server status
+            window.loadServerStatus();
+            
+            // Add event listeners to buttons
+            const reloadServerBtn = document.getElementById('reload-server-btn');
+            if (reloadServerBtn) {
+                reloadServerBtn.addEventListener('click', window.loadServerStatus);
+            }
+            
+            const testEnvBtn = document.getElementById('test-env-btn');
+            if (testEnvBtn) {
+                testEnvBtn.addEventListener('click', window.testEnvironment);
+            }
+            
+            const testApiAuthBtn = document.getElementById('test-api-auth-btn');
+            if (testApiAuthBtn) {
+                testApiAuthBtn.addEventListener('click', function() {
+                    window.testAPI('/api/auth');
+                });
+            }
+            
+            const testApiRegisterBtn = document.getElementById('test-api-register-btn');
+            if (testApiRegisterBtn) {
+                testApiRegisterBtn.addEventListener('click', function() {
+                    window.testAPI('/api/auth/register');
+                });
+            }
+            
+            const testApiTestauthBtn = document.getElementById('test-api-testauth-btn');
+            if (testApiTestauthBtn) {
+                testApiTestauthBtn.addEventListener('click', function() {
+                    window.testAPI('/api/test-auth');
+                });
+            }
+            
+            const testApiEnvBtn = document.getElementById('test-api-env-btn');
+            if (testApiEnvBtn) {
+                testApiEnvBtn.addEventListener('click', function() {
+                    window.testAPI('/api/check-env');
+                });
+            }
+            
+            const testAllApisBtn = document.getElementById('test-all-apis-btn');
+            if (testAllApisBtn) {
+                testAllApisBtn.addEventListener('click', window.testAllAPIs);
+            }
+        });
     </script>
 </body>
 </html>
