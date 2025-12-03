@@ -5,8 +5,6 @@ import Layout from '../layouts/Layout.astro'
 <Layout>
   <!-- Launch Discount Banner -->
   <div class="discount-banner">
-    <div class="sparkle-effect">✨</div>
-    <div class="sparkle-effect">✨</div>
   </div>
 
   <header class="site-header">
@@ -250,29 +248,49 @@ import Layout from '../layouts/Layout.astro'
     --gold: #ffd700;
     --text-dark: #000;
   }
+  .discount-banner {
+    background: var(--gold);
+    color: var(--text-dark);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.3rem;
+    padding: 0.5rem 0;
+    margin-bottom: 0;
+    border-radius: 0;
+  }
   .site-header {
     background: var(--cream-white);
     color: var(--text-dark);
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     margin: 0 auto;
     width: 100%;
-    max-width: 1100px;
+    max-width: 700px;
     border-radius: 0 0 24px 24px;
     position: relative;
     top: -8px;
     z-index: 10;
+    text-align: center;
+    padding: 0.5rem 0;
   }
   .header-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 2rem;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0.5rem 1rem;
   }
   .site-header .brand {
     color: var(--text-dark);
     font-weight: bold;
     font-size: 2rem;
     text-decoration: none;
+    margin-bottom: 0.5rem;
+  }
+  .site-header .nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
   }
   .site-header .nav a {
     color: var(--text-dark);
@@ -290,7 +308,8 @@ import Layout from '../layouts/Layout.astro'
   .cart-icon {
     color: var(--text-dark);
     font-size: 1.2rem;
-    margin-left: 2rem;
+    margin-left: 0;
+    margin-bottom: 0.5rem;
   }
   @media (max-width: 900px) {
     .site-header {
@@ -300,7 +319,7 @@ import Layout from '../layouts/Layout.astro'
     .header-container {
       flex-direction: column;
       gap: 1rem;
-      padding: 1rem;
+      padding: 0.5rem;
     }
     .site-header .nav {
       flex-wrap: wrap;
