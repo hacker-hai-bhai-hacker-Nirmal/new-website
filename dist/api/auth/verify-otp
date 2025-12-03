@@ -1,1 +1,0 @@
-{"success":true,"message":"OTP verification endpoint - POST to verify OTP and get JWT tokens","requiredFields":["email","otp","otpToken"],"returns":["user","accessToken","refreshToken","expiresIn"]}

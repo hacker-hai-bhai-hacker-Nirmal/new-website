@@ -1,1 +1,0 @@
-{"success":true,"message":"Token refresh endpoint - POST to refresh access tokens","requiredFields":["refreshToken"],"returns":["accessToken","expiresIn"]}

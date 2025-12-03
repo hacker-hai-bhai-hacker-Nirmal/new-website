@@ -259,7 +259,7 @@ import Layout from '../layouts/Layout.astro'
     --cream-white: #f9f6f2;
     --gold: #ffd700;
     --text-dark: #222;
-    --section-dark: #2C3E50;
+    --section-light: #F5E6D3;
   }
   /* Homepage-specific styles */
   .hero {
@@ -302,8 +302,8 @@ import Layout from '../layouts/Layout.astro'
 
   .featured-menu {
     padding: 5rem 0;
-    background: var(--section-dark);
-    color: white;
+    background: var(--section-light);
+    color: var(--text-dark);
   }
 
   .featured-grid {
@@ -314,12 +314,12 @@ import Layout from '../layouts/Layout.astro'
   }
 
   .menu-card {
-    background: #34495E;
+    background: #fff;
     border-radius: 15px;
     padding: 2rem;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
-    color: white;
+    color: var(--text-dark);
   }
 
   .menu-card:hover {
@@ -365,8 +365,8 @@ import Layout from '../layouts/Layout.astro'
 
   .how-it-works {
     padding: 5rem 0;
-    background: var(--section-dark);
-    color: white;
+    background: var(--section-light);
+    color: var(--text-dark);
   }
 
   .steps {
@@ -378,8 +378,8 @@ import Layout from '../layouts/Layout.astro'
 
   .step {
     text-align: center;
-    background: #34495E;
-    color: white;
+    background: #fff;
+    color: var(--text-dark);
     border-radius: 15px;
     padding: 2rem 1rem;
   }
@@ -420,11 +420,11 @@ import Layout from '../layouts/Layout.astro'
   }
 
   .referral-step {
-    background: rgba(44,62,80,0.7);
+    background: rgba(245,230,211,0.7);
     padding: 2rem;
     border-radius: 15px;
     backdrop-filter: blur(10px);
-    color: white;
+    color: var(--text-dark);
   }
 
   .cta.gold {

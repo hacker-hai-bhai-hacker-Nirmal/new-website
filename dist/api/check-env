@@ -1,7 +1,7 @@
 {
   "success": true,
   "message": "Environment variable check completed",
-  "timestamp": "2025-11-30T01:46:05.034Z",
+  "timestamp": "2025-12-03T09:24:29.044Z",
   "brevo_MCP_key_present": false,
   "brevo_MCP_key_length": 0,
   "brevo_MCP_key_first_chars": "undefined...",

@@ -1,13 +1,12 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { d as defineMiddleware } from './chunks/index_DHPUngCz.mjs';
-import './chunks/astro-designed-error-pages_Cwtd_jYS.mjs';
-import './chunks/astro/server_OziQ-2Q1.mjs';
-import { s as sequence } from './chunks/sequence_BGm6KjeW.mjs';
+import { d as defineMiddleware, s as sequence } from './chunks/index_BxC8yqQa.mjs';
+import './chunks/astro-designed-error-pages_CvTVsLWo.mjs';
+import './chunks/astro/server_CKD2j12W.mjs';
 
-// Astro Middleware for Route Protection (Temporarily Disabled)
+// Astro Middleware for Route Protection (Cloudflare-Only Approach)
 
 
-// Define protected and auth-only routes
+// Define protected routes that require authentication
 const protectedRoutes = ['/dashboard', '/checkout', '/rewards', '/admin', '/kitchen'];
 const authOnlyRoutes = ['/login'];
 
@@ -15,19 +14,12 @@ const onRequest$2 = defineMiddleware(async (context, next) => {
   const { pathname } = new URL(context.request.url);
   
   // Check if route requires authentication
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  const isAuthOnlyRoute = authOnlyRoutes.some(route => pathname.startsWith(route));
+  protectedRoutes.some(route => pathname.startsWith(route));
+  authOnlyRoutes.some(route => pathname.startsWith(route));
   
-  // For now, we'll handle client-side authentication
-  // In a production environment, you might want to verify tokens server-side
+  // TODO: Implement JWT verification for Cloudflare-only auth
+  // For now, allow all access (will implement later)
   
-  // Allow access to public routes
-  if (!isProtectedRoute && !isAuthOnlyRoute) {
-    return next();
-  }
-  
-  // For protected routes, let the client-side auth handle it
-  // This allows us to show proper error messages and handle redirects gracefully
   return next();
 });
 

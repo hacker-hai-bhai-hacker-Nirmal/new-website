@@ -1,1 +1,0 @@
-{"success":true,"message":"Registration endpoint - POST to register with role-based authentication","supportedRoles":["customer","delivery_partner","restaurant_staff"],"requiredFields":["email","firstName","lastName","role"],"optionalFields":["phone","restaurantId"]}
