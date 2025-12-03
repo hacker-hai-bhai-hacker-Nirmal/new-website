@@ -25,5 +25,10 @@
       },
       "description": "Cloudflare DNS and Pages management"
     }
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@cloudflare/playwright-mcp"],
+      "description": "Playwright MCP server for browser automation and UI testing"
+    }
   }
 }

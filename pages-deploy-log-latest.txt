@@ -1,0 +1,139 @@
+{
+  "result": {
+    "id": "098e5b70-5dc8-42ff-8f45-a2dd8887e058",
+    "short_id": "098e5b70",
+    "project_id": "bc02d65d-c2fd-4e4d-a539-e041ce40dedc",
+    "project_name": "new-website",
+    "environment": "production",
+    "url": "https://098e5b70.new-website-1ce.pages.dev",
+    "created_on": "2025-12-03T06:50:15.20087Z",
+    "modified_on": "2025-12-03T06:50:53.340515Z",
+    "latest_stage": {
+      "name": "deploy",
+      "started_on": "2025-12-03T06:50:41.60594Z",
+      "ended_on": "2025-12-03T06:50:53.340515Z",
+      "status": "success"
+    },
+    "deployment_trigger": {
+      "type": "github:push",
+      "metadata": {
+        "branch": "master",
+        "commit_hash": "37572dda3aaffc12401d9361134060a70a0e7144",
+        "commit_message": "Trigger deployment: Testing MCP-integrated workflow",
+        "commit_dirty": false
+      }
+    },
+    "stages": [
+      {
+        "name": "queued",
+        "started_on": "2025-12-03T06:50:15.333569Z",
+        "ended_on": "2025-12-03T06:50:15.333569Z",
+        "status": "success"
+      },
+      {
+        "name": "initialize",
+        "started_on": "2025-12-03T06:50:15.333569Z",
+        "ended_on": "2025-12-03T06:50:17.817991Z",
+        "status": "success"
+      },
+      {
+        "name": "clone_repo",
+        "started_on": "2025-12-03T06:50:17.817991Z",
+        "ended_on": "2025-12-03T06:50:19.230393Z",
+        "status": "success"
+      },
+      {
+        "name": "build",
+        "started_on": "2025-12-03T06:50:19.230393Z",
+        "ended_on": "2025-12-03T06:50:41.60594Z",
+        "status": "success"
+      },
+      {
+        "name": "deploy",
+        "started_on": "2025-12-03T06:50:41.60594Z",
+        "ended_on": "2025-12-03T06:50:53.340515Z",
+        "status": "success"
+      }
+    ],
+    "build_config": {
+      "build_command": "npm run build",
+      "destination_dir": "dist",
+      "build_caching": null,
+      "root_dir": "",
+      "web_analytics_tag": null,
+      "web_analytics_token": null
+    },
+    "source": {
+      "type": "github",
+      "config": {
+        "owner": "hacker-hai-bhai-hacker-Nirmal",
+        "repo_name": "new-website",
+        "production_branch": "master",
+        "pr_comments_enabled": false
+      }
+    },
+    "env_vars": {
+      "APPWRITE_DATABASE_ID": {
+        "type": "plain_text",
+        "value": "main-db"
+      },
+      "APPWRITE_ENDPOINT": {
+        "type": "plain_text",
+        "value": "https://fra.cloud.appwrite.io/v1"
+      },
+      "APPWRITE_PROJECT_ID": {
+        "type": "plain_text",
+        "value": "6900b1ed001604d8befb"
+      },
+      "JWT_SECRET": {
+        "type": "plain_text",
+        "value": "s60nAlPhGJq2iQnFSn0LqtVor/dr/mLrJ4vLBXdNv8U="
+      },
+      "brevo_MCP_key": {
+        "type": "plain_text",
+        "value": "eyJhcGlfa2V5IjoieGtleXNpYi0xMmYwNjFiM2VjY2E3M2Q3NzZmY2ZhZTljOWIyMDVkMWIwNDk3NTkyMWIyZjI0YmZiOGFmOGFkNDU5ZjIzZmFkLVhSc2VVYkNyNmFqa2ZxaGkifQ=="
+      }
+    },
+    "compatibility_date": "2025-11-25",
+    "compatibility_flags": [
+      "nodejs_compat"
+    ],
+    "build_image_major_version": 3,
+    "usage_model": "bundled",
+    "aliases": null,
+    "is_skipped": false,
+    "production_branch": "master",
+    "files": {
+      "/_astro/admin.DgQmsyAg.css": "21546bd06001671c6fc61d5ece5c944e",
+      "/_astro/admin.FHWDyVsb.css": "d57b628235d07199b234c7cd2e06a53c",
+      "/_astro/checkout.e4-sUyur.css": "36040d6db07c7d93312d66efc3406950",
+      "/_astro/dashboard.CcvzPEkZ.css": "1157fa4022b522467675fccda31213ac",
+      "/_astro/debug.astro_astro_type_script_index_0_lang.CEUUP0hg.js": "9ba723fbbe23bca5406ecdfb5e6b94ae",
+      "/_astro/delivery.EcDdxnJj.css": "0650361c11f2c223942c8ba846ab48a7",
+      "/_astro/delivery.astro_astro_type_script_index_0_lang.D8nvTCGS.js": "36b6923e81a7b521e5f22aeae6ad44e1",
+      "/_astro/kitchen.Bn41Lj4y.css": "ddfe2b1db1b7f63c423223bedc798ea4",
+      "/_astro/kitchen.astro_astro_type_script_index_0_lang.Cjnmi4KI.js": "c3bd809a8afd801ffbbd9295c80cf828",
+      "/_astro/login.DB9FR7yj.css": "7a2a6939be364621bb411b3dee15de19",
+      "/_astro/menu.BskemJ9G.css": "ca7bd7d79f3bc152c59148dc65a9d00f",
+      "/_astro/rewards.B29gwNLF.css": "4073ae5998831080ec53e3cdf4d42cfd",
+      "/admin/index.html": "4001b29d0d2fdd783ee7554c815187e3",
+      "/api/check-env": "c157ff4385de4375206ece1983d53fc9",
+      "/checkout/index.html": "66c697258b4c40ede1f7d3d6ba91b777",
+      "/dashboard/index.html": "7a668c7444747d41428e625a0c188e7f",
+      "/delivery/index.html": "1d47b7cb3d4ba228c45d18c62c194f56",
+      "/favicon.svg": "f46e90f224a1df98b3114a0c9c8956da",
+      "/index.html": "2ccbb5c65b88edbf8aee56a52a0ca3dd",
+      "/kitchen/index.html": "5735657a88491cc0d418d26eea669f3c",
+      "/login/index.html": "77a05d14360a1a245338d920f0a74bc3",
+      "/menu/index.html": "ba4522b74eef162eb8f26f4da3c755ac",
+      "/rewards/index.html": "bbedcbb6c36d9a71e1999d3cf073c9bf",
+      "/styles.css": "150c3420250fcb36f855dbd085ad7a7d"
+    },
+    "uses_functions": true,
+    "framework": "astro"
+  },
+  "success": true,
+  "errors": [],
+  "messages": []
+}
+

@@ -27,7 +27,7 @@ import Layout from '../layouts/Layout.astro'
   </header>
 
   <!-- Deployment Test Notification -->
-  <div class="deployment-notice" id="deploymentNotice">
+  <div class="deployment-notice" id="deploymentNotice" role="alert" aria-live="polite">
     <div class="notice-content">
       <span class="notice-icon">🚀</span>
       <span class="notice-text" id="noticeText">Workers Deployment Test - Updated: 2025-11-27 00:38</span>
@@ -50,7 +50,7 @@ import Layout from '../layouts/Layout.astro'
           </div>
         </div>
         <div class="hero-image">
-          <div class="food-placeholder">🍽️ Premium Food Photography</div>
+          <div class="food-placeholder" aria-label="Premium Food Photography" role="img">🍽️ Premium Food Photography</div>
         </div>
       </div>
     </section>
@@ -61,7 +61,7 @@ import Layout from '../layouts/Layout.astro'
         <h2>Featured Menu</h2>
         <div class="featured-grid">
           <div class="menu-card">
-            <div class="food-image">🥐</div>
+            <div class="food-image" aria-label="Artisan Croissant" role="img">🥐</div>
             <span class="badge bestseller">Bestseller</span>
             <h3>Artisan Croissant</h3>
             <p>Buttery, flaky perfection with premium French butter</p>
@@ -69,7 +69,7 @@ import Layout from '../layouts/Layout.astro'
             <button class="add-to-cart">Add to Cart</button>
           </div>
           <div class="menu-card">
-            <div class="food-image">☕</div>
+            <div class="food-image" aria-label="Signature Blend Coffee" role="img">☕</div>
             <span class="badge new">New</span>
             <h3>Signature Blend Coffee</h3>
             <p>Single-origin beans with chocolate and caramel notes</p>
@@ -77,7 +77,7 @@ import Layout from '../layouts/Layout.astro'
             <button class="add-to-cart">Add to Cart</button>
           </div>
           <div class="menu-card">
-            <div class="food-image">🥗</div>
+            <div class="food-image" aria-label="Garden Fresh Salad" role="img">🥗</div>
             <h3>Garden Fresh Salad</h3>
             <p>Organic greens with house-made vinaigrette</p>
             <span class="price">₹349</span>
@@ -174,8 +174,9 @@ import Layout from '../layouts/Layout.astro'
         <div class="footer-section">
           <h4>Get Exclusive Offers</h4>
           <div class="newsletter">
-            <input type="email" placeholder="Your email">
-            <button>Subscribe</button>
+            <label for="newsletter-email" class="visually-hidden">Email address</label>
+            <input id="newsletter-email" type="email" placeholder="Your email" aria-label="Email address">
+            <button aria-label="Subscribe to newsletter">Subscribe</button>
           </div>
         </div>
       </div>
@@ -253,6 +254,12 @@ import Layout from '../layouts/Layout.astro'
 </script>
 
 <style>
+  :root {
+    --primary-green: #388e3c;
+    --cream-white: #f9f6f2;
+    --gold: #ffd700;
+    --text-dark: #222;
+  }
   /* Homepage-specific styles */
   .hero {
     min-height: 100vh;
@@ -260,6 +267,8 @@ import Layout from '../layouts/Layout.astro'
     align-items: center;
     position: relative;
     overflow: hidden;
+    padding-top: 5rem;
+    padding-bottom: 3rem;
   }
 
   .hero-background {
@@ -461,6 +470,36 @@ import Layout from '../layouts/Layout.astro'
     
     .referral-steps {
       grid-template-columns: 1fr;
+    }
+    
+    .site-header .container, .site-footer .container {
+      flex-direction: column;
+      text-align: center;
+    }
+    .nav {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .nav a {
+      margin: 0.5rem 0;
+      width: 100%;
+    }
+    .cart-icon {
+      margin: 1rem 0 0 0;
+    }
+    .footer-content {
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .footer-section {
+      margin-bottom: 2rem;
+    }
+    .newsletter input[type="email"] {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    .newsletter button {
+      width: 100%;
     }
   }
 </style>
