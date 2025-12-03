@@ -145,6 +145,12 @@
       "timestamp": "2025-12-03T12:11:06.8918774+05:30",
       "title": "Note: Configured MCP servers for GitHub (@ama-mcp/github...",
       "id": 24
+    },
+    {
+      "timestamp": "2025-12-03T12:50:27.8774036+05:30",
+      "id": 25,
+      "detail": "Verified GitHub MCP integration: Use environment variables GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO for secure API access and automation. Direct API calls are reliable for repo management, workflow, and issues. MCP CLI may require additional setup or alternatives if npx fails. This method is now the recommended approach for future GitHub automation.",
+      "title": "Note: Verified GitHub MCP integration: Use environment v..."
     }
   ],
   "notes": {
@@ -155,5 +161,5 @@
       "Store in an external secrets manager (e.g., GitHub Secrets) for CI/CD uses"
     ]
   },
-  "last_updated": "2025-12-03T12:11:06.8959409+05:30"
+  "last_updated": "2025-12-03T12:50:27.8813401+05:30"
 }
