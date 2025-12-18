@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <main class="payment-main">
+    <section class="payment-section">
+      <h1>Amount to Pay: <span class="amount">₹794</span></h1>
+      <div class="payment-methods">
+        <div class="method active">
+          <input type="radio" id="cod" name="payment" checked disabled>
+          <label for="cod">Cash on Delivery <span class="active-label">(Active)</span></label>
+        </div>
+        <div class="method coming-soon">
+          <input type="radio" id="upi" name="payment" disabled>
+          <label for="upi">UPI <span class="soon-label">(Coming Soon)</span></label>
+        </div>
+        <div class="method coming-soon">
+          <input type="radio" id="card" name="payment" disabled>
+          <label for="card">Cards <span class="soon-label">(Coming Soon)</span></label>
+        </div>
+      </div>
+      <button class="place-order-btn">Place Order</button>
+    </section>
+  </main>
+</Layout>
+
+<style>
+.payment-main {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream-white, #F5E6D3);
+}
+.payment-section {
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  min-width: 320px;
+  max-width: 95vw;
+  text-align: center;
+}
+.amount {
+  color: #388e3c;
+  font-size: 2rem;
+  font-weight: bold;
+}
+.payment-methods {
+  margin: 2rem 0 2.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.method {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  justify-content: center;
+}
+.active-label {
+  color: #388e3c;
+  font-weight: bold;
+}
+.coming-soon label {
+  color: #aaa;
+}
+.soon-label {
+  font-size: 0.95em;
+  color: #aaa;
+}
+.place-order-btn {
+  width: 100%;
+  background: #388e3c;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.place-order-btn:hover {
+  background: #256029;
+}
+</style>
