@@ -266,82 +266,137 @@ import Layout from '../layouts/Layout.astro'
 </Layout>
 
 <script>
-  // Cart functionality with TypeScript types
-  let cartCount: number = 0;
-  const cartCountElement: HTMLElement | null = document.querySelector('.cart-count');
-  
-  // Type the button as HTMLButtonElement since we know it's a button
-  document.querySelectorAll<HTMLButtonElement>('.add-to-cart').forEach((button: HTMLButtonElement) => {
-    button.addEventListener('click', (event: MouseEvent): void => {
-      event.preventDefault();
-      cartCount++;
-      
-      if (cartCountElement) {
-        cartCountElement.textContent = cartCount.toString();
-      }
-      
-      // Show toast notification with type safety
-      const toast: HTMLDivElement = document.createElement('div');
-      toast.className = 'toast';
-      toast.textContent = 'Added to cart!';
-      document.body.appendChild(toast);
-      
-      // Remove toast after delay
-      const toastTimeout = setTimeout((): void => {
-        if (document.body.contains(toast)) {
-          document.body.removeChild(toast);
-        }
-        clearTimeout(toastTimeout);
-      }, 2000);
-    });
-  });
+// Cart and address state helpers
+const CART_KEY = 'litterateur_cart';
+const ADDRESS_KEY = 'litterateur_address';
 
-  // Smooth scroll for nav links
-  document.querySelectorAll('.scroll-link').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const targetId = this.getAttribute('href');
-      const target = document.querySelector(targetId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
+function getCart() {
+  return JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+}
+function setCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+function getAddress() {
+  return localStorage.getItem(ADDRESS_KEY) || '123 Literary Lane';
+}
+function setAddress(addr) {
+  localStorage.setItem(ADDRESS_KEY, addr);
+}
 
-  // Cart overlay functionality
-  const cartIcon = document.getElementById('cartIcon');
-  const cartOverlay = document.getElementById('cartOverlay');
-  const closeCart = document.getElementById('closeCart');
-  cartIcon && cartIcon.addEventListener('click', () => {
-    cartOverlay.style.display = 'flex';
-  });
-  closeCart && closeCart.addEventListener('click', () => {
-    cartOverlay.style.display = 'none';
-  });
-  // Close on overlay click
-  cartOverlay && cartOverlay.addEventListener('click', (e) => {
-    if (e.target === cartOverlay) cartOverlay.style.display = 'none';
-  });
+// Initial cart data (for demo)
+const defaultCart = [
+  { id: 1, name: 'Artisan Croissant', desc: 'Buttery, flaky perfection with premium French butter', price: 299, qty: 2, emoji: '🥐' },
+  { id: 2, name: 'Signature Blend Coffee', desc: 'Single-origin beans with chocolate and caramel notes', price: 199, qty: 1, emoji: '☕' },
+  { id: 3, name: 'Garden Fresh Salad', desc: 'Organic greens with house-made vinaigrette', price: 349, qty: 1, emoji: '🥗' }
+];
+if (!localStorage.getItem(CART_KEY)) setCart(defaultCart);
 
-  // Auth state simulation
-  const isAuthenticated = false; // Set to true if logged in
-  document.getElementById('signin-link').style.display = isAuthenticated ? 'none' : 'inline-block';
-  document.getElementById('account-link').style.display = isAuthenticated ? 'inline-block' : 'none';
-  // Deployment notice close button with null checks
-  const noticeClose: HTMLElement | null = document.getElementById('noticeClose');
-  const deploymentNotice: HTMLElement | null = document.getElementById('deploymentNotice');
-  
-  if (noticeClose && deploymentNotice) {
-    noticeClose.addEventListener('click', () => {
-      deploymentNotice.style.display = 'none';
-      localStorage.setItem('deploymentNoticeClosed', 'true');
-    });
-    
-    // Check if notice was previously closed
-    if (localStorage.getItem('deploymentNoticeClosed') === 'true') {
-      deploymentNotice.style.display = 'none';
-    }
+function renderCart() {
+  const cart = getCart();
+  const cartItems = document.getElementById('cartItems');
+  const proceedBtn = document.querySelector('.proceed-pay-btn');
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const discount = Math.round(subtotal * 0.35);
+  const delivery = cart.length ? 49 : 0;
+  const grandTotal = cart.length ? subtotal - discount + delivery : 0;
+  // Render items
+  if (cart.length === 0) {
+    cartItems.innerHTML = `<div class='empty-cart'><p>Your basket is empty.</p><a href='/menu' class='cta'>Browse Menu</a></div>`;
+    proceedBtn.style.display = 'none';
+  } else {
+    cartItems.innerHTML = cart.map((item, i) => `
+      <div class="cart-item">
+        <div class="item-image">${item.emoji}</div>
+        <div class="item-details">
+          <h4>${item.name}</h4>
+          <p>${item.desc}</p>
+          <div class="item-controls">
+            <button class="quantity-btn minus" data-idx="${i}">-</button>
+            <span class="quantity">${item.qty}</span>
+            <button class="quantity-btn plus" data-idx="${i}">+</button>
+          </div>
+        </div>
+        <div class="item-price">₹${item.price * item.qty}</div>
+      </div>
+    `).join('');
+    proceedBtn.style.display = 'block';
   }
+  // Update totals
+  document.querySelector('.price-summary .price-row:nth-child(1) span:last-child').textContent = `₹${subtotal}`;
+  document.querySelector('.price-summary .price-row.discount span:last-child').textContent = `-₹${discount}`;
+  document.querySelector('.price-summary .price-row.delivery span:last-child').textContent = `₹${delivery}`;
+  document.querySelector('.price-summary .price-row.total span:last-child').textContent = `₹${grandTotal}`;
+  proceedBtn.textContent = `Proceed to Pay (₹${grandTotal})`;
+  // Update cart count
+  document.querySelectorAll('.cart-count').forEach(el => el.textContent = cart.reduce((sum, i) => sum + i.qty, 0));
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('plus') || e.target.classList.contains('minus')) {
+    const idx = +e.target.dataset.idx;
+    const cart = getCart();
+    if (e.target.classList.contains('plus')) cart[idx].qty++;
+    if (e.target.classList.contains('minus') && cart[idx].qty > 1) cart[idx].qty--;
+    if (e.target.classList.contains('minus') && cart[idx].qty === 1) cart.splice(idx, 1);
+    setCart(cart);
+    renderCart();
+  }
+});
+
+// Address change
+const addressSpan = document.querySelector('.drawer-address-section strong');
+const changeBtn = document.querySelector('.change-address');
+changeBtn.onclick = function() {
+  const newAddr = prompt('Enter delivery address:', getAddress());
+  if (newAddr) {
+    setAddress(newAddr);
+    addressSpan.textContent = newAddr;
+  }
+};
+addressSpan.textContent = getAddress();
+
+// Cart drawer open/close
+const cartIcon = document.getElementById('cartIcon');
+const cartOverlay = document.getElementById('cartOverlay');
+const closeCart = document.getElementById('closeCart');
+cartIcon && cartIcon.addEventListener('click', () => {
+  cartOverlay.style.display = 'flex';
+  renderCart();
+});
+closeCart && closeCart.addEventListener('click', () => {
+  cartOverlay.style.display = 'none';
+});
+cartOverlay && cartOverlay.addEventListener('click', (e) => {
+  if (e.target === cartOverlay) cartOverlay.style.display = 'none';
+});
+
+// Auto-open drawer on Add to Cart
+function setupAddToCart() {
+  document.querySelectorAll('.add-to-cart').forEach((btn, i) => {
+    btn.onclick = function() {
+      const cart = getCart();
+      // Find by name (for demo)
+      const name = btn.parentElement.querySelector('h3').textContent;
+      const found = cart.find(item => item.name === name);
+      if (found) found.qty++;
+      else cart.push({
+        id: Date.now(),
+        name,
+        desc: btn.parentElement.querySelector('p').textContent,
+        price: +btn.parentElement.querySelector('.price').textContent.replace(/[^\d]/g, ''),
+        qty: 1,
+        emoji: btn.parentElement.querySelector('.food-image').textContent.trim()
+      });
+      setCart(cart);
+      renderCart();
+      cartOverlay.style.display = 'flex';
+    };
+  });
+}
+setupAddToCart();
+
+// On page load, render cart
+renderCart();
 </script>
 
 <style>
