@@ -485,6 +485,8 @@ renderCart();
     z-index: 1000;
     backdrop-filter: blur(2px);
     transition: background 0.3s;
+    /* Prevent background scroll when overlay is open */
+    overflow: hidden;
   }
   .checkout-drawer {
     width: 400px;
@@ -500,6 +502,10 @@ renderCart();
     display: flex;
     flex-direction: column;
     z-index: 1001;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Prevent page scroll when drawer is open */
+    overscroll-behavior: contain;
   }
   .cart-overlay[style*="display: flex"] .checkout-drawer {
     transform: translateX(0);
