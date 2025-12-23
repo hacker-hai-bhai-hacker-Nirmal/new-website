@@ -12,9 +12,9 @@ import Layout from '../layouts/Layout.astro'
     <div class="container header-flex">
       <a class="brand" href="/">Litterateur</a>
       <nav class="nav">
-        <a href="#featured-menu" class="scroll-link">Menu</a>
+        <a href="/menu">Menu</a>
         <a href="#how-it-works" class="scroll-link">How It Works</a>
-        <a href="#referral" class="scroll-link">Rewards</a>
+        <a href="/rewards">Rewards</a>
         <a href="/dashboard" id="account-link" style="display:none">My Account</a>
         <a class="cta" href="/login" id="signin-link">Sign In</a>
         <span class="cart-icon" id="cartIcon" tabindex="0">🛒 <span class="cart-count">0</span></span>
@@ -137,6 +137,7 @@ import Layout from '../layouts/Layout.astro'
     <section id="featured-menu" class="featured-menu">
       <div class="container">
         <h2>Featured Menu</h2>
+        <p class="section-desc">A taste of our bestsellers. <a href="/menu" class="inline-link">View Full Menu</a></p>
         <div class="featured-grid">
           <div class="menu-card">
             <div class="food-image" aria-label="Artisan Croissant" role="img">🥐</div>
@@ -199,8 +200,8 @@ import Layout from '../layouts/Layout.astro'
     <section id="referral" class="referral-section">
       <div class="container">
         <div class="referral-content">
-          <h2>Refer Friends & Earn Up to 60% Off!</h2>
-          <p>Share Litterateur with your friends and watch your discounts grow</p>
+          <h2>Rewards Preview</h2>
+          <p>Share Litterateur with your friends and watch your discounts grow. <a href="/rewards" class="inline-link">See All Rewards</a></p>
           <div class="referral-steps">
             <div class="referral-step">
               <h4>First Referral</h4>
