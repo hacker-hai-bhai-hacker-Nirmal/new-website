@@ -93,76 +93,86 @@ import Layout from '../layouts/Layout.astro'
               <p>Use your email and password for secure authentication</p>
             </div>
 
-            <form id="loginForm" class="login-form">
+            <form id="phoneForm" class="phone-form">
               <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required />
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required />
               </div>
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required />
+              <div id="recaptcha-container"></div>
+              <button type="button" id="sendOtpBtn" class="primary-btn">Send OTP</button>
+              <div id="otpSection" style="display:none; margin-top:20px;">
+                <div class="form-group">
+                  <label for="otp">Enter OTP</label>
+                  <input type="text" id="otp" name="otp" maxlength="6" required />
+                </div>
+                <button type="button" id="verifyOtpBtn" class="primary-btn">Verify OTP</button>
               </div>
-              <button type="submit" class="primary-btn">Sign In</button>
-              <div id="loginError" style="color:var(--error-red);margin-top:10px;"></div>
-            </form>
-
-            <div class="divider" style="margin: 30px 0; text-align: center; color: var(--text-light);">or</div>
-
-            <form id="signupForm" class="signup-form">
-              <div class="form-group">
-                <label for="signupEmail">Email</label>
-                <input type="email" id="signupEmail" name="signupEmail" required />
-              </div>
-              <div class="form-group">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" name="signupPassword" required />
-              </div>
-              <button type="submit" class="primary-btn">Sign Up</button>
-              <div id="signupError" style="color:var(--error-red);margin-top:10px;"></div>
+              <div id="phoneError" style="color:var(--error-red);margin-top:10px;"></div>
             </form>
 
             <script type="module">
-              import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+              import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
               import { doc, getDoc, setDoc } from "firebase/firestore";
-              import { auth, db } from "../utils/firebase.js";
+              import { db } from "../utils/firebase.js";
 
-              document.getElementById('loginForm').onsubmit = async (e) => {
-                e.preventDefault();
-                const email = e.target.email.value;
-                const password = e.target.password.value;
-                const errorDiv = document.getElementById('loginError');
+              const auth = getAuth();
+              let confirmationResult = null;
+
+              // Setup reCAPTCHA
+              window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+                'size': 'invisible',
+                'callback': (response) => {
+                  // reCAPTCHA solved
+                }
+              }, auth);
+
+              document.getElementById('sendOtpBtn').onclick = async () => {
+                const phoneInput = document.getElementById('phone');
+                const phone = phoneInput.value.trim();
+                const errorDiv = document.getElementById('phoneError');
                 errorDiv.textContent = "";
+                if (!/^\+?[1-9]\d{9,14}$/.test(phone)) {
+                  errorDiv.textContent = "Please enter a valid phone number (with country code, e.g. +91...)";
+                  return;
+                }
                 try {
-                  const userCred = await signInWithEmailAndPassword(auth, email, password);
-                  const user = userCred.user;
-                  const userDoc = await getDoc(doc(db, "users", user.uid));
+                  confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
+                  document.getElementById('otpSection').style.display = "block";
+                  errorDiv.textContent = "OTP sent!";
+                } catch (err) {
+                  errorDiv.textContent = err.message;
+                }
+              };
+
+              document.getElementById('verifyOtpBtn').onclick = async () => {
+                const otpInput = document.getElementById('otp');
+                const otp = otpInput.value.trim();
+                const errorDiv = document.getElementById('phoneError');
+                errorDiv.textContent = "";
+                if (!otp || otp.length !== 6) {
+                  errorDiv.textContent = "Please enter the 6-digit OTP.";
+                  return;
+                }
+                try {
+                  const result = await confirmationResult.confirm(otp);
+                  const user = result.user;
+                  // Check if user doc exists, if not, create with role 'customer'
+                  const userDocRef = doc(db, "users", user.uid);
+                  const userDoc = await getDoc(userDocRef);
+                  if (!userDoc.exists()) {
+                    await setDoc(userDocRef, {
+                      phone: user.phoneNumber,
+                      role: "customer",
+                      createdAt: new Date().toISOString()
+                    });
+                  }
+                  // Redirect based on role
                   const role = userDoc.exists() ? userDoc.data().role : "customer";
                   if (role === "admin") {
                     window.location.href = "/admin";
                   } else {
                     window.location.href = "/dashboard";
                   }
-                } catch (err) {
-                  errorDiv.textContent = err.message;
-                }
-              };
-
-              document.getElementById('signupForm').onsubmit = async (e) => {
-                e.preventDefault();
-                const email = e.target.signupEmail.value;
-                const password = e.target.signupPassword.value;
-                const errorDiv = document.getElementById('signupError');
-                errorDiv.textContent = "";
-                try {
-                  const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                  const user = userCred.user;
-                  // Create Firestore user document with default role 'customer'
-                  await setDoc(doc(db, "users", user.uid), {
-                    email: user.email,
-                    role: "customer",
-                    createdAt: new Date().toISOString()
-                  });
-                  window.location.href = "/dashboard";
                 } catch (err) {
                   errorDiv.textContent = err.message;
                 }
