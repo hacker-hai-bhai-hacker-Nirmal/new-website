@@ -13,43 +13,13 @@ import Layout from '../layouts/Layout.astro'
   <header class="site-header">
     <div class="container">
       <a class="brand" href="/">
-        <span class="brand-icon">📚</span>
-        Litterateur
-      </a>
-      <nav class="nav">
-        <a href="/menu">Menu</a>
-        <a href="/rewards">Rewards</a>
-        <a class="cta" href="/otp-login">Sign In</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="auth-section">
-      <div class="container">
-        <div class="auth-container">
-          <div class="auth-image">
-            <div class="image-content">
-              <div class="floating-elements">
-                <div class="float-item coffee">☕</div>
-                <div class="float-item book">📖</div>
-                <div class="float-item food">🍽️</div>
-              </div>
-              <div class="image-text">
-                <h2>Literary Dining Experience</h2>
-                <p>Where every meal tells a story</p>
-              </div>
-            </div>
-          </div>
-          
           <div class="auth-form-container">
-
             <div class="auth-header">
               <div class="auth-badge">
                 <span>🔐 Secure Login</span>
               </div>
-              <h1>Sign In to Litterateur</h1>
-              <p>Use your email and password for secure authentication</p>
+              <h1>Sign In or Sign Up to Litterateur</h1>
+              <p>Use your email and password for secure authentication. Email verification is required.</p>
             </div>
 
             <form id="signupForm" class="signup-form">
@@ -132,18 +102,6 @@ import Layout from '../layouts/Layout.astro'
                 }
               };
             </script>
-  }
-
-  body {
-    font-family: 'Georgia', serif;
-    line-height: 1.6;
-    color: var(--text-dark);
-    background: var(--cream-white);
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
     padding: 0 20px;
   }
 
