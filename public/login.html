@@ -46,80 +46,102 @@
   <script>
     // Set deployment timestamp
     document.querySelector('.deploy-timestamp').textContent = 'Deployment Timestamp: ' + new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
-
-    // Firebase config (public, safe for client)
-    const firebaseConfig = {
-      apiKey: "AIzaSyB8tgve3Kp1iTSia65hggHdiRrMerlFw9o",
-      authDomain: "litterateur-e0a3c.firebaseapp.com",
-      projectId: "litterateur-e0a3c",
-      storageBucket: "litterateur-e0a3c.firebasestorage.app",
-      messagingSenderId: "720445027014",
-      appId: "1:720445027014:web:bf1d60c9a2a3f93c675dc7",
-      measurementId: "G-JM0F9W1H40"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    let confirmationResult = null;
-
-    // Setup reCAPTCHA
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-      'size': 'invisible',
-      'callback': (response) => {
-        // reCAPTCHA solved
-      }
-    }, auth);
-
-    document.getElementById('sendOtpBtn').onclick = async () => {
-      const phoneInput = document.getElementById('phoneNumber');
-      const phone = phoneInput.value;
-      const errorDiv = document.getElementById('phoneError');
-      errorDiv.textContent = "";
-      if (!phone) {
-        errorDiv.textContent = "Please enter a valid phone number.";
-        return;
-      }
-      try {
-        confirmationResult = await auth.signInWithPhoneNumber(phone, window.recaptchaVerifier);
-        document.getElementById('otpSection').style.display = 'block';
-        errorDiv.textContent = "OTP sent! Please check your phone.";
-      } catch (err) {
-        errorDiv.textContent = err.message;
-      }
-    };
-
-    document.getElementById('verifyOtpBtn').onclick = async () => {
-      const otpInput = document.getElementById('otpCode');
-      const otp = otpInput.value;
-      const errorDiv = document.getElementById('phoneError');
-      errorDiv.textContent = "";
-      if (!otp || !confirmationResult) {
-        errorDiv.textContent = "Please enter the OTP sent to your phone.";
-        return;
-      }
-      try {
-        const result = await confirmationResult.confirm(otp);
-        const user = result.user;
-        // Create user doc if not exists
-        const userDoc = await db.collection("users").doc(user.uid).get();
-        if (!userDoc.exists) {
-          await db.collection("users").doc(user.uid).set({
-            phone: user.phoneNumber,
-            role: "customer",
-            createdAt: new Date().toISOString()
-          });
-        }
-        // Redirect based on role
-        const role = userDoc.exists ? userDoc.data().role : "customer";
-        if (role === "admin") {
-          window.location.href = "/admin";
-        } else {
-          window.location.href = "/dashboard";
-        }
-      } catch (err) {
-        errorDiv.textContent = err.message;
-      }
-    };
+  </script>
+  <script>
+    // Helper to log and show errors
+    function showError(msg) {
+      console.error(msg);
+      var errorDiv = document.getElementById('phoneError');
+      if (errorDiv) errorDiv.textContent = msg;
+    }
+    // Load Firebase scripts in order and run logic only after all are loaded
+    function loadScript(src) {
+      return new Promise(function(resolve, reject) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = function(e) { reject('Failed to load ' + src); };
+        document.body.appendChild(s);
+      });
+    }
+    Promise.resolve()
+      .then(function() { return loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'); })
+      .then(function() { return loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js'); })
+      .then(function() { return loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'); })
+      .then(function() {
+        if (!window.firebase) return showError('Firebase global not found!');
+        // Firebase config (public, safe for client)
+        var firebaseConfig = {
+          apiKey: "AIzaSyB8tgve3Kp1iTSia65hggHdiRrMerlFw9o",
+          authDomain: "litterateur-e0a3c.firebaseapp.com",
+          projectId: "litterateur-e0a3c",
+          storageBucket: "litterateur-e0a3c.firebasestorage.app",
+          messagingSenderId: "720445027014",
+          appId: "1:720445027014:web:bf1d60c9a2a3f93c675dc7",
+          measurementId: "G-JM0F9W1H40"
+        };
+        firebase.initializeApp(firebaseConfig);
+        var auth = firebase.auth();
+        var db = firebase.firestore();
+        var confirmationResult = null;
+        // Setup reCAPTCHA
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          'size': 'invisible',
+          'callback': function(response) {}
+        }, auth);
+        document.getElementById('sendOtpBtn').onclick = async function() {
+          var phoneInput = document.getElementById('phoneNumber');
+          var phone = phoneInput.value;
+          var errorDiv = document.getElementById('phoneError');
+          errorDiv.textContent = "";
+          if (!phone) {
+            errorDiv.textContent = "Please enter a valid phone number.";
+            return;
+          }
+          try {
+            confirmationResult = await auth.signInWithPhoneNumber(phone, window.recaptchaVerifier);
+            document.getElementById('otpSection').style.display = 'block';
+            errorDiv.textContent = "OTP sent! Please check your phone.";
+          } catch (err) {
+            errorDiv.textContent = err.message;
+          }
+        };
+        document.getElementById('verifyOtpBtn').onclick = async function() {
+          var otpInput = document.getElementById('otpCode');
+          var otp = otpInput.value;
+          var errorDiv = document.getElementById('phoneError');
+          errorDiv.textContent = "";
+          if (!otp || !confirmationResult) {
+            errorDiv.textContent = "Please enter the OTP sent to your phone.";
+            return;
+          }
+          try {
+            var result = await confirmationResult.confirm(otp);
+            var user = result.user;
+            // Create user doc if not exists
+            var userDoc = await db.collection("users").doc(user.uid).get();
+            if (!userDoc.exists) {
+              await db.collection("users").doc(user.uid).set({
+                phone: user.phoneNumber,
+                role: "customer",
+                createdAt: new Date().toISOString()
+              });
+            }
+            // Redirect based on role
+            var role = userDoc.exists ? userDoc.data().role : "customer";
+            if (role === "admin") {
+              window.location.href = "/admin";
+            } else {
+              window.location.href = "/dashboard";
+            }
+          } catch (err) {
+            errorDiv.textContent = err.message;
+          }
+        };
+      })
+      .catch(function(e) {
+        showError(e);
+      });
   </script>
 </body>
 </html>
