@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Litterateur — Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f8f8; margin: 0; }
+    .container { max-width: 400px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+    .brand { font-size: 2rem; font-weight: bold; color: #2a7a2e; text-align: center; margin-bottom: 16px; }
+    .discount-banner { background: linear-gradient(45deg, gold, #FFA500); color: #2a7a2e; text-align: center; padding: 12px; font-weight: bold; font-size: 18px; border-radius: 8px 8px 0 0; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; margin-bottom: 6px; font-weight: 500; }
+    input[type="tel"], input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+    .primary-btn { width: 100%; background: #2a7a2e; color: #fff; border: none; padding: 12px; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    .primary-btn:disabled { background: #aaa; }
+    #phoneError { color: #d32f2f; margin-top: 10px; min-height: 20px; }
+    .deploy-timestamp { color: #888; font-size: 14px; text-align: right; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="discount-banner">🎉 Launch Discount: Get Up to 60% Off! 🎉</div>
+    <div class="brand">Litterateur</div>
+    <div class="deploy-timestamp">Deployment Timestamp: <!--TIMESTAMP--></div>
+    <form id="phoneForm" class="phone-form">
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+91 9876543210" required />
+      </div>
+      <div id="recaptcha-container"></div>
+      <button type="button" id="sendOtpBtn" class="primary-btn">Send OTP</button>
+      <div id="otpSection" style="display:none; margin-top:20px;">
+        <div class="form-group">
+          <label for="otpCode">Enter OTP</label>
+          <input type="text" id="otpCode" name="otpCode" maxlength="6" required />
+        </div>
+        <button type="button" id="verifyOtpBtn" class="primary-btn">Verify & Sign In</button>
+      </div>
+      <div id="phoneError"></div>
+    </form>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Set deployment timestamp
+    document.querySelector('.deploy-timestamp').textContent = 'Deployment Timestamp: ' + new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+
+    // Firebase config (public, safe for client)
+    const firebaseConfig = {
+      apiKey: "AIzaSyB8tgve3Kp1iTSia65hggHdiRrMerlFw9o",
+      authDomain: "litterateur-e0a3c.firebaseapp.com",
+      projectId: "litterateur-e0a3c",
+      storageBucket: "litterateur-e0a3c.firebasestorage.app",
+      messagingSenderId: "720445027014",
+      appId: "1:720445027014:web:bf1d60c9a2a3f93c675dc7",
+      measurementId: "G-JM0F9W1H40"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    let confirmationResult = null;
+
+    // Setup reCAPTCHA
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'invisible',
+      'callback': (response) => {
+        // reCAPTCHA solved
+      }
+    }, auth);
+
+    document.getElementById('sendOtpBtn').onclick = async () => {
+      const phoneInput = document.getElementById('phoneNumber');
+      const phone = phoneInput.value;
+      const errorDiv = document.getElementById('phoneError');
+      errorDiv.textContent = "";
+      if (!phone) {
+        errorDiv.textContent = "Please enter a valid phone number.";
+        return;
+      }
+      try {
+        confirmationResult = await auth.signInWithPhoneNumber(phone, window.recaptchaVerifier);
+        document.getElementById('otpSection').style.display = 'block';
+        errorDiv.textContent = "OTP sent! Please check your phone.";
+      } catch (err) {
+        errorDiv.textContent = err.message;
+      }
+    };
+
+    document.getElementById('verifyOtpBtn').onclick = async () => {
+      const otpInput = document.getElementById('otpCode');
+      const otp = otpInput.value;
+      const errorDiv = document.getElementById('phoneError');
+      errorDiv.textContent = "";
+      if (!otp || !confirmationResult) {
+        errorDiv.textContent = "Please enter the OTP sent to your phone.";
+        return;
+      }
+      try {
+        const result = await confirmationResult.confirm(otp);
+        const user = result.user;
+        // Create user doc if not exists
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        if (!userDoc.exists) {
+          await db.collection("users").doc(user.uid).set({
+            phone: user.phoneNumber,
+            role: "customer",
+            createdAt: new Date().toISOString()
+          });
+        }
+        // Redirect based on role
+        const role = userDoc.exists ? userDoc.data().role : "customer";
+        if (role === "admin") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/dashboard";
+        }
+      } catch (err) {
+        errorDiv.textContent = err.message;
+      }
+    };
+  </script>
+</body>
+</html>
