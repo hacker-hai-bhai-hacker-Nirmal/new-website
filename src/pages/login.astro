@@ -40,11 +40,7 @@ import Layout from '../layouts/Layout.astro'
         </form>
 
         <script type="module">
-          import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
-          import { doc, getDoc, setDoc } from "firebase/firestore";
-          import { db } from "../utils/firebase.js";
-
-          const auth = getAuth();
+          import { auth, db, getAuth, signInWithPhoneNumber, RecaptchaVerifier, doc, getDoc, setDoc } from "../utils/firebase.js";
           let confirmationResult = null;
 
           // Setup reCAPTCHA
