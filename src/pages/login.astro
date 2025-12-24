@@ -35,87 +35,7 @@ import Layout from '../layouts/Layout.astro'
           <div id="phoneError" style="color:var(--error-red);margin-top:10px;"></div>
         </form>
         <!-- redeploy trigger: 2025-12-24 -->
-        <!-- Firebase App (the core Firebase SDK) -->
-        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-        <!-- Inline Firebase logic: must come after all CDN scripts -->
-        <script is:inline>
-          window.addEventListener('load', () => {
-            // Firebase config (public, safe for client)
-            const firebaseConfig = {
-              apiKey: "AIzaSyB8tgve3Kp1iTSia65hggHdiRrMerlFw9o",
-              authDomain: "litterateur-e0a3c.firebaseapp.com",
-              projectId: "litterateur-e0a3c",
-              storageBucket: "litterateur-e0a3c.firebasestorage.app",
-              messagingSenderId: "720445027014",
-              appId: "1:720445027014:web:bf1d60c9a2a3f93c675dc7",
-              measurementId: "G-JM0F9W1H40"
-            };
-            firebase.initializeApp(firebaseConfig);
-            const auth = firebase.auth();
-            const db = firebase.firestore();
-            let confirmationResult = null;
-            // Setup reCAPTCHA
-            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-              'size': 'invisible',
-              'callback': (response) => {
-                // reCAPTCHA solved
-              }
-            }, auth);
-
-            document.getElementById('sendOtpBtn').onclick = async () => {
-              const phoneInput = document.getElementById('phoneNumber');
-              const phone = phoneInput.value;
-              const errorDiv = document.getElementById('phoneError');
-              errorDiv.textContent = "";
-              if (!phone) {
-                errorDiv.textContent = "Please enter a valid phone number.";
-                return;
-              }
-              try {
-                confirmationResult = await auth.signInWithPhoneNumber(phone, window.recaptchaVerifier);
-                document.getElementById('otpSection').style.display = 'block';
-                errorDiv.textContent = "OTP sent! Please check your phone.";
-              } catch (err) {
-                errorDiv.textContent = err.message;
-              }
-            };
-
-            document.getElementById('verifyOtpBtn').onclick = async () => {
-              const otpInput = document.getElementById('otpCode');
-              const otp = otpInput.value;
-              const errorDiv = document.getElementById('phoneError');
-              errorDiv.textContent = "";
-              if (!otp || !confirmationResult) {
-                errorDiv.textContent = "Please enter the OTP sent to your phone.";
-                return;
-              }
-              try {
-                const result = await confirmationResult.confirm(otp);
-                const user = result.user;
-                // Create user doc if not exists
-                const userDoc = await db.collection("users").doc(user.uid).get();
-                if (!userDoc.exists) {
-                  await db.collection("users").doc(user.uid).set({
-                    phone: user.phoneNumber,
-                    role: "customer",
-                    createdAt: new Date().toISOString()
-                  });
-                }
-                // Redirect based on role
-                const role = userDoc.exists ? userDoc.data().role : "customer";
-                if (role === "admin") {
-                  window.location.href = "/admin";
-                } else {
-                  window.location.href = "/dashboard";
-                }
-              } catch (err) {
-                errorDiv.textContent = err.message;
-              }
-            };
-          });
-        </script>
+        <!-- Scripts moved to end of body for reliability -->
         </script>
       </div> <!-- end .auth-form-container -->
       </div> <!-- end .auth-container -->
@@ -123,6 +43,86 @@ import Layout from '../layouts/Layout.astro'
   </section>
 </main>
 </Layout>
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      // Firebase config (public, safe for client)
+      const firebaseConfig = {
+        apiKey: "AIzaSyB8tgve3Kp1iTSia65hggHdiRrMerlFw9o",
+        authDomain: "litterateur-e0a3c.firebaseapp.com",
+        projectId: "litterateur-e0a3c",
+        storageBucket: "litterateur-e0a3c.firebasestorage.app",
+        messagingSenderId: "720445027014",
+        appId: "1:720445027014:web:bf1d60c9a2a3f93c675dc7",
+        measurementId: "G-JM0F9W1H40"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+      let confirmationResult = null;
+      // Setup reCAPTCHA
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'invisible',
+        'callback': (response) => {
+          // reCAPTCHA solved
+        }
+      }, auth);
+
+      document.getElementById('sendOtpBtn').onclick = async () => {
+        const phoneInput = document.getElementById('phoneNumber');
+        const phone = phoneInput.value;
+        const errorDiv = document.getElementById('phoneError');
+        errorDiv.textContent = "";
+        if (!phone) {
+          errorDiv.textContent = "Please enter a valid phone number.";
+          return;
+        }
+        try {
+          confirmationResult = await auth.signInWithPhoneNumber(phone, window.recaptchaVerifier);
+          document.getElementById('otpSection').style.display = 'block';
+          errorDiv.textContent = "OTP sent! Please check your phone.";
+        } catch (err) {
+          errorDiv.textContent = err.message;
+        }
+      };
+
+      document.getElementById('verifyOtpBtn').onclick = async () => {
+        const otpInput = document.getElementById('otpCode');
+        const otp = otpInput.value;
+        const errorDiv = document.getElementById('phoneError');
+        errorDiv.textContent = "";
+        if (!otp || !confirmationResult) {
+          errorDiv.textContent = "Please enter the OTP sent to your phone.";
+          return;
+        }
+        try {
+          const result = await confirmationResult.confirm(otp);
+          const user = result.user;
+          // Create user doc if not exists
+          const userDoc = await db.collection("users").doc(user.uid).get();
+          if (!userDoc.exists) {
+            await db.collection("users").doc(user.uid).set({
+              phone: user.phoneNumber,
+              role: "customer",
+              createdAt: new Date().toISOString()
+            });
+          }
+          // Redirect based on role
+          const role = userDoc.exists ? userDoc.data().role : "customer";
+          if (role === "admin") {
+            window.location.href = "/admin";
+          } else {
+            window.location.href = "/dashboard";
+          }
+        } catch (err) {
+          errorDiv.textContent = err.message;
+        }
+      };
+    });
+  </script>
 
 <style>
   /* Discount Banner */
