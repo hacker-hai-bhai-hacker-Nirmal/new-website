@@ -14,6 +14,9 @@ import Layout from '../layouts/Layout.astro'
     <div class="container">
       <a class="brand" href="/">Litterateur</a>
       <div class="auth-form-container">
+        <div class="deploy-timestamp" style="margin-bottom:16px;color:#888;font-size:14px;text-align:right;">
+          Deployment Timestamp: {new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })}
+        </div>
         <!-- redeploy trigger: 2025-12-24 -->
         <script type="module" is:inline>
           import { auth, db, getAuth, signInWithPhoneNumber, RecaptchaVerifier, doc, getDoc, setDoc } from "../utils/firebase.js";
