@@ -15,34 +15,6 @@ import Layout from '../layouts/Layout.astro'
       <a class="brand" href="/">Litterateur</a>
       <div class="auth-form-container">
         <script type="module" src="/src/scripts/phone-auth.js"></script>
-            if (!otp || !confirmationResult) {
-              errorDiv.textContent = "Please enter the OTP sent to your phone.";
-              return;
-            }
-            try {
-              const result = await confirmationResult.confirm(otp);
-              const user = result.user;
-              // Create user doc if not exists
-              const userDoc = await getDoc(doc(db, "users", user.uid));
-              if (!userDoc.exists()) {
-                await setDoc(doc(db, "users", user.uid), {
-                  phone: user.phoneNumber,
-                  role: "customer",
-                  createdAt: new Date().toISOString()
-                });
-              }
-              // Redirect based on role
-              const role = userDoc.exists() ? userDoc.data().role : "customer";
-              if (role === "admin") {
-                window.location.href = "/admin";
-              } else {
-                window.location.href = "/dashboard";
-              }
-            } catch (err) {
-              errorDiv.textContent = err.message;
-            }
-          };
-        </script>
       </div> <!-- end .auth-form-container -->
       </div> <!-- end .auth-container -->
     </div> <!-- end .container -->
