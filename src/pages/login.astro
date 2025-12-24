@@ -14,6 +14,7 @@ import Layout from '../layouts/Layout.astro'
     <div class="container">
       <a class="brand" href="/">Litterateur</a>
       <div class="auth-form-container">
+        <!-- redeploy trigger: 2025-12-24 -->
         <script type="module" is:inline>
           import { auth, db, getAuth, signInWithPhoneNumber, RecaptchaVerifier, doc, getDoc, setDoc } from "../utils/firebase.js";
           let confirmationResult = null;
