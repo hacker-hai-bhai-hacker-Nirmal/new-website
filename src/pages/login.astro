@@ -12,99 +12,97 @@ import Layout from '../layouts/Layout.astro'
 
   <header class="site-header">
     <div class="container">
-      <a class="brand" href="/">
-          <div class="auth-form-container">
-            <div class="auth-header">
-              <div class="auth-badge">
-                <span>🔐 Secure Login</span>
-              </div>
-              <h1>Sign In or Sign Up to Litterateur</h1>
-              <p>Use your email and password for secure authentication. Email verification is required.</p>
-            </div>
+      <a class="brand" href="/">Litterateur</a>
+      <div class="auth-form-container">
+        <div class="auth-header">
+          <div class="auth-badge">
+            <span>🔐 Secure Login</span>
+          </div>
+          <h1>Sign In or Sign Up to Litterateur</h1>
+          <p>Use your email and password for secure authentication. Email verification is required.</p>
+        </div>
 
-            <form id="signupForm" class="signup-form">
-              <div class="form-group">
-                <label for="signupEmail">Email</label>
-                <input type="email" id="signupEmail" name="signupEmail" required />
-              </div>
-              <div class="form-group">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" name="signupPassword" required />
-              </div>
-              <button type="submit" class="primary-btn">Sign Up</button>
-              <div id="signupError" style="color:var(--error-red);margin-top:10px;"></div>
-            </form>
+        <form id="signupForm" class="signup-form">
+          <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <input type="email" id="signupEmail" name="signupEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" name="signupPassword" required />
+          </div>
+          <button type="submit" class="primary-btn">Sign Up</button>
+          <div id="signupError" style="color:var(--error-red);margin-top:10px;"></div>
+        </form>
 
-            <form id="loginForm" class="login-form" style="margin-top:30px;">
-              <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" name="loginEmail" required />
-              </div>
-              <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" name="loginPassword" required />
-              </div>
-              <button type="submit" class="primary-btn">Sign In</button>
-              <div id="loginError" style="color:var(--error-red);margin-top:10px;"></div>
-            </form>
+        <form id="loginForm" class="login-form" style="margin-top:30px;">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" name="loginEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" name="loginPassword" required />
+          </div>
+          <button type="submit" class="primary-btn">Sign In</button>
+          <div id="loginError" style="color:var(--error-red);margin-top:10px;"></div>
+        </form>
 
-            <script type="module">
-              import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-              import { doc, getDoc, setDoc } from "firebase/firestore";
-              import { db } from "../utils/firebase.js";
+        <script type="module">
+          import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+          import { doc, getDoc, setDoc } from "firebase/firestore";
+          import { db } from "../utils/firebase.js";
 
-              const auth = getAuth();
+          const auth = getAuth();
 
-              document.getElementById('signupForm').onsubmit = async (e) => {
-                e.preventDefault();
-                const email = e.target.signupEmail.value;
-                const password = e.target.signupPassword.value;
-                const errorDiv = document.getElementById('signupError');
-                errorDiv.textContent = "";
-                try {
-                  const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                  const user = userCred.user;
-                  await sendEmailVerification(user);
-                  await setDoc(doc(db, "users", user.uid), {
-                    email: user.email,
-                    role: "customer",
-                    createdAt: new Date().toISOString()
-                  });
-                  errorDiv.textContent = "Signup successful! Please check your email for a verification link.";
-                } catch (err) {
-                  errorDiv.textContent = err.message;
-                }
-              };
+          document.getElementById('signupForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = e.target.signupEmail.value;
+            const password = e.target.signupPassword.value;
+            const errorDiv = document.getElementById('signupError');
+            errorDiv.textContent = "";
+            try {
+              const userCred = await createUserWithEmailAndPassword(auth, email, password);
+              const user = userCred.user;
+              await sendEmailVerification(user);
+              await setDoc(doc(db, "users", user.uid), {
+                email: user.email,
+                role: "customer",
+                createdAt: new Date().toISOString()
+              });
+              errorDiv.textContent = "Signup successful! Please check your email for a verification link.";
+            } catch (err) {
+              errorDiv.textContent = err.message;
+            }
+          };
 
-              document.getElementById('loginForm').onsubmit = async (e) => {
-                e.preventDefault();
-                const email = e.target.loginEmail.value;
-                const password = e.target.loginPassword.value;
-                const errorDiv = document.getElementById('loginError');
-                errorDiv.textContent = "";
-                try {
-                  const userCred = await signInWithEmailAndPassword(auth, email, password);
-                  const user = userCred.user;
-                  await user.reload();
-                  if (!user.emailVerified) {
-                    errorDiv.textContent = "Please verify your email before logging in.";
-                    return;
-                  }
-                  const userDoc = await getDoc(doc(db, "users", user.uid));
-                  const role = userDoc.exists() ? userDoc.data().role : "customer";
-                  if (role === "admin") {
-                    window.location.href = "/admin";
-                  } else {
-                    window.location.href = "/dashboard";
-                  }
-                } catch (err) {
-                  errorDiv.textContent = err.message;
-                }
-              };
-            </script>
-
-          </script>
-        </div> <!-- end .auth-form-container -->
+          document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = e.target.loginEmail.value;
+            const password = e.target.loginPassword.value;
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = "";
+            try {
+              const userCred = await signInWithEmailAndPassword(auth, email, password);
+              const user = userCred.user;
+              await user.reload();
+              if (!user.emailVerified) {
+                errorDiv.textContent = "Please verify your email before logging in.";
+                return;
+              }
+              const userDoc = await getDoc(doc(db, "users", user.uid));
+              const role = userDoc.exists() ? userDoc.data().role : "customer";
+              if (role === "admin") {
+                window.location.href = "/admin";
+              } else {
+                window.location.href = "/dashboard";
+              }
+            } catch (err) {
+              errorDiv.textContent = err.message;
+            }
+          };
+        </script>
+      </div> <!-- end .auth-form-container -->
       </div> <!-- end .auth-container -->
     </div> <!-- end .container -->
   </section>
