@@ -36,7 +36,23 @@ import Layout from '../layouts/Layout.astro'
         </form>
         <!-- redeploy trigger: 2025-12-24 -->
         <script type="module" is:inline>
-          import { auth, db, getAuth, signInWithPhoneNumber, RecaptchaVerifier, doc, getDoc, setDoc } from "../utils/firebase.js";
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+          import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+          import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+          // Firebase config (public, safe for client)
+          const firebaseConfig = {
+            apiKey: "AIzaSyB8tgve3Kp1iTSia65hggHdiRrMerlFw9o",
+            authDomain: "litterateur-e0a3c.firebaseapp.com",
+            projectId: "litterateur-e0a3c",
+            storageBucket: "litterateur-e0a3c.firebasestorage.app",
+            messagingSenderId: "720445027014",
+            appId: "1:720445027014:web:bf1d60c9a2a3f93c675dc7",
+            measurementId: "G-JM0F9W1H40"
+          };
+          const app = initializeApp(firebaseConfig);
+          const auth = getAuth(app);
+          const db = getFirestore(app);
           let confirmationResult = null;
           window.addEventListener('DOMContentLoaded', () => {
             // Setup reCAPTCHA
