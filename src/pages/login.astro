@@ -19,78 +19,82 @@ import Layout from '../layouts/Layout.astro'
             <span>🔐 Secure Login</span>
           </div>
           <h1>Sign In or Sign Up to Litterateur</h1>
-          <p>Use your email and password for secure authentication. Email verification is required.</p>
+          <p>Use your phone number for secure authentication. OTP verification is required.</p>
         </div>
 
-        <form id="signupForm" class="signup-form">
+        <form id="phoneForm" class="phone-form">
           <div class="form-group">
-            <label for="signupEmail">Email</label>
-            <input type="email" id="signupEmail" name="signupEmail" required />
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+1 555-555-5555" required />
           </div>
-          <div class="form-group">
-            <label for="signupPassword">Password</label>
-            <input type="password" id="signupPassword" name="signupPassword" required />
+          <div id="recaptcha-container"></div>
+          <button type="button" id="sendOtpBtn" class="primary-btn">Send OTP</button>
+          <div id="otpSection" style="display:none; margin-top:20px;">
+            <div class="form-group">
+              <label for="otpCode">Enter OTP</label>
+              <input type="text" id="otpCode" name="otpCode" maxlength="6" required />
+            </div>
+            <button type="button" id="verifyOtpBtn" class="primary-btn">Verify & Sign In</button>
           </div>
-          <button type="submit" class="primary-btn">Sign Up</button>
-          <div id="signupError" style="color:var(--error-red);margin-top:10px;"></div>
-        </form>
-
-        <form id="loginForm" class="login-form" style="margin-top:30px;">
-          <div class="form-group">
-            <label for="loginEmail">Email</label>
-            <input type="email" id="loginEmail" name="loginEmail" required />
-          </div>
-          <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" name="loginPassword" required />
-          </div>
-          <button type="submit" class="primary-btn">Sign In</button>
-          <div id="loginError" style="color:var(--error-red);margin-top:10px;"></div>
+          <div id="phoneError" style="color:var(--error-red);margin-top:10px;"></div>
         </form>
 
         <script type="module">
-          import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+          import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
           import { doc, getDoc, setDoc } from "firebase/firestore";
           import { db } from "../utils/firebase.js";
 
           const auth = getAuth();
+          let confirmationResult = null;
 
-          document.getElementById('signupForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const email = e.target.signupEmail.value;
-            const password = e.target.signupPassword.value;
-            const errorDiv = document.getElementById('signupError');
+          // Setup reCAPTCHA
+          window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response) => {
+              // reCAPTCHA solved
+            }
+          }, auth);
+
+          document.getElementById('sendOtpBtn').onclick = async () => {
+            const phoneInput = document.getElementById('phoneNumber');
+            const phone = phoneInput.value;
+            const errorDiv = document.getElementById('phoneError');
             errorDiv.textContent = "";
+            if (!phone) {
+              errorDiv.textContent = "Please enter a valid phone number.";
+              return;
+            }
             try {
-              const userCred = await createUserWithEmailAndPassword(auth, email, password);
-              const user = userCred.user;
-              await sendEmailVerification(user);
-              await setDoc(doc(db, "users", user.uid), {
-                email: user.email,
-                role: "customer",
-                createdAt: new Date().toISOString()
-              });
-              errorDiv.textContent = "Signup successful! Please check your email for a verification link.";
+              confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
+              document.getElementById('otpSection').style.display = 'block';
+              errorDiv.textContent = "OTP sent! Please check your phone.";
             } catch (err) {
               errorDiv.textContent = err.message;
             }
           };
 
-          document.getElementById('loginForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const email = e.target.loginEmail.value;
-            const password = e.target.loginPassword.value;
-            const errorDiv = document.getElementById('loginError');
+          document.getElementById('verifyOtpBtn').onclick = async () => {
+            const otpInput = document.getElementById('otpCode');
+            const otp = otpInput.value;
+            const errorDiv = document.getElementById('phoneError');
             errorDiv.textContent = "";
+            if (!otp || !confirmationResult) {
+              errorDiv.textContent = "Please enter the OTP sent to your phone.";
+              return;
+            }
             try {
-              const userCred = await signInWithEmailAndPassword(auth, email, password);
-              const user = userCred.user;
-              await user.reload();
-              if (!user.emailVerified) {
-                errorDiv.textContent = "Please verify your email before logging in.";
-                return;
-              }
+              const result = await confirmationResult.confirm(otp);
+              const user = result.user;
+              // Create user doc if not exists
               const userDoc = await getDoc(doc(db, "users", user.uid));
+              if (!userDoc.exists()) {
+                await setDoc(doc(db, "users", user.uid), {
+                  phone: user.phoneNumber,
+                  role: "customer",
+                  createdAt: new Date().toISOString()
+                });
+              }
+              // Redirect based on role
               const role = userDoc.exists() ? userDoc.data().role : "customer";
               if (role === "admin") {
                 window.location.href = "/admin";
