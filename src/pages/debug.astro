@@ -1,161 +1,81 @@
 ---
-// Comprehensive Debug Test Page
-// Purpose: Diagnose API routes 404 issue and find root cause
-// Updated: 2025-11-30 - Frontmatter structure corrected
-// Status: All issues resolved - Ready for final testing
-
-export const prerender = false;
-
-// TypeScript interface declarations for Window object
-declare global {
-  interface Window {
-    debugData: any;
-    loadServerStatus: () => Promise<void>;
-    testEnvironment: () => Promise<void>;
-    testAPI: (endpoint: string) => Promise<void>;
-    testAllAPIs: () => Promise<void>;
-    updateDiagnosis: (apiResults: any[]) => void;
-  }
-}
-
-export async function GET() {
-  // Test 1: Check if we're in server mode
-  const isServer = typeof Astro !== 'undefined';
-  
-  // Test 2: Check environment variables
-  const runtimeEnv = (Astro as any)?.locals?.runtime?.env || {};
-  const envVars = {
-    JWT_SECRET: runtimeEnv.JWT_SECRET || 'NOT_FOUND',
-    brevo_MCP_key: runtimeEnv.brevo_MCP_key ? 'FOUND' : 'NOT_FOUND',
-    APPWRITE_PROJECT_ID: runtimeEnv.APPWRITE_PROJECT_ID || 'NOT_FOUND',
-    APPWRITE_ENDPOINT: runtimeEnv.APPWRITE_ENDPOINT || 'NOT_FOUND',
-    APPWRITE_DATABASE_ID: runtimeEnv.APPWRITE_DATABASE_ID || 'NOT_FOUND'
-  };
-
-  // Test 3: Check API route availability
-  const apiEndpoints = [
-    '/api/auth',
-    '/api/auth/register', 
-    '/api/auth/verify-otp',
-    '/api/auth/me',
-    '/api/auth/refresh',
-    '/api/test-auth',
-    '/api/check-env'
-  ];
-
-  // Pass data to the HTML template
-  return Astro.props.debugData = {
-    debugSession: {
-      timestamp: new Date().toISOString(),
-      purpose: "Diagnose API routes 404 issue",
-      mode: isServer ? 'SERVER' : 'CLIENT'
-    },
-    
-    environmentCheck: {
-      status: "Environment Variables Test",
-      variables: envVars,
-      allFound: Object.values(envVars).every(v => v !== 'NOT_FOUND')
-    },
-
-    apiRoutesTest: {
-      status: "API Routes Availability Test",
-      endpoints: apiEndpoints.map(endpoint => ({
-        path: endpoint,
-        expectedStatus: "Should return 200 or proper error",
-        actualStatus: "UNKNOWN - Test via frontend"
-      }))
-    },
-
-    systemInfo: {
-      astroVersion: "5.16.1",
-      adapter: "@astrojs/cloudflare",
-      outputMode: "server",
-      deploymentPlatform: "Cloudflare Pages"
-    },
-
-    nextSteps: [
-      "1. Check if environment variables are accessible",
-      "2. Test API endpoints via frontend JavaScript",
-      "3. Verify Cloudflare Pages Functions configuration",
-      "4. Check build output for API routes"
-    ],
-
-    troubleshooting: {
-      possibleCauses: [
-        "Cloudflare Pages Functions not enabled",
-        "Environment variables not properly configured", 
-        "Build configuration issue",
-        "API routes not being compiled correctly",
-        "Server mode not properly activated"
-      ],
-      testsToRun: [
-        "Environment variable access test",
-        "API endpoint fetch test", 
-        "Build output verification",
-        "Cloudflare configuration check",
-        "Test API endpoint from server side"
-      ]
-    }
-  };
-};
-
-export async function POST({ request }: { request: Request }) {
-  try {
-    const body = await request.json();
-    const { action, endpoint } = body;
-
-    if (action === 'test-api') {
-      // Test API endpoint from server side
-      const response = await fetch(`https://c66224ef.new-website-1ce.pages.dev${endpoint}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      const data = await response.text();
-      
-      return Response.json({
-        endpoint,
-        status: response.status,
-        statusText: response.statusText,
-        data: data.substring(0, 500), // Limit response size
-        success: response.ok
-      });
-
-    } else if (action === 'test-env') {
-      // Test environment variables from server side
-      const runtimeEnv = (Astro as any)?.locals?.runtime?.env || {};
-      const envVars = {
-        brevo_MCP_key: runtimeEnv?.brevo_MCP_key ? 'FOUND' : 'NOT_FOUND',
-        JWT_SECRET: runtimeEnv?.JWT_SECRET ? 'FOUND' : 'NOT_FOUND',
-        APPWRITE_PROJECT_ID: runtimeEnv?.APPWRITE_PROJECT_ID || 'NOT_FOUND',
-        APPWRITE_ENDPOINT: runtimeEnv?.APPWRITE_ENDPOINT || 'NOT_FOUND',
-        APPWRITE_DATABASE_ID: runtimeEnv?.APPWRITE_DATABASE_ID || 'NOT_FOUND'
+---
+---
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase API Key Debug</title>
+    <style>
+      body { font-family: system-ui, sans-serif; background: #f8fafc; color: #222; margin: 0; padding: 0; }
+      .container { max-width: 420px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px #0001; padding: 2rem; }
+      h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+      button { padding: 0.5rem 1.2rem; font-size: 1rem; border-radius: 6px; border: none; background: #2563eb; color: #fff; cursor: pointer; margin-top: 1rem; }
+      button:active { background: #1d4ed8; }
+      .result { margin-top: 1.5rem; padding: 1rem; border-radius: 8px; font-size: 1.1rem; }
+      .success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+      .error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+      .loading { background: #fef9c3; color: #92400e; border: 1px solid #fde68a; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Firebase API Key Debug</h1>
+      <p>This page tests your Firebase API key by initializing the Firebase SDK and reporting the result below.</p>
+      <button id="test-btn">Test Firebase API Key</button>
+      <div id="result" class="result">Not tested yet.</div>
+    </div>
+    <script>
+      document.getElementById('test-btn').onclick = async function() {
+        const resultDiv = document.getElementById('result');
+        resultDiv.className = 'result loading';
+        resultDiv.textContent = 'Loading Firebase SDK and testing...';
+        function loadScript(src) {
+          return new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = src;
+            s.onload = resolve;
+            s.onerror = () => reject('Failed to load ' + src);
+            document.body.appendChild(s);
+          });
+        }
+        try {
+          await loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
+          await loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js');
+          const firebaseConfig = {
+            apiKey: "AIzaSyB8tgve3Kp1iTSia65hggHdiRrMerlFw9o",
+            authDomain: "litterateur-e0a3c.firebaseapp.com",
+            projectId: "litterateur-e0a3c",
+            storageBucket: "litterateur-e0a3c.appspot.com",
+            messagingSenderId: "720445027014",
+            appId: "1:720445027014:web:bf1d60c9a2a3f93c675dc7",
+            measurementId: "G-JM0F9W1H40"
+          };
+          let app, auth;
+          try {
+            app = firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+          } catch (e) {
+            resultDiv.className = 'result error';
+            resultDiv.textContent = 'Firebase init error: ' + (e.message || e);
+            return;
+          }
+          try {
+            await auth.languageCode;
+            resultDiv.className = 'result success';
+            resultDiv.textContent = '✅ Firebase initialized successfully. API key is valid.';
+          } catch (e) {
+            resultDiv.className = 'result error';
+            resultDiv.textContent = '❌ Firebase error: ' + (e.message || e);
+          }
+        } catch (e) {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = 'Script load error: ' + (e.message || e);
+        }
       };
-
-      return Response.json({
-        action: 'test-env',
-        environment: envVars,
-        allFound: Object.values(envVars).every(v => v !== 'NOT_FOUND'),
-        success: true
-      });
-
-    } else {
-      return Response.json({
-        error: 'Invalid action',
-        availableActions: ['test-api', 'test-env'],
-        received: action
-      });
-
-    }
-
-  } catch (error) {
-    return Response.json({
-      error: 'Server error',
-      message: (error as any)?.message || 'Unknown error',
-      success: false
-    }, { status: 500 });
-  }
-}
+    </script>
+  </body>
+</html>
 ---
 
 <!DOCTYPE html>
