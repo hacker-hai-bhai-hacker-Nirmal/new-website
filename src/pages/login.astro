@@ -14,66 +14,7 @@ import Layout from '../layouts/Layout.astro'
     <div class="container">
       <a class="brand" href="/">Litterateur</a>
       <div class="auth-form-container">
-        <div class="auth-header">
-          <div class="auth-badge">
-            <span>🔐 Secure Login</span>
-          </div>
-          <h1>Sign In or Sign Up to Litterateur</h1>
-          <p>Use your phone number for secure authentication. OTP verification is required.</p>
-        </div>
-
-        <form id="phoneForm" class="phone-form">
-          <div class="form-group">
-            <label for="phoneNumber">Phone Number</label>
-            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+1 555-555-5555" required />
-          </div>
-          <div id="recaptcha-container"></div>
-          <button type="button" id="sendOtpBtn" class="primary-btn">Send OTP</button>
-          <div id="otpSection" style="display:none; margin-top:20px;">
-            <div class="form-group">
-              <label for="otpCode">Enter OTP</label>
-              <input type="text" id="otpCode" name="otpCode" maxlength="6" required />
-            </div>
-            <button type="button" id="verifyOtpBtn" class="primary-btn">Verify & Sign In</button>
-          </div>
-          <div id="phoneError" style="color:var(--error-red);margin-top:10px;"></div>
-        </form>
-
-        <script type="module">
-          import { auth, db, getAuth, signInWithPhoneNumber, RecaptchaVerifier, doc, getDoc, setDoc } from "../utils/firebase.js";
-          let confirmationResult = null;
-
-          // Setup reCAPTCHA
-          window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-            'size': 'invisible',
-            'callback': (response) => {
-              // reCAPTCHA solved
-            }
-          }, auth);
-
-          document.getElementById('sendOtpBtn').onclick = async () => {
-            const phoneInput = document.getElementById('phoneNumber');
-            const phone = phoneInput.value;
-            const errorDiv = document.getElementById('phoneError');
-            errorDiv.textContent = "";
-            if (!phone) {
-              errorDiv.textContent = "Please enter a valid phone number.";
-              return;
-            }
-            try {
-              confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
-              document.getElementById('otpSection').style.display = 'block';
-              errorDiv.textContent = "OTP sent! Please check your phone.";
-            } catch (err) {
-              errorDiv.textContent = err.message;
-            }
-          };
-
-          document.getElementById('verifyOtpBtn').onclick = async () => {
-            const otpInput = document.getElementById('otpCode');
-            const otp = otpInput.value;
-            const errorDiv = document.getElementById('phoneError');
-            errorDiv.textContent = "";
+        <script type="module" src="/src/scripts/phone-auth.js"></script>
             if (!otp || !confirmationResult) {
               errorDiv.textContent = "Please enter the OTP sent to your phone.";
               return;
